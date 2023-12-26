@@ -30,7 +30,6 @@ export const Index = () => {
 };
 
 const IndexContainer = styled.div`
-  padding: 100px 0 100px 30px; // TODO: 추후 기본 padding값 맞춰 수정 예정
   height: 100%;
   margin: 0 auto;
 `;
