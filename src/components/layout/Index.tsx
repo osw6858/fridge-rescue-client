@@ -14,7 +14,7 @@ export const Index = () => {
             recipeTitle="레시피 제목"
             briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
             imageURL="/"
-            matchedFoodList={['양파', '무', '당근']}
+            matchedFoodList={['당근', '무']}
           />
         ))}
       </SamllCardList>

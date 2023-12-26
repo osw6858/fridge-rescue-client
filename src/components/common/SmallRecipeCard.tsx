@@ -1,7 +1,8 @@
 import { Chip, Card, CardActions, CardContent, CardMedia } from '@mui/material';
 import { styled } from 'styled-components';
+import { StyledLink } from '../layout/header/Header';
 
-interface SmallCarState {
+export interface CardProps {
   recipeTitle: string;
   briefExplanation: string;
   imageURL: string;
@@ -13,29 +14,32 @@ export const SmallRecipeCard = ({
   briefExplanation,
   imageURL,
   matchedFoodList,
-}: SmallCarState) => {
+}: CardProps) => {
   return (
-    <StyledCard sx={{ maxWidth: 345 }}>
-      <CardMedia sx={{ height: 190 }} image={imageURL} title="레시피 사진" />
-      <CardContent>
-        <RecipeTitle> {recipeTitle}</RecipeTitle>
-        <BriefExplanation>{briefExplanation}</BriefExplanation>
-      </CardContent>
-      <MatchedFoodList>
-        <MatchedFood>일치하는 재료</MatchedFood>
-        <CardActions>
-          {matchedFoodList.map((food, index) => (
-            <Chip key={index} label={food} />
-          ))}
-        </CardActions>
-      </MatchedFoodList>
-    </StyledCard>
+    <StyledLink to="/">
+      <StyledCard sx={{ maxWidth: 345, minHeight: 300, minWidth: 290 }}>
+        <CardMedia sx={{ height: 190 }} image={imageURL} title="레시피 사진" />
+        <CardContent>
+          <RecipeTitle> {recipeTitle}</RecipeTitle>
+          <BriefExplanation>{briefExplanation}</BriefExplanation>
+        </CardContent>
+        <MatchedFoodList>
+          <MatchedFood>일치하는 재료</MatchedFood>
+          <CardActions>
+            {matchedFoodList.length !== 0 ? (
+              // TODO: key수정하기
+              matchedFoodList.map((food, index) => <Chip key={index} label={food} />)
+            ) : (
+              <p>일치하는 재료가 없습니다.</p>
+            )}
+          </CardActions>
+        </MatchedFoodList>
+      </StyledCard>
+    </StyledLink>
   );
 };
 
 const StyledCard = styled(Card)`
-  min-height: 300px;
-  min-width: 290px;
   margin: 14px;
 
   .css-gavykb-MuiChip-root {
@@ -47,26 +51,26 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const RecipeTitle = styled.h5`
+export const RecipeTitle = styled.h5`
   font-size: 20px;
   line-height: 30px;
   font-weight: 600;
 `;
 
-const BriefExplanation = styled.p`
+export const BriefExplanation = styled.p`
   color: ${(props) => props.theme.colors.darkGray};
   width: 100%;
   margin-top: 20px;
   line-height: 20px;
 `;
 
-const MatchedFood = styled.p`
+export const MatchedFood = styled.p`
   color: ${(props) => props.theme.colors.black};
   font-weight: 600;
   font-size: 14px;
   margin: 10px 0 5px 10px;
 `;
 
-const MatchedFoodList = styled.div`
+export const MatchedFoodList = styled.div`
   padding: 10px;
 `;
