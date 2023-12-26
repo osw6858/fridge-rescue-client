@@ -10,7 +10,7 @@ export const PageLayout = ({ children }: PageLayoutProp) => {
 
 const PageContainer = styled.div`
   max-width: 768px;
-  height: 100vh;
+  height: fit-content;
   background-color: ${(props) => props.theme.colors.white};
   margin: 0 auto;
 `;
