@@ -1,5 +1,5 @@
 import { Routes } from 'react-router-dom';
 
-export const Router: React.FC = () => {
+export const Router = () => {
   return <Routes>{/* <Route path="/example" element={} /> */}</Routes>;
 };
