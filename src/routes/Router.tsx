@@ -1,5 +1,10 @@
-import { Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import { Index } from '../components/layout/Index';
 
 export const Router = () => {
-  return <Routes>{/* <Route path="/example" element={} /> */}</Routes>;
+  return (
+    <Routes>
+      <Route index element={<Index />} />
+    </Routes>
+  );
 };
