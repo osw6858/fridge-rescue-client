@@ -4,6 +4,7 @@ import { BasicInput } from '../components/common/BasicInput';
 import { BasicButton } from '../components/common/BasicButton';
 import { FcGoogle } from 'react-icons/fc';
 import { HiMiniChatBubbleOvalLeft } from 'react-icons/hi2';
+import { Link } from 'react-router-dom';
 
 export const SignIn = () => {
   return (
@@ -36,7 +37,9 @@ export const SignIn = () => {
             </div>
           </BasicButton>
         </div>
-        <p className="sign-up">아직 회원이 아니신가요?</p>
+        <Link to="/signup">
+          <span className="sign-up">아직 회원이 아니신가요?</span>
+        </Link>
       </form>
     </SignInContainer>
   );
