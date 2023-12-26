@@ -65,5 +65,11 @@ module.exports = {
     ],
     'react/no-unknown-property': ['error', { ignore: ['css'] }],
     'react/state-in-constructor': 'off',
+    'jsx-a11y/label-has-associated-control': [
+      2,
+      {
+        labelAttributes: ['htmlFor'],
+      },
+    ],
   },
 };
