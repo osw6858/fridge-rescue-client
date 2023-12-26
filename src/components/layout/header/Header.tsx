@@ -38,7 +38,7 @@ const TempInput = styled.input`
   width: 70%;
 `;
 
-const StyledLink = styled(Link)`
+export const StyledLink = styled(Link)`
   text-decoration: none;
   color: inherit;
 `;

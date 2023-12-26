@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { SmallRecipeCard } from '../common/SmallRecipeCard';
 
 export const Index = () => {
   return (
@@ -7,9 +8,14 @@ export const Index = () => {
         {/** TODO: 이곳에 타이틀 컴포넌트 추가 */}타이틀<MoreButton>더보기</MoreButton>
       </Title>
       <SamllCardList>
-        {[1, 2, 3, 4, 5, 6].map(() => (
-          // TODO: 이곳에 smallCard 컴포넌트 추가, 아래는 임시 컴포넌트
-          <ExampleCard></ExampleCard>
+        {[1, 2, 3, 4, 5].map((_, index) => (
+          <SmallRecipeCard
+            key={index}
+            recipeTitle="레시피 제목"
+            briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
+            imageURL="/"
+            matchedFoodList={['당근', '무']}
+          />
         ))}
       </SamllCardList>
       <Title>
@@ -50,6 +56,20 @@ const SamllCardList = styled.section`
   overflow-y: clip;
   align-items: flex-start;
   margin-bottom: 80px;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    background-color: ${(props) => props.theme.colors.lightGray};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme.colors.gray};
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${(props) => props.theme.colors.darkGray};
+  }
 `;
 
 const ExampleCard = styled.div`
