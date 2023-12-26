@@ -56,6 +56,8 @@ module.exports = {
     'react/prop-types': 'off',
     'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
+    // TODO: Mock데이터 완성후엔 no-array-index-key : off 옵션 삭제
+    'react/no-array-index-key': 'off',
     'react/function-component-definition': [
       'error',
       {
