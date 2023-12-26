@@ -58,7 +58,17 @@ const SamllCardList = styled.section`
   margin-bottom: 80px;
 
   &::-webkit-scrollbar {
-    display: none;
+    height: 8px;
+    background-color: ${(props) => props.theme.colors.lightGray};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme.colors.gray};
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${(props) => props.theme.colors.darkGray};
   }
 `;
 
