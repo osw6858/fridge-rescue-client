@@ -7,9 +7,9 @@ export const Index = () => {
         {/** TODO: 이곳에 타이틀 컴포넌트 추가 */}타이틀<MoreButton>더보기</MoreButton>
       </Title>
       <SamllCardList>
-        {[1, 2, 3, 4, 5, 6].map(() => (
+        {[1, 2, 3, 4, 5, 6].map((_, index) => (
           // TODO: 이곳에 smallCard 컴포넌트 추가, 아래는 임시 컴포넌트
-          <ExampleCard></ExampleCard>
+          <ExampleCard key={index}></ExampleCard>
         ))}
       </SamllCardList>
       <Title>
