@@ -1,6 +1,6 @@
 import { Chip, Card, CardActions, CardContent, CardMedia } from '@mui/material';
 import { styled } from 'styled-components';
-import { StyledLink } from '../layout/header/Header';
+import { StyledLink } from '../header/Header';
 
 export interface CardProps {
   recipeTitle: string;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SmallRecipeCard } from '../common/SmallRecipeCard';
+import { SmallRecipeCard } from '../components/common/SmallRecipeCard';
 
 export const Index = () => {
   return (

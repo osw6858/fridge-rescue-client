@@ -7,7 +7,7 @@ import {
   BriefExplanation,
   RecipeTitle,
 } from './SmallRecipeCard';
-import { StyledLink } from '../layout/header/Header';
+import { StyledLink } from '../header/Header';
 
 export const LargeRecipeCard = ({
   recipeTitle,
