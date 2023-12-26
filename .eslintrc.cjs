@@ -52,6 +52,7 @@ module.exports = {
     ],
     'react/display-name': 'off',
     'react/self-closing-comp': 'off',
+    'react/jsx-no-useless-fragment': 0,
     'react/prop-types': 'off',
     'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
