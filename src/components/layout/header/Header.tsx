@@ -7,7 +7,7 @@ export const Header = () => {
       <Wrapper>
         {/** TODO: 이곳에다 공통 Input컴포넌트 추가 / 아래는 임시 input */}
         <TempInput type="text" />
-        <StyledLink to="/endpoint">
+        <StyledLink to="/signin">
           <LoginButton>로그인</LoginButton>
         </StyledLink>
       </Wrapper>
