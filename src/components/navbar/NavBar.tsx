@@ -38,7 +38,7 @@ const NavBarContainer = styled.nav`
   bottom: 0;
   width: 100%;
   box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 9999;
+  z-index: 998;
 
   svg {
     font-size: 24px;
