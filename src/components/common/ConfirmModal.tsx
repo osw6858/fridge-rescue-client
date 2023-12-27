@@ -9,7 +9,7 @@ import styled from 'styled-components';
 interface ConfirmModalProps {
   isOpen: boolean;
   handleOpen: (isOpen: boolean) => void;
-  buttonName: string;
+  buttonName?: string;
   title: string;
   description?: string;
 }
