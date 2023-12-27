@@ -11,7 +11,7 @@ interface CardProps {
   size: 'large' | 'small';
 }
 
-export const LargeRecipeCard = ({
+export const RecipeCard = ({
   recipeTitle,
   briefExplanation,
   imageURL,

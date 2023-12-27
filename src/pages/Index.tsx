@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 import { CarouselSlider } from '../components/common/CarouselSlider';
-import { LargeRecipeCard } from '../components/common/RecipeCard';
+import { RecipeCard } from '../components/common/RecipeCard';
+import { BasicTitle } from '../components/common/BasicTitle';
 
 export const Index = () => {
   return (
     <IndexContainer>
       <Title>
-        {/** TODO: 이곳에 타이틀 컴포넌트 추가 */}타이틀<MoreButton>더보기</MoreButton>
+        <BasicTitle title="최신 레시피" />
+        <MoreButton>더보기</MoreButton>
       </Title>
       <CardList>
         {[1, 2, 3, 4, 5].map((_, index) => (
-          <LargeRecipeCard
+          <RecipeCard
             key={index}
             recipeTitle="레시피 제목"
             briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
@@ -21,7 +23,8 @@ export const Index = () => {
         ))}
       </CardList>
       <Title>
-        {/** TODO: 이곳에 타이틀 컴포넌트 추가 */}케러셀 슬라이드<MoreButton>더보기</MoreButton>
+        <BasicTitle title="인기 레시피" />
+        <MoreButton>더보기</MoreButton>
       </Title>
       <CarouselSlider popularRecipeList={[1, 2, 3]} />
     </IndexContainer>
