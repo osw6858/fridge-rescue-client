@@ -1,24 +1,29 @@
 import { Chip, Card, CardActions, CardContent, CardMedia } from '@mui/material';
 import { styled } from 'styled-components';
-import {
-  MatchedFood,
-  type CardProps,
-  MatchedFoodList,
-  BriefExplanation,
-  RecipeTitle,
-} from './SmallRecipeCard';
-import { StyledLink } from '../layout/header/Header';
+import { StyledLink } from '../header/Header';
+import { useCardStyle } from '../../hooks/useCardStyle';
+
+interface CardProps {
+  recipeTitle: string;
+  briefExplanation: string;
+  imageURL: string;
+  matchedFoodList: string[];
+  size: 'large' | 'small';
+}
 
 export const LargeRecipeCard = ({
   recipeTitle,
   briefExplanation,
   imageURL,
   matchedFoodList,
+  size,
 }: CardProps) => {
+  const { cardSize, imgSize, display } = useCardStyle(size);
+
   return (
     <StyledLink to="/">
-      <StyledCard sx={{ maxWidth: 760, minHeight: 320 }}>
-        <CardMedia sx={{ minWidth: 260 }} image={imageURL} title="레시피 사진" />
+      <StyledCard sx={cardSize} style={display}>
+        <CardMedia sx={imgSize} image={imageURL} title="레시피 사진" />
         <div>
           <CardContent>
             <RecipeTitle> {recipeTitle}</RecipeTitle>
@@ -42,8 +47,8 @@ export const LargeRecipeCard = ({
 };
 
 const StyledCard = styled(Card)`
-  display: flex;
   min-height: 300px;
+  margin: 5px;
 
   .css-gavykb-MuiChip-root {
     margin-bottom: 10px;
@@ -52,4 +57,28 @@ const StyledCard = styled(Card)`
   .css-dnrpxu-MuiCardActions-root {
     flex-wrap: wrap;
   }
+`;
+
+const RecipeTitle = styled.h5`
+  font-size: 20px;
+  line-height: 30px;
+  font-weight: 600;
+`;
+
+const BriefExplanation = styled.p`
+  color: ${(props) => props.theme.colors.darkGray};
+  width: 100%;
+  margin-top: 20px;
+  line-height: 20px;
+`;
+
+const MatchedFood = styled.p`
+  color: ${(props) => props.theme.colors.black};
+  font-weight: 600;
+  font-size: 14px;
+  margin: 10px 0 5px 10px;
+`;
+
+const MatchedFoodList = styled.div`
+  padding: 10px;
 `;

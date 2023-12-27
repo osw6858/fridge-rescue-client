@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { PageLayout } from './components/layout/PageLayout';
 import { Router } from './routes/Router';
 import { NavBar } from './components/navbar/NavBar';
-import { Header } from './components/layout/header/Header';
+import { Header } from './components/header/Header';
 
 export const App = () => {
   return (

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { SmallRecipeCard } from '../common/SmallRecipeCard';
+import { CarouselSlider } from '../components/common/CarouselSlider';
+import { LargeRecipeCard } from '../components/common/RecipeCard';
 
 export const Index = () => {
   return (
@@ -7,24 +8,22 @@ export const Index = () => {
       <Title>
         {/** TODO: 이곳에 타이틀 컴포넌트 추가 */}타이틀<MoreButton>더보기</MoreButton>
       </Title>
-      <SamllCardList>
+      <CardList>
         {[1, 2, 3, 4, 5].map((_, index) => (
-          <SmallRecipeCard
+          <LargeRecipeCard
             key={index}
             recipeTitle="레시피 제목"
             briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-            imageURL="/"
+            imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
             matchedFoodList={['당근', '무']}
+            size="small"
           />
         ))}
-      </SamllCardList>
+      </CardList>
       <Title>
         {/** TODO: 이곳에 타이틀 컴포넌트 추가 */}케러셀 슬라이드<MoreButton>더보기</MoreButton>
       </Title>
-      <Carousel>
-        {/** TODO: 이곳에 Carousel 컴포넌트 추가 */}
-        <ExampleCard></ExampleCard>
-      </Carousel>
+      <CarouselSlider popularRecipeList={[1, 2, 3]} />
     </IndexContainer>
   );
 };
@@ -49,7 +48,7 @@ const MoreButton = styled.button`
   color: ${(props) => props.theme.colors.darkGray};
 `;
 
-const SamllCardList = styled.section`
+const CardList = styled.section`
   display: flex;
   overflow-x: scroll;
   overflow-y: clip;
@@ -69,15 +68,4 @@ const SamllCardList = styled.section`
   &::-webkit-scrollbar-thumb:hover {
     background-color: ${(props) => props.theme.colors.darkGray};
   }
-`;
-
-const ExampleCard = styled.div`
-  background-color: black;
-  height: 300px;
-  min-width: 220px;
-  margin: 3px;
-`;
-
-const Carousel = styled.div`
-  padding-right: 30px;
 `;
