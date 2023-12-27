@@ -18,7 +18,7 @@ export const LargeRecipeCard = ({
   return (
     <StyledLink to="/">
       <StyledCard sx={{ maxWidth: 760, minHeight: 320 }}>
-        <CardMedia sx={{ minWidth: 260 }} image={imageURL} title="레시피 사진" />
+        <CardMedia sx={{ minWidth: 300 }} image={imageURL} title="레시피 사진" />
         <div>
           <CardContent>
             <RecipeTitle> {recipeTitle}</RecipeTitle>

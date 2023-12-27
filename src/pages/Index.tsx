@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { SmallRecipeCard } from '../components/common/SmallRecipeCard';
+import { CarouselSlider } from '../components/common/CarouselSlider';
 
 export const Index = () => {
   return (
@@ -21,10 +22,7 @@ export const Index = () => {
       <Title>
         {/** TODO: 이곳에 타이틀 컴포넌트 추가 */}케러셀 슬라이드<MoreButton>더보기</MoreButton>
       </Title>
-      <Carousel>
-        {/** TODO: 이곳에 Carousel 컴포넌트 추가 */}
-        <ExampleCard></ExampleCard>
-      </Carousel>
+      <CarouselSlider popularRecipeList={[1, 2, 3]} />
     </IndexContainer>
   );
 };
@@ -69,15 +67,4 @@ const SamllCardList = styled.section`
   &::-webkit-scrollbar-thumb:hover {
     background-color: ${(props) => props.theme.colors.darkGray};
   }
-`;
-
-const ExampleCard = styled.div`
-  background-color: black;
-  height: 300px;
-  min-width: 220px;
-  margin: 3px;
-`;
-
-const Carousel = styled.div`
-  padding-right: 30px;
 `;
