@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { CarouselSlider } from '../components/common/CarouselSlider';
-import { LargeRecipeCard } from '../components/common/RecipeCard';
+import { RecipeCard } from '../components/common/RecipeCard';
 
 export const Index = () => {
   return (
@@ -10,7 +10,7 @@ export const Index = () => {
       </Title>
       <CardList>
         {[1, 2, 3, 4, 5].map((_, index) => (
-          <LargeRecipeCard
+          <RecipeCard
             key={index}
             recipeTitle="레시피 제목"
             briefExplanation="간단 설명 You can add ornaments to the beginning of the component."

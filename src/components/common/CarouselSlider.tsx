@@ -1,5 +1,5 @@
 import Carousel from 'react-material-ui-carousel';
-import { LargeRecipeCard } from './RecipeCard';
+import { RecipeCard } from './RecipeCard';
 import { styled } from 'styled-components';
 
 // 임시 타입 지정
@@ -11,9 +11,9 @@ export const CarouselSlider = ({ popularRecipeList }: RecipeProps) => {
   return (
     <Carousel>
       {popularRecipeList.map((_, index) => (
-        <>
+        <div key={index}>
           <Lank>{index + 1}위</Lank>
-          <LargeRecipeCard
+          <RecipeCard
             key={index}
             recipeTitle="111"
             briefExplanation="111"
@@ -21,7 +21,7 @@ export const CarouselSlider = ({ popularRecipeList }: RecipeProps) => {
             matchedFoodList={['ekdrms']}
             size="large"
           />
-        </>
+        </div>
       ))}
     </Carousel>
   );
