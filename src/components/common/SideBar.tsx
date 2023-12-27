@@ -1,6 +1,9 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import styled, { keyframes } from 'styled-components';
 import { useEffect } from 'react';
 import { device } from '../../styles/media';
+import { StyledLink } from '../header/Header';
 
 interface Props {
   handleSidbar: () => void;
@@ -21,15 +24,21 @@ export const SideBar = ({ handleSidbar, isOpen }: Props) => {
         style={{ transform: `translateX(${isOpen ? '0' : '-100%'})` }}
         onClick={(event) => event.stopPropagation()}
       >
-        <SidbarTitle>알림</SidbarTitle>
+        <p>알림</p>
         <NotificationList>
-          <Notification>
-            <Content>00님이 레시피를 추천했어요!</Content>
-            <Time>1분전</Time>
-            <DeleteButtonWrapper>
-              <p>삭제</p>
-            </DeleteButtonWrapper>
-          </Notification>
+          {[1, 2, 3].map((_, index) => (
+            <Wrapper>
+              <StyledLink to="/recipe" key={index}>
+                <Notification>
+                  <Content>00님이 레시피를 추천했어요!</Content>
+                  <Time>1분전</Time>
+                </Notification>
+              </StyledLink>
+              <DeleteButtonWrapper>
+                <p onClick={() => console.log('삭제')}>삭제</p>
+              </DeleteButtonWrapper>
+            </Wrapper>
+          ))}
         </NotificationList>
       </SideMenuWrapper>
     </Container>
@@ -56,6 +65,8 @@ const Container = styled.div`
 `;
 
 const SideMenuWrapper = styled.div`
+  font-size: 35px;
+  font-weight: 700;
   position: fixed;
   top: 0;
   left: 0;
@@ -67,27 +78,19 @@ const SideMenuWrapper = styled.div`
   flex-direction: column;
   animation: ${SlideIn} 0.5s ease-in-out;
 
-  & > ul {
-    margin: 22px 22px 22px 10px;
-    & > a {
-      font-size: 1.6rem;
-      margin: 20px 0 28px 22px;
-    }
-  }
-
   @media ${device.mobile} {
-    width: 250px;
+    width: 200px;
   }
 `;
 
-const SidbarTitle = styled.p`
-  font-size: 35px;
-  font-weight: 700;
+const Wrapper = styled.div`
+  position: relative;
 `;
 
 const NotificationList = styled.ul`
+  margin-top: 20px;
   display: grid;
-  place-items: center;
+  gap: 10px;
 `;
 
 const Notification = styled.li`
@@ -104,6 +107,10 @@ const Content = styled.p`
   padding-left: 10px;
   font-weight: 600;
   font-size: 17px;
+
+  @media ${device.mobile} {
+    font-size: 13px;
+  }
 `;
 
 const Time = styled.span`
@@ -114,12 +121,17 @@ const Time = styled.span`
 `;
 
 const DeleteButtonWrapper = styled.div`
+  position: absolute;
   display: flex;
   justify-content: flex-end;
+
+  bottom: 15px;
+  right: 2px;
 
   & > p {
     margin-right: 15px;
     font-size: 13px;
     color: ${(props) => props.theme.colors.darkGray};
+    cursor: pointer;
   }
 `;
