@@ -1,23 +1,30 @@
+import { useNavigate } from 'react-router';
+import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { SideBar } from '../common/SideBar';
 import { useState } from 'react';
 import { BasicInput } from '../common/BasicInput';
 import { BasicButton } from '../common/BasicButton';
+import { currentCategoryAtom } from '../../store/menu';
 
 export const Header = () => {
   const [sidBar, setSidBar] = useState(false);
+  
+  const navigation = useNavigate();
+  const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
+  const handleLogin = () => {
+    navigation('/signin');
+    setCurrentCategory('');
+  };
 
   return (
     <Container>
       <Wrapper>
-        {/** TODO: 이곳에다 공통 Input컴포넌트 추가 / 아래는 임시 input */}
         <BasicInput id="text" type="email" placeholder="재료, 레시피를 검색해 주세요." />
-        <StyledLink to="/signin">
-          <BasicButton type="button" bgcolor="#FF8527" fontcolor="#fff" hoverbgcolor="#ff750c">
+          <BasicButton onClick={handleLogin} type="button" bgcolor="#FF8527" fontcolor="#fff" hoverbgcolor="#ff750c">
             로그인
           </BasicButton>
-        </StyledLink>
         <StyledSvg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -47,12 +54,14 @@ const Container = styled.header`
 `;
 
 const Wrapper = styled.div`
+
   display: grid;
   grid-template-columns: 70% 1fr 1fr;
   gap: 12px;
   width: 768px;
   margin: 0 auto;
 `;
+
 
 export const StyledLink = styled(Link)`
   text-decoration: none;
