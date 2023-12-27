@@ -1,15 +1,21 @@
+import { useNavigate } from 'react-router';
+import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { currentCategoryAtom } from '../../store/menu';
 
 export const Header = () => {
+  const navigation = useNavigate();
+  const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
+  const handleLogin = () => {
+    navigation('/signin');
+    setCurrentCategory('');
+  };
   return (
     <Container>
       <Wrapper>
         {/** TODO: 이곳에다 공통 Input컴포넌트 추가 / 아래는 임시 input */}
         <TempInput type="text" />
-        <StyledLink to="/signin">
-          <LoginButton>로그인</LoginButton>
-        </StyledLink>
+        <LoginButton onClick={handleLogin}>로그인</LoginButton>
       </Wrapper>
     </Container>
   );
@@ -27,6 +33,7 @@ const Container = styled.header`
 `;
 
 const Wrapper = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -36,11 +43,6 @@ const Wrapper = styled.div`
 
 const TempInput = styled.input`
   width: 70%;
-`;
-
-export const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
 `;
 
 const LoginButton = styled.button`
