@@ -10,9 +10,10 @@ import { currentCategoryAtom } from '../../store/menu';
 
 export const Header = () => {
   const [sidBar, setSidBar] = useState(false);
-  
+
   const navigation = useNavigate();
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
+
   const handleLogin = () => {
     navigation('/signin');
     setCurrentCategory('');
@@ -22,9 +23,15 @@ export const Header = () => {
     <Container>
       <Wrapper>
         <BasicInput id="text" type="email" placeholder="재료, 레시피를 검색해 주세요." />
-          <BasicButton onClick={handleLogin} type="button" bgcolor="#FF8527" fontcolor="#fff" hoverbgcolor="#ff750c">
-            로그인
-          </BasicButton>
+        <BasicButton
+          clickFn={handleLogin}
+          type="button"
+          $bgcolor="#FF8527"
+          $fontcolor="#fff"
+          $hoverbgcolor="#ff750c"
+        >
+          로그인
+        </BasicButton>
         <StyledSvg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -54,14 +61,12 @@ const Container = styled.header`
 `;
 
 const Wrapper = styled.div`
-
   display: grid;
   grid-template-columns: 70% 1fr 1fr;
   gap: 12px;
   width: 768px;
   margin: 0 auto;
 `;
-
 
 export const StyledLink = styled(Link)`
   text-decoration: none;

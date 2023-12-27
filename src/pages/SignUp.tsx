@@ -23,7 +23,7 @@ export const SignUp = () => {
           <label htmlFor="nickname">닉네임</label>
           <BasicInput id="nickname" type="text" placeholder="사용할 닉네임을 입력하세요" />
         </div>
-        <BasicButton type="submit" bgcolor="#FF8527" fontcolor="#fff" hoverbgcolor="#ff750c">
+        <BasicButton type="submit" $bgcolor="#FF8527" $fontcolor="#fff" $hoverbgcolor="#ff750c">
           회원 가입
         </BasicButton>
         <Link to="/signin">

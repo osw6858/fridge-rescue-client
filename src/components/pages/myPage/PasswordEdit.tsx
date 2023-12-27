@@ -14,7 +14,7 @@ export const PasswordEdit = () => {
         type="password"
         placeholder="변경할 비밀번호를 한번 더 입력하세요"
       />
-      <BasicButton bgcolor="#ff8527" type="text" fontcolor="#fff">
+      <BasicButton $bgcolor="#ff8527" type="text" $fontcolor="#fff">
         변경하기
       </BasicButton>
     </PasswordEditContainer>
