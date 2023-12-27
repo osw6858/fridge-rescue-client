@@ -27,8 +27,8 @@ export const SideBar = ({ handleSidbar, isOpen }: Props) => {
         <p>알림</p>
         <NotificationList>
           {[1, 2, 3].map((_, index) => (
-            <Wrapper>
-              <StyledLink to="/recipe" key={index}>
+            <Wrapper key={index}>
+              <StyledLink to="/recipe">
                 <Notification>
                   <Content>00님이 레시피를 추천했어요!</Content>
                   <Time>1분전</Time>
