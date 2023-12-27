@@ -1,28 +1,33 @@
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
-import { useState } from 'react';
 import { GoHomeFill } from 'react-icons/go';
 import { PiCookingPotFill } from 'react-icons/pi';
 import { LuRefrigerator } from 'react-icons/lu';
 import { FaBookmark } from 'react-icons/fa6';
 import { FaUser } from 'react-icons/fa';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { currentCategoryAtom } from '../../store/menu';
 
 export const NavBar = () => {
-  const [selectedCategory, setSelectedCategory] = useState(0);
+  const navigation = useNavigate();
+  const [currentCategory, setCurrentCategory] = useRecoilState(currentCategoryAtom);
+
   return (
     <NavBarContainer>
       <BottomNavigation
         showLabels
-        value={selectedCategory}
+        value={currentCategory}
         onChange={(e, newValue) => {
-          setSelectedCategory(newValue);
+          setCurrentCategory(newValue);
+          navigation(newValue);
         }}
       >
-        <BottomNavigationAction label="홈" icon={<GoHomeFill />} />
+        <BottomNavigationAction label="홈" icon={<GoHomeFill />} value="/" />
         <BottomNavigationAction label="레시피" icon={<PiCookingPotFill />} />
         <BottomNavigationAction label="냉장고" icon={<LuRefrigerator />} />
         <BottomNavigationAction label="스크랩" icon={<FaBookmark />} />
-        <BottomNavigationAction label="MY" icon={<FaUser />} />
+        <BottomNavigationAction label="MY" icon={<FaUser />} value="/mypage" />
       </BottomNavigation>
     </NavBarContainer>
   );
