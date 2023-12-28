@@ -26,7 +26,7 @@ export const NavBar = () => {
         <BottomNavigationAction label="홈" icon={<GoHomeFill />} value="/" />
         <BottomNavigationAction label="레시피" icon={<PiCookingPotFill />} />
         <BottomNavigationAction label="냉장고" icon={<LuRefrigerator />} />
-        <BottomNavigationAction label="스크랩" icon={<FaBookmark />} />
+        <BottomNavigationAction label="스크랩" icon={<FaBookmark />} value="/scrap" />
         <BottomNavigationAction label="MY" icon={<FaUser />} value="/mypage" />
       </BottomNavigation>
     </NavBarContainer>

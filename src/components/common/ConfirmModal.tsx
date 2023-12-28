@@ -58,6 +58,7 @@ const StyledDialog = styled(Dialog)`
   }
 
   #alert-dialog-title {
+    font-family: Pretendard-Regular;
     font-size: 18px;
     font-weight: 900;
     padding: 0;
@@ -65,6 +66,7 @@ const StyledDialog = styled(Dialog)`
   }
 
   #alert-dialog-description {
+    font-family: Pretendard-Regular;
     font-size: 14px;
     margin-top: 12px;
   }
@@ -72,6 +74,7 @@ const StyledDialog = styled(Dialog)`
 
 const StyledDialogActions = styled(DialogActions)`
   & > button {
+    font-family: Pretendard-Regular;
     color: ${(props) => props.theme.colors.black};
     font-size: 12px;
     margin: 0 auto;
