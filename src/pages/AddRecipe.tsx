@@ -87,7 +87,7 @@ export const AddRecipe = () => {
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          clickFn={addStep}
+          onClick={addStep}
         >
           +
         </BasicButton>

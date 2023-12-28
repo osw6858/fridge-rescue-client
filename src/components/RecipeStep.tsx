@@ -27,7 +27,7 @@ export const RecipeStep = ({
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          clickFn={() => deleteStep(index)}
+          onClick={() => deleteStep(index)}
         >
           단계 삭제
         </BasicButton>
@@ -42,7 +42,7 @@ export const RecipeStep = ({
                   type="button"
                   $bgcolor={theme.colors.orange}
                   $fontcolor={theme.colors.white}
-                  clickFn={() => deleteImageStep(index)}
+                  onClick={() => deleteImageStep(index)}
                 >
                   사진 삭제
                 </BasicButton>

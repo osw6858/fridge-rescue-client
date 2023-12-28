@@ -4,7 +4,7 @@ interface BasicButtonProps {
   children: React.ReactNode;
   type: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  clickFn?: (param?: any) => void;
+  onClick?: (param?: any) => void;
   $bgcolor: string;
   $hoverbgcolor?: string;
   $fontcolor?: string;
@@ -14,7 +14,7 @@ interface BasicButtonProps {
 export const BasicButton = ({
   children,
   type,
-  clickFn,
+  onClick,
   $bgcolor,
   $hoverbgcolor,
   $fontcolor = '#000',
@@ -23,7 +23,7 @@ export const BasicButton = ({
   return (
     <BasicButtonWrap
       type={type}
-      onClick={clickFn}
+      onClick={onClick}
       $bgcolor={$bgcolor}
       $hoverbgcolor={$hoverbgcolor}
       $fontcolor={$fontcolor}
