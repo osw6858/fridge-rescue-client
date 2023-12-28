@@ -7,6 +7,7 @@ interface BasicButtonProps {
   hoverbgcolor?: string;
   fontcolor?: string;
   bordercolor?: string;
+  onClick: () => void;
 }
 
 export const BasicButton = ({
@@ -16,6 +17,7 @@ export const BasicButton = ({
   hoverbgcolor,
   fontcolor = '#000',
   bordercolor,
+  onClick,
 }: BasicButtonProps) => {
   return (
     <BasicButtonWrap
@@ -24,6 +26,7 @@ export const BasicButton = ({
       hoverbgcolor={hoverbgcolor}
       fontcolor={fontcolor}
       bordercolor={bordercolor}
+      onClick={onClick}
     >
       {children}
     </BasicButtonWrap>
