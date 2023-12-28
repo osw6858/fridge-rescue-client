@@ -53,7 +53,7 @@ const Form = styled.form`
 
 const SearchWrapper = styled.div`
   display: grid;
-  grid-template-columns: 97% 50px;
+  grid-template-columns: 90% 10%;
   gap: 15px;
   margin-top: 40px;
 `;
@@ -61,7 +61,7 @@ const SearchWrapper = styled.div`
 const SearchedList = styled.ul`
   display: grid;
   position: absolute;
-  width: 97%;
+  width: 90%;
   height: 300px;
 `;
 
