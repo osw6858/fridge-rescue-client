@@ -9,6 +9,7 @@ export const BasicTitle = ({ title }: TitleProps) => {
 };
 
 const Title = styled.h2`
-  font-size: 35px;
+  font-size: 24px;
   font-weight: 600;
+  margin-bottom: 16px;
 `;

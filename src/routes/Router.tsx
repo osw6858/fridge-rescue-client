@@ -4,6 +4,7 @@ import { SignIn } from '../pages/SignIn';
 import { SignUp } from '../pages/SignUp';
 import { MyPage } from '../pages/MyPage';
 import { AddRecipe } from '../pages/AddRecipe';
+import { Scrap } from '../pages/Scrap';
 
 export const Router = () => {
   return (
@@ -14,6 +15,7 @@ export const Router = () => {
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/scrap" element={<Scrap />} />
     </Routes>
   );
 };

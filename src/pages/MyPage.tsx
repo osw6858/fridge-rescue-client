@@ -50,7 +50,12 @@ export const MyPage = () => {
         <h2>{selectedMenu !== '로그아웃' && selectedMenu}</h2>
         {renderSelectedComponent()}
         {logoutModal && (
-          <ConfirmModal handleOpen={setLogoutModal} isOpen={logoutModal} title="로그아웃 할까요?" />
+          <ConfirmModal
+            handleOpen={setLogoutModal}
+            isOpen={logoutModal}
+            title="로그아웃 할까요?"
+            description="메인페이지로 돌아갑니다."
+          />
         )}
       </MyPageContainer>
     </>
