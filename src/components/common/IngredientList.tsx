@@ -3,10 +3,16 @@ import { useState } from 'react';
 import { styled } from 'styled-components';
 
 interface IngredientListProps {
-  titleList?: string[];
+  titleList: string[];
+  setSelectedIngredient: React.Dispatch<React.SetStateAction<string[]>>;
+  usedIngredient: string[];
 }
 
-export const IngredientList = ({ titleList }: IngredientListProps) => {
+export const IngredientList = ({
+  titleList,
+  setSelectedIngredient,
+  usedIngredient,
+}: IngredientListProps) => {
   // 추후 재료의 길이만큼 뱃지 배열 설정
   const [selected, setSelected] = useState(Array(4).fill(false));
 
@@ -14,6 +20,12 @@ export const IngredientList = ({ titleList }: IngredientListProps) => {
     const newSelected = [...selected];
     newSelected[index] = !newSelected[index];
     setSelected(newSelected);
+
+    if (newSelected[index]) {
+      setSelectedIngredient([...usedIngredient, titleList[index]]);
+    } else {
+      setSelectedIngredient(usedIngredient.filter((ingredient) => ingredient !== titleList[index]));
+    }
   };
 
   return (

@@ -13,7 +13,10 @@ interface Step {
 }
 
 export const AddRecipe = () => {
+  const [usedIngredient, setUsedIngredient] = useState<string[]>([]);
+  const [title, setTitle] = useState('');
   const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
+
   // console.log(step);
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -59,6 +62,12 @@ export const AddRecipe = () => {
     e.preventDefault();
     const formData = new FormData();
 
+    usedIngredient.forEach((ingredient, index) => {
+      formData.append(`usedIngredient[${index}]`, ingredient);
+    });
+
+    formData.append(`recipeTitle`, title);
+
     step.forEach((item, index) => {
       if (item.image) {
         formData.append(`step[${index}][image]`, item.image);
@@ -78,9 +87,17 @@ export const AddRecipe = () => {
         </BasicButton>
         <IngredientSearchForm />
       </TitleWrapper>
-      <IngredientList titleList={['당근', '무', '오징어']} />
+      <IngredientList
+        titleList={['당근', '무', '오징어']}
+        setSelectedIngredient={setUsedIngredient}
+        usedIngredient={usedIngredient}
+      />
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
-        <RecipeTitle placeholder="레시피 제목 입력" />
+        <RecipeTitle
+          placeholder="레시피 제목 입력"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
         {step.map((e, i) => (
           <RecipeStep
             key={i}
