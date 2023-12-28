@@ -1,6 +1,7 @@
 import { Chip, Card, CardActions, CardContent, CardMedia } from '@mui/material';
 import { styled } from 'styled-components';
 import { useCardStyle } from '../../hooks/useCardStyle';
+import { device } from '../../styles/media';
 
 interface CardProps {
   recipeTitle: string;
@@ -8,6 +9,12 @@ interface CardProps {
   imageURL: string;
   matchedFoodList: string[];
   size: 'large' | 'small';
+}
+
+interface State {
+  $display: {
+    display: string;
+  };
 }
 
 export const RecipeCard = ({
@@ -20,28 +27,38 @@ export const RecipeCard = ({
   const { cardSize, imgSize, display } = useCardStyle(size);
 
   return (
-    <StyledCard sx={cardSize} style={display}>
-      <CardMedia sx={imgSize} image={imageURL} title="레시피 사진" />
-      <div>
-        <CardContent>
-          <RecipeTitle> {recipeTitle}</RecipeTitle>
-          <BriefExplanation>{briefExplanation}</BriefExplanation>
-        </CardContent>
-        <MatchedFoodList>
-          <MatchedFood>일치하는 재료</MatchedFood>
-          <CardActions>
-            {matchedFoodList.length !== 0 ? (
-              // TODO: key수정하기
-              matchedFoodList.map((food, index) => <Chip key={index} label={food} />)
-            ) : (
-              <p>일치하는 재료가 없습니다.</p>
-            )}
-          </CardActions>
-        </MatchedFoodList>
-      </div>
+    <StyledCard sx={cardSize}>
+      <Container $display={display}>
+        <CardMedia sx={imgSize} image={imageURL} title="레시피 사진" />
+        <div>
+          <CardContent>
+            <RecipeTitle> {recipeTitle}</RecipeTitle>
+            <BriefExplanation>{briefExplanation}</BriefExplanation>
+          </CardContent>
+          <MatchedFoodList>
+            <MatchedFood>일치하는 재료</MatchedFood>
+            <CardActions>
+              {matchedFoodList.length !== 0 ? (
+                // TODO: key수정하기
+                matchedFoodList.map((food, index) => <Chip key={index} label={food} />)
+              ) : (
+                <p>일치하는 재료가 없습니다.</p>
+              )}
+            </CardActions>
+          </MatchedFoodList>
+        </div>
+      </Container>
     </StyledCard>
   );
 };
+
+const Container = styled.div<State>`
+  display: ${(props) => props.$display.display};
+
+  @media ${device.mobile} {
+    display: block;
+  }
+`;
 
 const StyledCard = styled(Card)`
   min-height: 300px;
