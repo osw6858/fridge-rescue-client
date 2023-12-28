@@ -6,6 +6,7 @@ import { theme } from '../styles/theme';
 import { IngredientSearchForm } from '../components/IngredientSearchForm';
 import { RecipeStep } from '../components/RecipeStep';
 import { useState, type ChangeEvent } from 'react';
+import { useSelectItem } from '../hooks/useSelectItem';
 
 interface Step {
   image: File | null;
@@ -13,11 +14,9 @@ interface Step {
 }
 
 export const AddRecipe = () => {
-  const [usedIngredient, setUsedIngredient] = useState<string[]>([]);
+  const { selectedItem, setSelectedItem } = useSelectItem();
   const [title, setTitle] = useState('');
   const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
-
-  // console.log(step);
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const newImage = [...step];
@@ -62,7 +61,7 @@ export const AddRecipe = () => {
     e.preventDefault();
     const formData = new FormData();
 
-    usedIngredient.forEach((ingredient, index) => {
+    selectedItem.forEach((ingredient, index) => {
       formData.append(`usedIngredient[${index}]`, ingredient);
     });
 
@@ -85,12 +84,12 @@ export const AddRecipe = () => {
         <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
           삭제
         </BasicButton>
-        <IngredientSearchForm />
       </TitleWrapper>
+      <IngredientSearchForm />
       <IngredientList
         titleList={['당근', '무', '오징어']}
-        setSelectedIngredient={setUsedIngredient}
-        usedIngredient={usedIngredient}
+        setSelectedIngredient={setSelectedItem}
+        usedIngredient={selectedItem}
       />
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
         <RecipeTitle
