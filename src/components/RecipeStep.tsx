@@ -3,14 +3,14 @@ import { BasicButton } from './common/BasicButton';
 import { theme } from '../styles/theme';
 import { type ChangeEvent } from 'react';
 
-type stepProps = {
-  image: string;
+interface stepProps {
+  image: File | null;
   index: number;
   deleteStep: (index: number) => void;
   handleImageStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
   handleContentStep: (event: ChangeEvent<HTMLTextAreaElement>, index: number) => void;
   deleteImageStep: (index: number) => void;
-};
+}
 
 export const RecipeStep = ({
   image,
@@ -34,9 +34,9 @@ export const RecipeStep = ({
       </DeleteButton>
       <RecipeContainer>
         <div>
-          {image && image ? (
+          {image ? (
             <>
-              <UploadImage src={image} alt="업로드된 이미지" />
+              <UploadImage src={URL.createObjectURL(image)} alt="업로드된 이미지" />
               <ButtonWrapper>
                 <BasicButton
                   type="button"

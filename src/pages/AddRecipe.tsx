@@ -7,30 +7,25 @@ import { IngredientSearchForm } from '../components/IngredientSearchForm';
 import { RecipeStep } from '../components/RecipeStep';
 import { useState, type ChangeEvent } from 'react';
 
-type Step = {
-  image: string;
+interface Step {
+  image: File | null;
   content: string;
-};
+}
 
 export const AddRecipe = () => {
-  const [step, setStep] = useState<Step[]>([{ image: '', content: '' }]);
+  const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
   // console.log(step);
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const newImage = [...step];
     const file = event.target.files && event.target.files[0];
-    const reader = new FileReader();
 
-    reader.onloadend = () => {
+    if (file) {
       newImage[index] = {
-        image: reader.result as string,
+        image: file,
         content: newImage[index].content,
       };
       setStep(newImage);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
     }
   };
 
@@ -48,16 +43,30 @@ export const AddRecipe = () => {
   };
 
   const addStep = () => {
-    setStep([...step, { image: '', content: '' }]);
+    setStep([...step, { image: null, content: '' }]);
   };
 
   const deleteImageStep = (index: number) => {
     const newStep = [...step];
     newStep[index] = {
       ...newStep[index],
-      image: '',
+      image: null,
     };
     setStep(newStep);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    step.forEach((item, index) => {
+      if (item.image) {
+        formData.append(`step[${index}][image]`, item.image);
+      }
+      formData.append(`step[${index}][content]`, item.content);
+    });
+
+    // 이후 axios를 사용
   };
 
   return (
@@ -70,7 +79,7 @@ export const AddRecipe = () => {
         <IngredientSearchForm />
       </TitleWrapper>
       <IngredientList titleList={['당근', '무', '오징어']} />
-      <WriteContainer>
+      <WriteContainer onSubmit={(e) => handleSubmit(e)}>
         <RecipeTitle placeholder="레시피 제목 입력" />
         {step.map((e, i) => (
           <RecipeStep
