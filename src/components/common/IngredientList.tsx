@@ -13,8 +13,7 @@ export const IngredientList = ({
   setSelectedIngredient,
   usedIngredient,
 }: IngredientListProps) => {
-  // 추후 재료의 길이만큼 뱃지 배열 설정
-  const [selected, setSelected] = useState(Array(4).fill(false));
+  const [selected, setSelected] = useState(Array(titleList.length).fill(false));
 
   const handleClick = (index: number) => {
     const newSelected = [...selected];
