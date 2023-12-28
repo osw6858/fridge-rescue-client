@@ -14,6 +14,7 @@ export const Header = () => {
 
   const navigation = useNavigate();
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
+
   const handleLogin = () => {
     navigation('/signin');
     setCurrentCategory('');

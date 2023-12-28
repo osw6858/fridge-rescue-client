@@ -9,7 +9,7 @@ export const NicknameEdit = () => {
       <BasicInput id="nickname" type="text" placeholder="변경할 닉네임을 입력하세요" />
       <p className="error">이미 존재하는 닉네임 입니다.</p>
       <br />
-      <BasicButton bgcolor="#ff8527" type="text" fontcolor="#fff">
+      <BasicButton $bgcolor="#ff8527" type="text" $fontcolor="#fff">
         변경하기
       </BasicButton>
     </NicknameEditContainer>

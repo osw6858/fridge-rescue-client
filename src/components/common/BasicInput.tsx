@@ -4,10 +4,20 @@ interface BasicInputProps {
   id?: string;
   type: string;
   placeholder?: string;
+  onChange?: () => void;
+  value?: string;
 }
 
-export const BasicInput = ({ id, type, placeholder }: BasicInputProps) => {
-  return <BasicInputWrap id={id} type={type} placeholder={placeholder}></BasicInputWrap>;
+export const BasicInput = ({ id, type, placeholder, onChange, value }: BasicInputProps) => {
+  return (
+    <BasicInputWrap
+      id={id}
+      type={type}
+      placeholder={placeholder}
+      onChange={onChange}
+      value={value}
+    ></BasicInputWrap>
+  );
 };
 
 const BasicInputWrap = styled.input`
