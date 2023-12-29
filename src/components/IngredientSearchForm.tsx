@@ -4,6 +4,7 @@ import { styled } from 'styled-components';
 import { BasicButton } from './common/BasicButton';
 import { theme } from '../styles/theme';
 import { useIngredient } from '../hooks/useIngredient';
+import { device } from '../styles/media';
 
 export const IngredientSearchForm = () => {
   const { query, setQuery, visible, selectedItem, handleSelect, handleDelete, addIngredient } =
@@ -53,9 +54,13 @@ const Form = styled.form`
 
 const SearchWrapper = styled.div`
   display: grid;
-  grid-template-columns: 90% 8%;
+  grid-template-columns: 90% auto;
   gap: 15px;
   margin-top: 15px;
+
+  @media ${device.mobile} {
+    grid-template-columns: 75% auto;
+  }
 `;
 
 const SearchedList = styled.ul`

@@ -1,10 +1,9 @@
 import { styled } from 'styled-components';
 import { IngredientSearchForm } from '../components/IngredientSearchForm';
 import { BasicTitle } from '../components/common/BasicTitle';
-import { BasicButton } from '../components/common/BasicButton';
-import { theme } from '../styles/theme';
 import { IngredientList } from '../components/common/IngredientList';
 import { useSelectItem } from '../hooks/useSelectItem';
+import { HiTrash } from 'react-icons/hi';
 
 export const MyRefrigerator = () => {
   const { selectedItem, setSelectedItem } = useSelectItem();
@@ -17,9 +16,7 @@ export const MyRefrigerator = () => {
       <Container>
         <RefrigeSection>
           <SectionName>냉장실</SectionName>
-          <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
-            삭제
-          </BasicButton>
+          <HiTrash />
         </RefrigeSection>
         <IngredientSearchForm />
         <IngredientList
@@ -31,9 +28,7 @@ export const MyRefrigerator = () => {
       <Container>
         <RefrigeSection>
           <SectionName>냉동실</SectionName>
-          <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
-            삭제
-          </BasicButton>
+          <HiTrash />
         </RefrigeSection>
         <IngredientSearchForm />
         <IngredientList
@@ -47,17 +42,26 @@ export const MyRefrigerator = () => {
 };
 
 const Container = styled.div`
-  margin-bottom: 90px;
+  margin-bottom: 50px;
+  padding: 45px 20px 45px 20px;
+  border-radius: 15px;
+  background-color: #f8f8f8;
 `;
 
 const RefrigeSection = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
 
   & > button {
     width: 70px;
+  }
+
+  & > svg {
+    width: 25px;
+    height: 25px;
+    margin-right: 13px;
+    fill: ${(props) => props.theme.colors.darkGray};
   }
 `;
 
