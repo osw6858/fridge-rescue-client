@@ -6,11 +6,11 @@ import { device } from '../../styles/media';
 import { StyledLink } from '../header/Header';
 
 interface Props {
-  handleSidbar: () => void;
+  handleSidebar: () => void;
   isOpen: boolean;
 }
 
-export const SideBar = ({ handleSidbar, isOpen }: Props) => {
+export const SideBar = ({ handleSidebar, isOpen }: Props) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -19,7 +19,7 @@ export const SideBar = ({ handleSidbar, isOpen }: Props) => {
   }, []);
 
   return (
-    <Container onClick={handleSidbar}>
+    <Container onClick={handleSidebar}>
       <SideMenuWrapper
         style={{ transform: `translateX(${isOpen ? '0' : '-100%'})` }}
         onClick={(event) => event.stopPropagation()}

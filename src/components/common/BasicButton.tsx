@@ -3,8 +3,7 @@ import styled from 'styled-components';
 interface BasicButtonProps {
   children: React.ReactNode;
   type: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onClick?: (param?: any) => void;
+  onClick?: () => void;
   $bgcolor: string;
   $hoverbgcolor?: string;
   $fontcolor?: string;

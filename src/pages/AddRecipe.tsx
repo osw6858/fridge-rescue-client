@@ -15,7 +15,6 @@ interface Step {
 
 export const AddRecipe = () => {
   const { selectedItem, setSelectedItem } = useSelectItem();
-  const [title, setTitle] = useState('');
   const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -59,6 +58,11 @@ export const AddRecipe = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const target = e.target as typeof e.target & {
+      title: { value: string };
+    };
+    const title = target.title.value;
+
     const formData = new FormData();
 
     selectedItem.forEach((ingredient, index) => {
@@ -92,11 +96,7 @@ export const AddRecipe = () => {
         usedIngredient={selectedItem}
       />
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
-        <RecipeTitle
-          placeholder="레시피 제목 입력"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        <RecipeTitle placeholder="레시피 제목 입력" name="title" />
         {step.map((e, i) => (
           <RecipeStep
             key={i}

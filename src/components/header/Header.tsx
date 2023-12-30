@@ -10,7 +10,7 @@ import { currentCategoryAtom } from '../../store/menu';
 import { TbBellFilled } from 'react-icons/tb';
 
 export const Header = () => {
-  const [sidBar, setSidBar] = useState(false);
+  const [sideBar, setSideBar] = useState(false);
 
   const navigation = useNavigate();
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
@@ -28,16 +28,16 @@ export const Header = () => {
           <BasicButton
             onClick={handleLogin}
             type="button"
-            bgcolor="#FF8527"
-            fontcolor="#fff"
-            hoverbgcolor="#ff750c"
+            $bgcolor="#FF8527"
+            $fontcolor="#fff"
+            $hoverbgcolor="#ff750c"
           >
             로그인
           </BasicButton>
         </div>
-        <TbBellFilled />
+        <TbBellFilled onClick={() => setSideBar(true)} />
       </Wrapper>
-      {sidBar && <SideBar isOpen={sidBar} handleSidbar={() => setSidBar(false)} />}
+      {sideBar && <SideBar isOpen={sideBar} handleSidebar={() => setSideBar(false)} />}
     </Container>
   );
 };
