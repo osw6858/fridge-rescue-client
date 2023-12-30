@@ -86,9 +86,6 @@ export const AddRecipe = () => {
     <>
       <TitleWrapper>
         <BasicTitle title="어떤 재료를 사용할까요?" />
-        <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
-          삭제
-        </BasicButton>
       </TitleWrapper>
       <IngredientSearchForm
         isRecipePageSearch
