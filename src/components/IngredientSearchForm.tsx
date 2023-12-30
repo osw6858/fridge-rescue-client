@@ -2,49 +2,88 @@ import { Chip, InputAdornment, TextField } from '@mui/material';
 import type { ChangeEvent } from 'react';
 import { styled } from 'styled-components';
 import { BasicButton } from './common/BasicButton';
+import { IngredientList } from './common/IngredientList';
 import { theme } from '../styles/theme';
-import { useIngredient } from '../hooks/useIngredient';
 import { device } from '../styles/media';
+import { useIngredient } from '../hooks/useIngredient';
 
-export const IngredientSearchForm = () => {
-  const { query, setQuery, visible, selectedItem, handleSelect, handleDelete, addIngredient } =
-    useIngredient();
+interface SearchFormPorps {
+  selectedItem: string[];
+  setSelectedItem: React.Dispatch<React.SetStateAction<string[]>>;
+  isRecipePageSearch: boolean;
+}
+
+export const IngredientSearchForm = ({
+  selectedItem,
+  setSelectedItem,
+  isRecipePageSearch,
+}: SearchFormPorps) => {
+  const {
+    addItemList,
+    query,
+    visible,
+    selectedQuery,
+    handleSelect,
+    handleDelete,
+    addIngredient,
+    handleItemList,
+    setQuery,
+  } = useIngredient();
 
   return (
-    <Form onSubmit={addIngredient}>
-      <SearchWrapper>
-        <TextField
-          value={query}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                {selectedItem.map((item, index) => (
-                  <Chip
-                    style={{ marginRight: '4px' }}
-                    key={index}
-                    label={item}
-                    onDelete={() => handleDelete(index)}
-                  />
-                ))}
-              </InputAdornment>
-            ),
-          }}
+    <>
+      <Form onSubmit={(e) => addIngredient(e, isRecipePageSearch)}>
+        <SearchWrapper>
+          <TextField
+            value={query}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  {selectedQuery.map((item, index) => (
+                    <Chip
+                      style={{ marginRight: '4px' }}
+                      key={index}
+                      label={item}
+                      onDelete={() => handleDelete(index)}
+                    />
+                  ))}
+                </InputAdornment>
+              ),
+            }}
+          />
+          <BasicButton
+            type={isRecipePageSearch ? 'button' : 'submit'}
+            $bgcolor={theme.colors.orange}
+            $fontcolor={theme.colors.white}
+            onClick={isRecipePageSearch ? handleItemList : undefined}
+          >
+            +
+          </BasicButton>
+        </SearchWrapper>
+        {visible && (
+          <SearchedList>
+            {new Array(5).fill(1).map((_, i) => (
+              <SearchedItem key={i} onClick={handleSelect}>
+                <p>당근</p>
+              </SearchedItem>
+            ))}
+          </SearchedList>
+        )}
+      </Form>
+      <IngredientList
+        setSelectedIngredient={setSelectedItem}
+        usedIngredient={selectedItem}
+        titleList={['원래 냉장고 재료']}
+      />
+      {isRecipePageSearch && (
+        <IngredientList
+          setSelectedIngredient={setSelectedItem}
+          usedIngredient={selectedItem}
+          titleList={addItemList}
         />
-        <BasicButton type="submit" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
-          +
-        </BasicButton>
-      </SearchWrapper>
-      {visible && (
-        <SearchedList>
-          {new Array(5).fill(1).map((_, i) => (
-            <SearchedItem key={i} onClick={handleSelect}>
-              <p>당근</p>
-            </SearchedItem>
-          ))}
-        </SearchedList>
       )}
-    </Form>
+    </>
   );
 };
 

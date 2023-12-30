@@ -1,12 +1,11 @@
 import { styled } from 'styled-components';
-import { IngredientList } from '../components/common/IngredientList';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { theme } from '../styles/theme';
-import { IngredientSearchForm } from '../components/IngredientSearchForm';
 import { RecipeStep } from '../components/RecipeStep';
 import { useState, type ChangeEvent } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
+import { IngredientSearchForm } from '../components/IngredientSearchForm';
 
 interface Step {
   image: File | null;
@@ -16,6 +15,8 @@ interface Step {
 export const AddRecipe = () => {
   const { selectedItem, setSelectedItem } = useSelectItem();
   const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
+
+  // console.log(selectedItem);
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const newImage = [...step];
@@ -85,15 +86,11 @@ export const AddRecipe = () => {
     <>
       <TitleWrapper>
         <BasicTitle title="어떤 재료를 사용할까요?" />
-        <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
-          삭제
-        </BasicButton>
       </TitleWrapper>
-      <IngredientSearchForm />
-      <IngredientList
-        titleList={['당근', '무', '오징어']}
-        setSelectedIngredient={setSelectedItem}
-        usedIngredient={selectedItem}
+      <IngredientSearchForm
+        isRecipePageSearch
+        selectedItem={selectedItem}
+        setSelectedItem={setSelectedItem}
       />
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
         <RecipeTitle placeholder="레시피 제목 입력" name="title" />

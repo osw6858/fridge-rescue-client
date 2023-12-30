@@ -1,13 +1,11 @@
 import { styled } from 'styled-components';
-import { IngredientSearchForm } from '../components/IngredientSearchForm';
 import { BasicTitle } from '../components/common/BasicTitle';
-import { IngredientList } from '../components/common/IngredientList';
-import { useSelectItem } from '../hooks/useSelectItem';
 import { HiTrash } from 'react-icons/hi';
+import { useSelectItem } from '../hooks/useSelectItem';
+import { IngredientSearchForm } from '../components/IngredientSearchForm';
 
 export const MyRefrigerator = () => {
   const { selectedItem, setSelectedItem } = useSelectItem();
-
   // console.log(selectedItem);
 
   return (
@@ -18,11 +16,10 @@ export const MyRefrigerator = () => {
           <SectionName>냉장실</SectionName>
           <HiTrash />
         </RefrigeSection>
-        <IngredientSearchForm />
-        <IngredientList
-          titleList={['당근', '닭고기', '무', '로즈마리']}
-          setSelectedIngredient={setSelectedItem}
-          usedIngredient={selectedItem}
+        <IngredientSearchForm
+          isRecipePageSearch={false}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
         />
       </Container>
       <Container>
@@ -30,11 +27,10 @@ export const MyRefrigerator = () => {
           <SectionName>냉동실</SectionName>
           <HiTrash />
         </RefrigeSection>
-        <IngredientSearchForm />
-        <IngredientList
-          titleList={['당근', '닭고기', '무', '로즈마리']}
-          setSelectedIngredient={setSelectedItem}
-          usedIngredient={selectedItem}
+        <IngredientSearchForm
+          isRecipePageSearch={false}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
         />
       </Container>
     </>
