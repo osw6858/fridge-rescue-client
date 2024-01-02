@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useState } from 'react';
 import { styled } from 'styled-components';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';

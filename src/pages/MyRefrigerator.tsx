@@ -20,7 +20,7 @@ export const MyRefrigerator = () => {
   );
   const [isSave, setIsSave] = useState(false);
 
-  console.log(ingredientDetails);
+  // console.log(ingredientDetails);
 
   useEffect(() => {
     setIsSave(false);
@@ -49,7 +49,7 @@ export const MyRefrigerator = () => {
       return;
     }
     setIsSave(!isSave);
-    console.log(ingredientDetails);
+    // console.log(ingredientDetails);
   };
 
   // const removeIngredient = (index: number) => {
@@ -67,17 +67,19 @@ export const MyRefrigerator = () => {
           addItemList={addItemList}
           setAddItemList={setAddItemList}
         />
-        {ingredientDetails.map((ingredient, index) => (
-          <IngredientInfo
-            key={index}
-            name={ingredient.name}
-            expiredAt={ingredient.expiredAt}
-            memo={ingredient.memo}
-            updateIngredientDetails={updateIngredientDetails}
-            index={index}
-            isSave={isSave}
-          />
-        ))}
+        <Wrapper>
+          {ingredientDetails.map((ingredient, index) => (
+            <IngredientInfo
+              key={index}
+              name={ingredient.name}
+              expiredAt={ingredient.expiredAt}
+              memo={ingredient.memo}
+              updateIngredientDetails={updateIngredientDetails}
+              index={index}
+              isSave={isSave}
+            />
+          ))}
+        </Wrapper>
         {isSave ? (
           <BasicButton
             type="button"
@@ -110,6 +112,12 @@ const Container = styled.div`
   & > button {
     margin-top: 30px;
   }
+`;
+
+const Wrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 `;
 
 const RefrigeSection = styled.div`
