@@ -8,6 +8,7 @@ import { Scrap } from '../pages/Scrap';
 import { MyRefrigerator } from '../pages/MyRefrigerator';
 import { ReviewPost } from '../pages/ReviewPost';
 import { RecipeView } from '../pages/RecipeView';
+import { Recipe } from '../pages/Recipe';
 
 export const Router = () => {
   return (
@@ -20,6 +21,7 @@ export const Router = () => {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/scrap" element={<Scrap />} />
+      <Route path="/recipe" element={<Recipe />} />
       <Route path="/recipe/:recipeId" element={<RecipeView />} />
       <Route path="/review-post" element={<ReviewPost />} />
     </Routes>
