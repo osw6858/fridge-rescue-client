@@ -6,8 +6,10 @@ import { BasicTextArea } from '../components/common/BasicTextArea';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const ReviewPost = () => {
+  const navigation = useNavigate();
   const [droppedImage, setDroppedImage] = useState<FormData | null>();
 
   const handleImageDrop = (imageFile: FormData | null) => {
@@ -39,6 +41,7 @@ export const ReviewPost = () => {
             $bgcolor={theme.colors.white}
             $hoverbgcolor="#ececec"
             $bordercolor="#c0c0c0"
+            onClick={() => navigation(-1)}
           >
             돌아가기
           </BasicButton>
