@@ -6,6 +6,7 @@ import { RecipeStep } from '../components/RecipeStep';
 import { useState, type ChangeEvent } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/IngredientSearchForm';
+import { IngredientList } from '../components/common/IngredientList';
 
 interface Step {
   image: File | null;
@@ -13,7 +14,7 @@ interface Step {
 }
 
 export const AddRecipe = () => {
-  const { selectedItem, setSelectedItem } = useSelectItem();
+  const { selectedItem, setSelectedItem, addItemList, setAddItemList } = useSelectItem();
   const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
 
   // console.log(selectedItem);
@@ -89,8 +90,18 @@ export const AddRecipe = () => {
       </TitleWrapper>
       <IngredientSearchForm
         isRecipePageSearch
-        selectedItem={selectedItem}
-        setSelectedItem={setSelectedItem}
+        addItemList={addItemList}
+        setAddItemList={setAddItemList}
+      />
+      <IngredientList
+        setSelectedIngredient={setSelectedItem}
+        usedIngredient={selectedItem}
+        titleList={['원래 냉장고 재료']}
+      />
+      <IngredientList
+        setSelectedIngredient={setSelectedItem}
+        usedIngredient={selectedItem}
+        titleList={addItemList}
       />
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
         <RecipeTitle placeholder="레시피 제목 입력" name="title" />

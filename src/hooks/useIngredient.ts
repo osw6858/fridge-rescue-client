@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 
-export const useIngredient = () => {
-  const [addItemList, setAddItemList] = useState<string[]>([]);
+interface IngredientProps {
+  addItemList: string[];
+  setAddItemList: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
+export const useIngredient = ({ addItemList, setAddItemList }: IngredientProps) => {
   const [query, setQuery] = useState('');
   const [visible, setVisible] = useState(false);
   const [selectedQuery, setSelectedQuery] = useState<string[]>([]);
@@ -29,9 +33,6 @@ export const useIngredient = () => {
       }
       setQuery('');
     }
-    if (selectedQuery.length > 0) {
-      // console.log('사용자 냉장고에 재료 추가');
-    }
   };
 
   const handleItemList = () => {
@@ -40,7 +41,6 @@ export const useIngredient = () => {
   };
 
   return {
-    addItemList,
     query,
     visible,
     selectedQuery,
