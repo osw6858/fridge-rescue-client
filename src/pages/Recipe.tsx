@@ -13,6 +13,9 @@ export const Recipe = () => {
   return (
     <RecipeContainer>
       <div className="header">
+        <p>
+          총 <span className="recipe-count">13,435개</span>의 맛있는 레시피가 있어요!
+        </p>
         <BasicButton
           type="submit"
           $bgcolor={theme.colors.orange}
@@ -94,11 +97,20 @@ const RecipeContainer = styled.div`
 
   .header {
     width: 100%;
+    margin-bottom: 24px;
+
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
 
     & > button {
       width: 30%;
+    }
+
+    .recipe-count {
+      font-size: 20px;
+      font-family: Pretendard-SemiBold;
+      color: ${(props) => props.theme.colors.blue};
     }
   }
 `;
