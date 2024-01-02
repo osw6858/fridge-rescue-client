@@ -1,6 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
 import { useState } from 'react';
 import { styled } from 'styled-components';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface Props {
   name: string;
@@ -36,7 +37,11 @@ export const IngredientInfo = ({
   return (
     <Container>
       <Accordion expanded={expanded === name} onChange={handleChange(name)}>
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+        <AccordionSummary
+          aria-controls="panel1d-content"
+          id="panel1d-header"
+          expandIcon={<ExpandMoreIcon />}
+        >
           <Typography style={{ fontWeight: 700 }}>{name}</Typography>
         </AccordionSummary>
         <AccordionDetails>
