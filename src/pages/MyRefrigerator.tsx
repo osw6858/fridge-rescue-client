@@ -20,9 +20,18 @@ export const MyRefrigerator = () => {
   );
   const [isSave, setIsSave] = useState(false);
 
+  console.log(ingredientDetails);
+
   useEffect(() => {
-    setIngredientDetails(addItemList.map((name) => ({ name, expiredAt: '', memo: '' })));
     setIsSave(false);
+    const newItems = addItemList.filter(
+      (item) => !ingredientDetails.some((detail) => detail.name === item)
+    );
+
+    const newDetails = newItems.map((name) => ({ name, expiredAt: '', memo: '' }));
+
+    setIngredientDetails((prevDetails) => [...prevDetails, ...newDetails]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addItemList]);
 
   const updateIngredientDetails = (index: number, expiredAt: string, memo: string) => {
@@ -35,7 +44,8 @@ export const MyRefrigerator = () => {
     const hasEmptyExpiredAt = ingredientDetails.some((item) => item.expiredAt === '');
 
     if (hasEmptyExpiredAt) {
-      // alert('모든 재료의 유통기한을 입력해주세요.');
+      // 임시 알람
+      alert('모든 재료의 유통기한을 입력해주세요.');
       return;
     }
     setIsSave(!isSave);
