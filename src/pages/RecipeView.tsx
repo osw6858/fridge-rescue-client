@@ -7,9 +7,15 @@ import { PiSiren } from 'react-icons/pi';
 import { RecipeReviewList } from '../components/pages/Recipe/RecipeReviewList';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
+import { useNavigate } from 'react-router-dom';
 
 export const RecipeView = () => {
+  const navigation = useNavigate();
   const [cookingCompletion, setCookingCompletion] = useState(false);
+
+  const onAgree = () => {
+    navigation('/review-post');
+  };
 
   const handleCookingCompletion = (isComplete: boolean) => {
     setCookingCompletion(isComplete);
@@ -82,6 +88,7 @@ export const RecipeView = () => {
           description="레시피 후기 등록 페이지로 이동합니다"
           isOpen={cookingCompletion}
           handleOpen={handleCookingCompletion}
+          onAgree={onAgree}
         />
       )}
     </RecipeViewContainer>
