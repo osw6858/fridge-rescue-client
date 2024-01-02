@@ -2,6 +2,7 @@ import { Chip, Card, CardActions, CardContent, CardMedia } from '@mui/material';
 import { styled } from 'styled-components';
 import { useCardStyle } from '../../hooks/useCardStyle';
 import { device } from '../../styles/media';
+import { Link } from 'react-router-dom';
 
 interface CardProps {
   recipeTitle: string;
@@ -28,26 +29,28 @@ export const RecipeCard = ({
 
   return (
     <StyledCard sx={cardSize}>
-      <Container $display={display}>
-        <CardMedia sx={imgSize} image={imageURL} title="레시피 사진" />
-        <div>
-          <CardContent>
-            <RecipeTitle> {recipeTitle}</RecipeTitle>
-            <BriefExplanation>{briefExplanation}</BriefExplanation>
-          </CardContent>
-          <MatchedFoodList>
-            <MatchedFood>일치하는 재료</MatchedFood>
-            <CardActions>
-              {matchedFoodList.length !== 0 ? (
-                // TODO: key수정하기
-                matchedFoodList.map((food, index) => <Chip key={index} label={food} />)
-              ) : (
-                <p>일치하는 재료가 없습니다.</p>
-              )}
-            </CardActions>
-          </MatchedFoodList>
-        </div>
-      </Container>
+      <Link to="/recipe/1">
+        <Container $display={display}>
+          <CardMedia sx={imgSize} image={imageURL} title="레시피 사진" />
+          <div>
+            <CardContent>
+              <RecipeTitle> {recipeTitle}</RecipeTitle>
+              <BriefExplanation>{briefExplanation}</BriefExplanation>
+            </CardContent>
+            <MatchedFoodList>
+              <MatchedFood>일치하는 재료</MatchedFood>
+              <CardActions>
+                {matchedFoodList.length !== 0 ? (
+                  // TODO: key수정하기
+                  matchedFoodList.map((food, index) => <Chip key={index} label={food} />)
+                ) : (
+                  <p>일치하는 재료가 없습니다.</p>
+                )}
+              </CardActions>
+            </MatchedFoodList>
+          </div>
+        </Container>
+      </Link>
     </StyledCard>
   );
 };
