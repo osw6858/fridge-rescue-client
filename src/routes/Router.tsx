@@ -6,6 +6,7 @@ import { MyPage } from '../pages/MyPage';
 import { AddRecipe } from '../pages/AddRecipe';
 import { Scrap } from '../pages/Scrap';
 import { MyRefrigerator } from '../pages/MyRefrigerator';
+import { ReviewPost } from '../pages/ReviewPost';
 
 export const Router = () => {
   return (
@@ -18,6 +19,7 @@ export const Router = () => {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/scrap" element={<Scrap />} />
+      <Route path="/review-post" element={<ReviewPost />} />
     </Routes>
   );
 };

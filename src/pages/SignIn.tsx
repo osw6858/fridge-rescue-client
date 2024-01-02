@@ -5,6 +5,7 @@ import { BasicButton } from '../components/common/BasicButton';
 import { FcGoogle } from 'react-icons/fc';
 import { HiMiniChatBubbleOvalLeft } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
+import { theme } from '../styles/theme';
 
 export const SignIn = () => {
   return (
@@ -18,13 +19,23 @@ export const SignIn = () => {
           <BasicInput id="pw" type="password" placeholder="비밀번호를 입력해 주세요" />
         </div>
         <div className="buttons">
-          <BasicButton type="submit" $bgcolor="#FF8527" $fontcolor="#fff" $hoverbgcolor="#ff750c">
+          <BasicButton
+            type="submit"
+            $bgcolor={theme.colors.orange}
+            $fontcolor={theme.colors.white}
+            $hoverbgcolor="#ff750c"
+          >
             이메일 로그인
           </BasicButton>
 
           <div className="line-text">간편 로그인</div>
 
-          <BasicButton type="button" $bgcolor="#fff" $hoverbgcolor="#ececec" $bordercolor="#c0c0c0">
+          <BasicButton
+            type="button"
+            $bgcolor={theme.colors.white}
+            $hoverbgcolor="#ececec"
+            $bordercolor="#c0c0c0"
+          >
             <div className="icon-button">
               <FcGoogle />
               구글 계정으로 로그인
