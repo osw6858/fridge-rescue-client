@@ -42,7 +42,7 @@ export const IngredientInfo = ({
           id="panel1d-header"
           expandIcon={<ExpandMoreIcon />}
         >
-          <Typography style={{ fontWeight: 700 }}>{name}</Typography>
+          <IngredientTitle>{name}</IngredientTitle>
         </AccordionSummary>
         <AccordionDetails>
           <Info>
@@ -81,6 +81,11 @@ const Container = styled.div`
   & > div {
     background-color: #f8f8f8;
   }
+`;
+
+const IngredientTitle = styled.p`
+  font-size: 20px;
+  font-weight: 700;
 `;
 
 const Info = styled.div`
