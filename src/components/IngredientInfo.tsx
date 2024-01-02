@@ -50,6 +50,7 @@ export const IngredientInfo = ({
               <p> 유통기한</p>
             </Title>
             <Expiration
+              style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
               required
               readOnly={isSave}
               type="date"
@@ -59,7 +60,13 @@ export const IngredientInfo = ({
             <Title>
               <p>간단 메모</p>
             </Title>
-            <Memo required readOnly={isSave} value={memo} onChange={(e) => handleMemoChange(e)} />
+            <Memo
+              style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
+              required
+              readOnly={isSave}
+              value={memo}
+              onChange={(e) => handleMemoChange(e)}
+            />
             <ButtonWrapper></ButtonWrapper>
           </Info>
         </AccordionDetails>
@@ -113,7 +120,6 @@ const Expiration = styled.input`
 const Memo = styled.textarea`
   width: 100%;
   resize: none;
-  height: 150px;
   border: none;
   border-radius: 5px;
   padding: 10px;
