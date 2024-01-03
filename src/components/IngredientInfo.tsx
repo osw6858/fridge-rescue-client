@@ -4,6 +4,7 @@ import { styled } from 'styled-components';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { BasicButton } from './common/BasicButton';
 import { theme } from '../styles/theme';
+import { device } from '../styles/media';
 
 interface Props {
   name: string;
@@ -108,6 +109,16 @@ const Info = styled.div`
 
   & > button {
     max-width: 50px;
+  }
+
+  @media ${device.mobile} {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+
+    & > button {
+      margin-top: 20px;
+    }
   }
 `;
 
