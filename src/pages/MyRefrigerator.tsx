@@ -39,13 +39,6 @@ export const MyRefrigerator = () => {
   };
 
   const handleSave = async () => {
-    const hasEmptyExpiredAt = ingredientDetails.some((item) => item.expiredAt === '');
-
-    if (hasEmptyExpiredAt) {
-      // 임시 알람
-      alert('모든 재료의 유통기한을 입력해주세요.');
-      return;
-    }
     setIsSave(!isSave);
   };
 
@@ -103,6 +96,7 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr;
+  place-items: center;
+  gap: 5px;
 `;

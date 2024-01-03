@@ -2,6 +2,8 @@ import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useState } from 'react';
 import { styled } from 'styled-components';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { BasicButton } from './common/BasicButton';
+import { theme } from '../styles/theme';
 
 interface Props {
   name: string;
@@ -46,28 +48,38 @@ export const IngredientInfo = ({
         </AccordionSummary>
         <AccordionDetails>
           <Info>
-            <Title>
-              <p> 유통기한</p>
-            </Title>
-            <Expiration
-              style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
-              required
-              readOnly={isSave}
-              type="date"
-              value={expiredAt}
-              onChange={handleExpiredAtChange}
-            ></Expiration>
-            <Title>
-              <p>간단 메모</p>
-            </Title>
-            <Memo
-              style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
-              required
-              readOnly={isSave}
-              value={memo}
-              onChange={(e) => handleMemoChange(e)}
-            />
-            <ButtonWrapper></ButtonWrapper>
+            <Section>
+              <Title>
+                <p> 유통기한</p>
+              </Title>
+              <Expiration
+                style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
+                required
+                readOnly={isSave}
+                type="date"
+                value={expiredAt}
+                onChange={handleExpiredAtChange}
+              ></Expiration>
+            </Section>
+            <Section>
+              <Title>
+                <p>간단 메모</p>
+              </Title>
+              <Memo
+                style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
+                required
+                readOnly={isSave}
+                value={memo}
+                onChange={(e) => handleMemoChange(e)}
+              />
+            </Section>
+            <BasicButton
+              type="button"
+              $bgcolor={theme.colors.orange}
+              $fontcolor={theme.colors.white}
+            >
+              삭제
+            </BasicButton>
           </Info>
         </AccordionDetails>
       </Accordion>
@@ -77,6 +89,7 @@ export const IngredientInfo = ({
 
 const Container = styled.div`
   margin-top: 20px;
+  width: 100%;
 
   & > div {
     background-color: #f8f8f8;
@@ -90,7 +103,16 @@ const IngredientTitle = styled.p`
 
 const Info = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  & > button {
+    max-width: 50px;
+  }
+`;
+
+const Section = styled.div`
+  margin: 0 10px 0 10px;
 `;
 
 const Title = styled.div`
@@ -106,10 +128,15 @@ const Title = styled.div`
     height: 20px;
     cursor: pointer;
   }
+
+  & > p {
+    margin-left: 10px;
+  }
 `;
 
 const Expiration = styled.input`
   font-size: 14px;
+  width: 150px;
   height: 40px;
   border: none;
   border-radius: 5px;
@@ -123,7 +150,6 @@ const Expiration = styled.input`
 `;
 
 const Memo = styled.textarea`
-  width: 100%;
   resize: none;
   border: none;
   border-radius: 5px;
@@ -132,16 +158,5 @@ const Memo = styled.textarea`
   transition: all 0.3s ease;
   &:focus {
     outline: none;
-  }
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: end;
-  margin-top: 20px;
-
-  & > button {
-    width: 100px;
-    margin: 0 10px 0 10px;
   }
 `;
