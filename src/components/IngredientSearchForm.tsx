@@ -1,36 +1,51 @@
 import { Chip, InputAdornment, TextField } from '@mui/material';
-import type { ChangeEvent } from 'react';
+import { useState, type ChangeEvent, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { BasicButton } from './common/BasicButton';
 import { theme } from '../styles/theme';
 import { device } from '../styles/media';
-import { useIngredient } from '../hooks/useIngredient';
 
 interface SearchFormPorps {
   addItemList: string[];
   setAddItemList: React.Dispatch<React.SetStateAction<string[]>>;
-  isRecipePageSearch: boolean;
 }
 
-export const IngredientSearchForm = ({
-  addItemList,
-  setAddItemList,
-  isRecipePageSearch,
-}: SearchFormPorps) => {
-  const {
-    query,
-    visible,
-    selectedQuery,
-    handleSelect,
-    handleDelete,
-    addIngredient,
-    handleItemList,
-    setQuery,
-  } = useIngredient({ addItemList, setAddItemList });
+export const IngredientSearchForm = ({ addItemList, setAddItemList }: SearchFormPorps) => {
+  const [query, setQuery] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [selectedQuery, setSelectedQuery] = useState<string[]>([]);
+
+  useEffect(() => {
+    setVisible(query !== '');
+  }, [query]);
+
+  const handleSelect = (event: React.MouseEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement;
+    setSelectedQuery([...selectedQuery, target.innerText]);
+    setQuery('');
+    setVisible(false);
+  };
+
+  const handleDelete = (deleteIndex: number) => {
+    setSelectedQuery(selectedQuery.filter((_, index) => index !== deleteIndex));
+  };
+
+  const addIngredient = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (query && !selectedQuery.includes(query)) {
+      setSelectedQuery([...selectedQuery, query]);
+    }
+    setQuery('');
+  };
+
+  const handleItemList = () => {
+    setAddItemList([...addItemList, ...selectedQuery]);
+    setSelectedQuery([]);
+  };
 
   return (
     <>
-      <Form onSubmit={(e) => addIngredient(e, isRecipePageSearch)}>
+      <Form onSubmit={(e) => addIngredient(e)}>
         <SearchWrapper>
           <TextField
             value={query}
