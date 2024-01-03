@@ -6,6 +6,7 @@ import { RecipeStep } from '../components/RecipeStep';
 import { useState, type ChangeEvent } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/IngredientSearchForm';
+import { IngredientList } from '../components/common/IngredientList';
 
 interface Step {
   image: File | null;
@@ -13,10 +14,9 @@ interface Step {
 }
 
 export const AddRecipe = () => {
-  const { selectedItem, setSelectedItem } = useSelectItem();
+  const { selectedItem, setSelectedItem, addItemList, setAddItemList } = useSelectItem();
   const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
-
-  // console.log(selectedItem);
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const newImage = [...step];
@@ -28,6 +28,13 @@ export const AddRecipe = () => {
         content: newImage[index].content,
       };
       setStep(newImage);
+    }
+  };
+
+  const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const thumbnail = event.target.files && event.target.files[0];
+      setThumbnail(thumbnail);
     }
   };
 
@@ -72,6 +79,14 @@ export const AddRecipe = () => {
 
     formData.append(`recipeTitle`, title);
 
+    // TODO: 예외처리 보강
+    if (thumbnail) {
+      formData.append(`recipeImage`, thumbnail);
+    } else {
+      console.error('썸네일을 등록해 주세요!');
+      return;
+    }
+
     step.forEach((item, index) => {
       if (item.image) {
         formData.append(`step[${index}][image]`, item.image);
@@ -89,11 +104,41 @@ export const AddRecipe = () => {
       </TitleWrapper>
       <IngredientSearchForm
         isRecipePageSearch
-        selectedItem={selectedItem}
-        setSelectedItem={setSelectedItem}
+        addItemList={addItemList}
+        setAddItemList={setAddItemList}
+      />
+      <IngredientList
+        setSelectedIngredient={setSelectedItem}
+        usedIngredient={selectedItem}
+        titleList={['원래 냉장고 재료']}
+      />
+      <IngredientList
+        setSelectedIngredient={setSelectedItem}
+        usedIngredient={selectedItem}
+        titleList={addItemList}
       />
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
         <RecipeTitle placeholder="레시피 제목 입력" name="title" />
+        <Thumbnail>
+          <ImageContainer>
+            {thumbnail ? <ImagePreview src={URL.createObjectURL(thumbnail)} /> : <Placeholder />}
+          </ImageContainer>
+          <InputContainer>
+            <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
+            {thumbnail ? (
+              <BasicButton
+                type="button"
+                $bgcolor={theme.colors.orange}
+                $fontcolor={theme.colors.white}
+                onClick={() => setThumbnail(null)}
+              >
+                썸네일 삭제
+              </BasicButton>
+            ) : (
+              <InputLabel htmlFor="thumbnail">썸네일 업로드</InputLabel>
+            )}
+          </InputContainer>
+        </Thumbnail>
         {step.map((e, i) => (
           <RecipeStep
             key={i}
@@ -151,4 +196,50 @@ const ButtonWrapper = styled.div`
   gap: 4px;
   margin-top: 40px;
   justify-content: end;
+`;
+
+const Thumbnail = styled.div`
+  margin: 10px 0 40px 0;
+`;
+
+const ImageContainer = styled.div`
+  width: 100%;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const ImagePreview = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const Placeholder = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: ${(props) => props.theme.colors.gray};
+`;
+
+const Input = styled.input`
+  display: none;
+`;
+
+const InputContainer = styled.div`
+  position: relative;
+`;
+
+const InputLabel = styled.label`
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 10px 20px;
+  background-color: ${(props) => props.theme.colors.orange};
+  color: white;
+  cursor: pointer;
+  margin-right: 5px;
 `;

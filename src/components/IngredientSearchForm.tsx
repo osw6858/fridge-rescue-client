@@ -2,24 +2,22 @@ import { Chip, InputAdornment, TextField } from '@mui/material';
 import type { ChangeEvent } from 'react';
 import { styled } from 'styled-components';
 import { BasicButton } from './common/BasicButton';
-import { IngredientList } from './common/IngredientList';
 import { theme } from '../styles/theme';
 import { device } from '../styles/media';
 import { useIngredient } from '../hooks/useIngredient';
 
 interface SearchFormPorps {
-  selectedItem: string[];
-  setSelectedItem: React.Dispatch<React.SetStateAction<string[]>>;
+  addItemList: string[];
+  setAddItemList: React.Dispatch<React.SetStateAction<string[]>>;
   isRecipePageSearch: boolean;
 }
 
 export const IngredientSearchForm = ({
-  selectedItem,
-  setSelectedItem,
+  addItemList,
+  setAddItemList,
   isRecipePageSearch,
 }: SearchFormPorps) => {
   const {
-    addItemList,
     query,
     visible,
     selectedQuery,
@@ -28,7 +26,7 @@ export const IngredientSearchForm = ({
     addIngredient,
     handleItemList,
     setQuery,
-  } = useIngredient();
+  } = useIngredient({ addItemList, setAddItemList });
 
   return (
     <>
@@ -36,6 +34,7 @@ export const IngredientSearchForm = ({
         <SearchWrapper>
           <TextField
             value={query}
+            placeholder="재료를 검색해 주세요."
             onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)}
             InputProps={{
               startAdornment: (
@@ -53,36 +52,24 @@ export const IngredientSearchForm = ({
             }}
           />
           <BasicButton
-            type={isRecipePageSearch ? 'button' : 'submit'}
+            type="button"
             $bgcolor={theme.colors.orange}
             $fontcolor={theme.colors.white}
-            onClick={isRecipePageSearch ? handleItemList : undefined}
+            onClick={handleItemList}
           >
             +
           </BasicButton>
         </SearchWrapper>
         {visible && (
           <SearchedList>
-            {new Array(5).fill(1).map((_, i) => (
+            {['당근', '딸기', '로즈마리'].map((e, i) => (
               <SearchedItem key={i} onClick={handleSelect}>
-                <p>당근</p>
+                <p>{e}</p>
               </SearchedItem>
             ))}
           </SearchedList>
         )}
       </Form>
-      <IngredientList
-        setSelectedIngredient={setSelectedItem}
-        usedIngredient={selectedItem}
-        titleList={['원래 냉장고 재료']}
-      />
-      {isRecipePageSearch && (
-        <IngredientList
-          setSelectedIngredient={setSelectedItem}
-          usedIngredient={selectedItem}
-          titleList={addItemList}
-        />
-      )}
     </>
   );
 };
