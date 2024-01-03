@@ -20,8 +20,6 @@ export const MyRefrigerator = () => {
   );
   const [isSave, setIsSave] = useState(false);
 
-  // console.log(ingredientDetails);
-
   useEffect(() => {
     setIsSave(false);
     const newItems = addItemList.filter(
@@ -41,32 +39,14 @@ export const MyRefrigerator = () => {
   };
 
   const handleSave = async () => {
-    const hasEmptyExpiredAt = ingredientDetails.some((item) => item.expiredAt === '');
-
-    if (hasEmptyExpiredAt) {
-      // 임시 알람
-      alert('모든 재료의 유통기한을 입력해주세요.');
-      return;
-    }
     setIsSave(!isSave);
-    // console.log(ingredientDetails);
   };
-
-  // const removeIngredient = (index: number) => {
-  //   setAddItemList(addItemList.filter((_, i) => i !== index));
-  //   setIngredientDetails(ingredientDetails.filter((_, i) => i !== index));
-  // };
 
   return (
     <>
       <BasicTitle title="나의 냉장고" />
       <Container>
-        <RefrigeSection></RefrigeSection>
-        <IngredientSearchForm
-          isRecipePageSearch={false}
-          addItemList={addItemList}
-          setAddItemList={setAddItemList}
-        />
+        <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
         <Wrapper>
           {ingredientDetails.map((ingredient, index) => (
             <IngredientInfo
@@ -116,23 +96,7 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-`;
-
-const RefrigeSection = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  & > button {
-    width: 70px;
-  }
-
-  & > svg {
-    width: 25px;
-    height: 25px;
-    margin-right: 13px;
-    fill: ${(props) => props.theme.colors.darkGray};
-  }
+  grid-template-columns: 1fr;
+  place-items: center;
+  gap: 5px;
 `;

@@ -102,11 +102,7 @@ export const AddRecipe = () => {
       <TitleWrapper>
         <BasicTitle title="어떤 재료를 사용할까요?" />
       </TitleWrapper>
-      <IngredientSearchForm
-        isRecipePageSearch
-        addItemList={addItemList}
-        setAddItemList={setAddItemList}
-      />
+      <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
       <IngredientList
         setSelectedIngredient={setSelectedItem}
         usedIngredient={selectedItem}
