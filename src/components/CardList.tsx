@@ -3,10 +3,10 @@ import { QUERY_KEY } from '../constants/queryKey';
 import { styled } from 'styled-components';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import type { Recipe } from '../types/recipeType';
-import { fetchNewRecipe } from '../api/recipe/getNewRecipe';
+import { getchNewRecipe } from '../api/recipe/getNewRecipe';
 
 export const CardList = () => {
-  const { data } = useSuspenseQuery({ queryKey: [QUERY_KEY.NEW_RECIPE], queryFn: fetchNewRecipe });
+  const { data } = useSuspenseQuery({ queryKey: [QUERY_KEY.NEW_RECIPE], queryFn: getchNewRecipe });
 
   return (
     <Card>
