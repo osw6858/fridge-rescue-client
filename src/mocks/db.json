@@ -1,5 +1,10 @@
 {
-  "members": [{ "id": "user1", "password": "1111" }],
+  "members": [
+    { "id": 1, "name": "실명", "nickName": "나에요", "email": "example@email.com" },
+    { "id": 2, "name": "실명2", "nickName": "나에요2", "email": "example@email2com" },
+    { "id": 3, "name": "실명3", "nickName": "나에요3", "email": "example@email3.com" },
+    { "id": 4, "name": "실명4", "nickName": "나에요4", "email": "example@email4.com" }
+  ],
   "recipes": [
     {
       "id": 1,
@@ -36,6 +41,37 @@
       "reviewCount": 3123,
       "createdAt": "2024-01-04",
       "member": { "id": 4, "nickName": "나에요4" }
+    }
+  ],
+  "fridge": [
+    {
+      "id": 1,
+      "list": [
+        {
+          "id": 1,
+          "name": "로즈마리",
+          "expriedAt": "2099-05-05",
+          "memo": "내가 키우는 로즈마리"
+        },
+        {
+          "id": 2,
+          "name": "당근",
+          "expriedAt": "2024-05-16",
+          "memo": "내가 키우는 당근"
+        },
+        {
+          "id": 3,
+          "name": "밀가루",
+          "expriedAt": "2024-05-26",
+          "memo": "내가 키우는 밀가루"
+        },
+        {
+          "id": 4,
+          "name": "떡",
+          "expriedAt": "2024-07-15",
+          "memo": "내가 키우는 떡"
+        }
+      ]
     }
   ]
 }
