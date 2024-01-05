@@ -6,7 +6,7 @@ import type { Token } from '../types/tokenType';
 export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
   if (!config.headers || config.headers.Authorization) return config;
 
-  const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const accessToken = sessionStorage.getItem(ACCESS_TOKEN_KEY);
   if (!accessToken) {
     window.location.href = ROOT_URL;
     throw new Error('토큰이 유효하지 않습니다.');
@@ -32,7 +32,7 @@ export const handleTokenError = async (error: AxiosError) => {
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
-        localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
 
         return axiosAuth(originalRequest);
       }
