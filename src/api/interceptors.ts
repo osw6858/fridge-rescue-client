@@ -1,13 +1,14 @@
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { ACCESS_TOKEN_KEY, END_POINTS } from '../constants/api';
-import { axiosInstance } from './axiosInstance';
+import { ACCESS_TOKEN_KEY, END_POINTS, ROOT_URL } from '../constants/api';
+import { axiosAuth } from './axiosInstance';
 import type { Token } from '../types/tokenType';
 
 export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
-  if (!config.headers || !config.headers.Authorization) return config;
+  if (!config.headers || config.headers.Authorization) return config;
 
   const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
   if (!accessToken) {
+    window.location.href = ROOT_URL;
     throw new Error('토큰이 유효하지 않습니다.');
   }
 
@@ -24,7 +25,7 @@ export const handleTokenError = async (error: AxiosError) => {
 
   if (error.response && error.response.status === 401) {
     try {
-      const response = await axiosInstance.post<Token>(END_POINTS.TOKEN);
+      const response = await axiosAuth.post<Token>(END_POINTS.TOKEN);
 
       if (response.status === 200) {
         const { accessToken } = response.data;
@@ -33,7 +34,7 @@ export const handleTokenError = async (error: AxiosError) => {
 
         localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
 
-        return axiosInstance(originalRequest);
+        return axiosAuth(originalRequest);
       }
     } catch (error) {
       throw new Error(`${error}`);
