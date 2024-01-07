@@ -6,12 +6,12 @@ import { AddIngredientInfo } from '../components/AddIngredientInfo';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useEffect, useState } from 'react';
-import type { Ingredient } from '../types/ingredientType';
+import type { AddIngredient } from '../types/ingredientType';
 import { MyIngredientList } from '../components/MyIngredientList';
 
 export const MyRefrigerator = () => {
   const { addItemList, setAddItemList } = useSelectItem();
-  const [ingredientDetails, setIngredientDetails] = useState<Ingredient[]>(
+  const [ingredientDetails, setIngredientDetails] = useState<AddIngredient[]>(
     addItemList.map((name) => ({ name, expiredAt: '', memo: '' }))
   );
 
