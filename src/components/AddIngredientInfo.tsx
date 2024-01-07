@@ -1,51 +1,41 @@
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { useState } from 'react';
 import { styled } from 'styled-components';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { BasicButton } from './common/BasicButton';
 import { theme } from '../styles/theme';
 import { device } from '../styles/media';
+import type { Ingredient } from '../types/ingredientType';
 
 interface Props {
-  name: string;
-  expiredAt: string;
-  memo: string;
   handleIngredientDetails: (index: number, field: string, value: string) => void;
-  index: number;
+  deleteAddedIngredient: (index: number) => void;
+  ingredientDetails: Ingredient[];
 }
 
 export const AddIngredientInfo = ({
-  name,
-  expiredAt,
-  memo,
   handleIngredientDetails,
-  index,
+  deleteAddedIngredient,
+  ingredientDetails,
 }: Props) => {
-  const [expanded, setExpanded] = useState<string | false>('');
-
-  const handleChange = (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
-    setExpanded(newExpanded ? panel : false);
-  };
-
-  const handleExpiredAtChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExpiredAtChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+    memo: string
+  ) => {
     handleIngredientDetails(index, e.target.value, memo);
   };
 
-  const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleMemoChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    index: number,
+    expiredAt: string
+  ) => {
     handleIngredientDetails(index, expiredAt, e.target.value);
   };
 
   return (
-    <Container>
-      <Accordion expanded={expanded === name} onChange={handleChange(name)}>
-        <AccordionSummary
-          aria-controls="panel1d-content"
-          id="panel1d-header"
-          expandIcon={<ExpandMoreIcon />}
-        >
-          <IngredientTitle>{name}</IngredientTitle>
-        </AccordionSummary>
-        <AccordionDetails>
+    <>
+      {ingredientDetails.map((ingredient, index) => (
+        <Container key={index}>
+          <IngredientTitle>{ingredient.name}</IngredientTitle>
           <Info>
             <Section>
               <Title>
@@ -54,27 +44,32 @@ export const AddIngredientInfo = ({
               <Expiration
                 required
                 type="date"
-                value={expiredAt}
-                onChange={handleExpiredAtChange}
+                value={ingredient.expiredAt}
+                onChange={(e) => handleExpiredAtChange(e, index, ingredient.memo)}
               ></Expiration>
             </Section>
             <Section>
               <Title>
                 <p>간단 메모</p>
               </Title>
-              <Memo required value={memo} onChange={(e) => handleMemoChange(e)} />
+              <Memo
+                required
+                value={ingredient.memo}
+                onChange={(e) => handleMemoChange(e, index, ingredient.expiredAt)}
+              />
             </Section>
             <BasicButton
               type="button"
               $bgcolor={theme.colors.orange}
               $fontcolor={theme.colors.white}
+              onClick={() => deleteAddedIngredient(index)}
             >
               삭제
             </BasicButton>
           </Info>
-        </AccordionDetails>
-      </Accordion>
-    </Container>
+        </Container>
+      ))}
+    </>
   );
 };
 

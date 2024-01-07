@@ -74,5 +74,9 @@
       ]
     }
   ],
-  "ingredient": [{ "name": "당근", "expiration": "2020-09-09", "memo": "메모 당근" }]
+  "ingredient": [
+    { "name": "당근", "expiredAt": "2020-09-09", "memo": "메모 당근" },
+    { "name": "무", "expiredAt": "2026-09-12", "memo": "메모 무" },
+    { "name": "로즈마리", "expiredAt": "2020-10-09", "memo": "메모 로즈마리" }
+  ]
 }

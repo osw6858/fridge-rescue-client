@@ -6,10 +6,8 @@ import { AddIngredientInfo } from '../components/AddIngredientInfo';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import type { Ingredient } from '../types/ingredientType';
-import { getIngredient } from '../api/ingredient/getIngredient';
-import { QUERY_KEY } from '../constants/queryKey';
+import { MyIngredientList } from '../components/MyIngredientList';
 
 export const MyRefrigerator = () => {
   const { addItemList, setAddItemList } = useSelectItem();
@@ -34,12 +32,20 @@ export const MyRefrigerator = () => {
     setIngredientDetails(newDetails);
   };
 
-  const handleSave = async () => {
-    console.log(ingredientDetails);
-    setIngredientDetails([]);
+  const deleteAddedIngredient = (index: number) => {
+    const newDetailList = ingredientDetails.filter((_, idx) => index !== idx);
+    const newItemList = addItemList.filter((_, idx) => index !== idx);
+    setIngredientDetails(newDetailList);
+    setAddItemList(newItemList);
   };
 
-  const { data } = useQuery({ queryKey: [QUERY_KEY.ADD_INGREDIENT], queryFn: getIngredient });
+  const handleSave = async () => {
+    console.log('저장될 리스트', ingredientDetails);
+
+    // TODO: 여기에 서버에 보내는 로직을 추가
+    setIngredientDetails([]);
+    setAddItemList([]);
+  };
 
   return (
     <>
@@ -47,26 +53,24 @@ export const MyRefrigerator = () => {
       <Container>
         <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
         <Wrapper>
-          {ingredientDetails.map((ingredient, index) => (
-            <AddIngredientInfo
-              key={index}
-              name={ingredient.name}
-              expiredAt={ingredient.expiredAt}
-              memo={ingredient.memo}
-              handleIngredientDetails={handleIngredientDetails}
-              index={index}
-            />
-          ))}
-        </Wrapper>
+          <AddIngredientInfo
+            ingredientDetails={ingredientDetails}
+            handleIngredientDetails={handleIngredientDetails}
+            deleteAddedIngredient={deleteAddedIngredient}
+          />
 
-        <BasicButton
-          type="button"
-          $bgcolor={theme.colors.orange}
-          $fontcolor={theme.colors.white}
-          onClick={handleSave}
-        >
-          저장
-        </BasicButton>
+          {ingredientDetails.length > 0 && (
+            <BasicButton
+              type="button"
+              $bgcolor={theme.colors.orange}
+              $fontcolor={theme.colors.white}
+              onClick={handleSave}
+            >
+              재료 추가
+            </BasicButton>
+          )}
+        </Wrapper>
+        <MyIngredientList />
       </Container>
     </>
   );
@@ -87,4 +91,8 @@ const Wrapper = styled.div`
   grid-template-columns: 1fr;
   place-items: center;
   gap: 5px;
+
+  & > button {
+    margin-top: 20px;
+  }
 `;
