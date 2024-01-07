@@ -2,26 +2,22 @@ import { styled } from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/IngredientSearchForm';
-import { IngredientInfo } from '../components/IngredientInfo';
+import { AddIngredientInfo } from '../components/AddIngredientInfo';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useEffect, useState } from 'react';
-
-interface Ingredient {
-  name: string;
-  expiredAt: string;
-  memo: string;
-}
+import { useQuery } from '@tanstack/react-query';
+import type { Ingredient } from '../types/ingredientType';
+import { getIngredient } from '../api/ingredient/getIngredient';
+import { QUERY_KEY } from '../constants/queryKey';
 
 export const MyRefrigerator = () => {
   const { addItemList, setAddItemList } = useSelectItem();
   const [ingredientDetails, setIngredientDetails] = useState<Ingredient[]>(
     addItemList.map((name) => ({ name, expiredAt: '', memo: '' }))
   );
-  const [isSave, setIsSave] = useState(false);
 
   useEffect(() => {
-    setIsSave(false);
     const newItems = addItemList.filter(
       (item) => !ingredientDetails.some((detail) => detail.name === item)
     );
@@ -32,15 +28,18 @@ export const MyRefrigerator = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addItemList]);
 
-  const updateIngredientDetails = (index: number, expiredAt: string, memo: string) => {
+  const handleIngredientDetails = (index: number, expiredAt: string, memo: string) => {
     const newDetails = [...ingredientDetails];
     newDetails[index] = { ...newDetails[index], expiredAt, memo };
     setIngredientDetails(newDetails);
   };
 
   const handleSave = async () => {
-    setIsSave(!isSave);
+    console.log(ingredientDetails);
+    setIngredientDetails([]);
   };
+
+  const { data } = useQuery({ queryKey: [QUERY_KEY.ADD_INGREDIENT], queryFn: getIngredient });
 
   return (
     <>
@@ -49,36 +48,25 @@ export const MyRefrigerator = () => {
         <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
         <Wrapper>
           {ingredientDetails.map((ingredient, index) => (
-            <IngredientInfo
+            <AddIngredientInfo
               key={index}
               name={ingredient.name}
               expiredAt={ingredient.expiredAt}
               memo={ingredient.memo}
-              updateIngredientDetails={updateIngredientDetails}
+              handleIngredientDetails={handleIngredientDetails}
               index={index}
-              isSave={isSave}
             />
           ))}
         </Wrapper>
-        {isSave ? (
-          <BasicButton
-            type="button"
-            $bgcolor={theme.colors.orange}
-            $fontcolor={theme.colors.white}
-            onClick={handleSave}
-          >
-            수정
-          </BasicButton>
-        ) : (
-          <BasicButton
-            type="button"
-            $bgcolor={theme.colors.orange}
-            $fontcolor={theme.colors.white}
-            onClick={handleSave}
-          >
-            저장
-          </BasicButton>
-        )}
+
+        <BasicButton
+          type="button"
+          $bgcolor={theme.colors.orange}
+          $fontcolor={theme.colors.white}
+          onClick={handleSave}
+        >
+          저장
+        </BasicButton>
       </Container>
     </>
   );

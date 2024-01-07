@@ -10,18 +10,16 @@ interface Props {
   name: string;
   expiredAt: string;
   memo: string;
-  updateIngredientDetails: (index: number, field: string, value: string) => void;
+  handleIngredientDetails: (index: number, field: string, value: string) => void;
   index: number;
-  isSave: boolean;
 }
 
-export const IngredientInfo = ({
+export const AddIngredientInfo = ({
   name,
   expiredAt,
   memo,
-  updateIngredientDetails,
+  handleIngredientDetails,
   index,
-  isSave,
 }: Props) => {
   const [expanded, setExpanded] = useState<string | false>('');
 
@@ -30,11 +28,11 @@ export const IngredientInfo = ({
   };
 
   const handleExpiredAtChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateIngredientDetails(index, e.target.value, memo);
+    handleIngredientDetails(index, e.target.value, memo);
   };
 
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    updateIngredientDetails(index, expiredAt, e.target.value);
+    handleIngredientDetails(index, expiredAt, e.target.value);
   };
 
   return (
@@ -54,9 +52,7 @@ export const IngredientInfo = ({
                 <p> 유통기한</p>
               </Title>
               <Expiration
-                style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
                 required
-                readOnly={isSave}
                 type="date"
                 value={expiredAt}
                 onChange={handleExpiredAtChange}
@@ -66,13 +62,7 @@ export const IngredientInfo = ({
               <Title>
                 <p>간단 메모</p>
               </Title>
-              <Memo
-                style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
-                required
-                readOnly={isSave}
-                value={memo}
-                onChange={(e) => handleMemoChange(e)}
-              />
+              <Memo required value={memo} onChange={(e) => handleMemoChange(e)} />
             </Section>
             <BasicButton
               type="button"

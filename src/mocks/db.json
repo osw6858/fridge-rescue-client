@@ -73,5 +73,6 @@
         }
       ]
     }
-  ]
+  ],
+  "ingredient": [{ "name": "당근", "expiration": "2020-09-09", "memo": "메모 당근" }]
 }
