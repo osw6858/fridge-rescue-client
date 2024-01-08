@@ -1,12 +1,12 @@
 import { RecipeCard } from './common/RecipeCard';
 import { QUERY_KEY } from '../constants/queryKey';
 import { styled } from 'styled-components';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import type { Recipe } from '../types/recipeType';
 import { getNewRecipe } from '../api/recipe/getNewRecipe';
+import { useCustomSuspenseQuery } from '../hooks/api/customQueries';
 
 export const CardList = () => {
-  const { data } = useSuspenseQuery({ queryKey: [QUERY_KEY.NEW_RECIPE], queryFn: getNewRecipe });
+  const { data } = useCustomSuspenseQuery([QUERY_KEY.NEW_RECIPE], getNewRecipe);
 
   return (
     <Card>
