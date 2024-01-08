@@ -78,7 +78,9 @@ const Container = styled.div`
   width: 100%;
 
   & > div {
-    background-color: #f8f8f8;
+    background-color: ${(props) => props.theme.colors.grayishWhite};
+    border-radius: 10px;
+    padding: 10px;
   }
 `;
 
@@ -90,7 +92,8 @@ const IngredientTitle = styled.p`
 const Info = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
+  padding: 14px;
 
   & > button {
     max-width: 50px;
@@ -137,7 +140,6 @@ const Expiration = styled.input`
   border: none;
   border-radius: 5px;
   padding: 0 10px;
-  margin-bottom: 30px;
   transition: all 0.3s ease;
 
   &:focus {
@@ -146,6 +148,7 @@ const Expiration = styled.input`
 `;
 
 const Memo = styled.textarea`
+  height: 40px;
   resize: none;
   border: none;
   border-radius: 5px;

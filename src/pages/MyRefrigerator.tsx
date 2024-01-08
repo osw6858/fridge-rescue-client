@@ -58,7 +58,6 @@ export const MyRefrigerator = () => {
             handleIngredientDetails={handleIngredientDetails}
             deleteAddedIngredient={deleteAddedIngredient}
           />
-
           {ingredientDetails.length > 0 && (
             <BasicButton
               type="button"

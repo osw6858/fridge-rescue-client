@@ -4,6 +4,8 @@ import { QUERY_KEY } from '../constants/queryKey';
 import styled from 'styled-components';
 import { useState } from 'react';
 import type { Ingredient } from '../types/ingredientType';
+import { BasicButton } from './common/BasicButton';
+import { theme } from '../styles/theme';
 
 interface UpdatedItem {
   [key: number]: Ingredient;
@@ -17,6 +19,8 @@ export const MyIngredientList = () => {
   const [edit, setEdit] = useState<boolean>(false);
   const [deletedItems, setDeletedItems] = useState<number[]>([]);
   const [updatedItems, setUpdatedItems] = useState<UpdatedItem>({});
+
+  // console.log(updatedItems);
 
   const handleCheckboxChange = (id: number): void => {
     setDeletedItems((prevDeletedItems) =>
@@ -47,7 +51,7 @@ export const MyIngredientList = () => {
     }
   };
 
-  const saveChanges = (): void => {
+  const saveChanges = () => {
     const updatedItemsArray = Object.values(updatedItems).map((item) => ({
       id: item.id,
       name: item.name,
@@ -55,14 +59,15 @@ export const MyIngredientList = () => {
       memo: item.memo,
     }));
 
-    console.log({
+    const finalData = {
       deletedItems,
       updatedItems: updatedItemsArray,
-    });
+    };
 
-    // 이후 서버로 전송 로직
+    console.log(finalData);
 
-    // 상태 초기화
+    // TODO: 이후 서버로 전송 로직 추가
+
     setEdit(false);
     setDeletedItems([]);
     setUpdatedItems({});
@@ -72,50 +77,70 @@ export const MyIngredientList = () => {
     <Container>
       <TitleWrapper>
         <p>재료 목록</p>
-        {edit ? (
-          <button type="button" onClick={saveChanges}>
-            저장
-          </button>
-        ) : (
-          <button type="button" onClick={() => setEdit(true)}>
-            수정
-          </button>
-        )}
-      </TitleWrapper>
-
-      {data?.map((item) => (
-        <ItemWrapper key={item.id}>
-          <div>
-            <p>{item.name}</p>
-            {edit && (
-              <input
-                type="checkbox"
-                checked={deletedItems.includes(item.id)}
-                onChange={() => handleCheckboxChange(item.id)}
-              />
-            )}
-          </div>
+        <div>
           {edit ? (
-            <div>
-              <input
-                type="date"
-                defaultValue={item.expiredAt}
-                onChange={(e) => handleUpdate(item.id, 'expiredAt', e.target.value)}
-              />
-              <input
-                type="text"
-                defaultValue={item.memo}
-                onChange={(e) => handleUpdate(item.id, 'memo', e.target.value)}
-              />
-            </div>
+            <BasicButton
+              type="button"
+              onClick={saveChanges}
+              $bgcolor={theme.colors.orange}
+              $fontcolor={theme.colors.white}
+            >
+              저장
+            </BasicButton>
           ) : (
-            <div>
-              <p>{item.expiredAt}</p>
-              <p>{item.memo}</p>
-            </div>
+            <BasicButton
+              type="button"
+              $bgcolor={theme.colors.orange}
+              $fontcolor={theme.colors.white}
+              onClick={() => setEdit(true)}
+            >
+              수정
+            </BasicButton>
           )}
-        </ItemWrapper>
-      ))}
+        </div>
+      </TitleWrapper>
+      <GridContainer>
+        {data?.map((item) => (
+          <ItemWrapper key={item.id}>
+            <Item>
+              <Title>{item.name}</Title>
+              {edit && (
+                <DeleteCheck>
+                  <span>삭제</span>
+                  <StyledCheckbox
+                    type="checkbox"
+                    checked={deletedItems.includes(item.id)}
+                    onChange={() => handleCheckboxChange(item.id)}
+                  />
+                </DeleteCheck>
+              )}
+              {edit ? (
+                <InputWrapper>
+                  <p>유통기한</p>
+                  <DateInput
+                    type="date"
+                    defaultValue={item.expiredAt}
+                    onChange={(e) => handleUpdate(item.id, 'expiredAt', e.target.value)}
+                  />
+                  <p>간단 메모</p>
+                  <MemoInput
+                    type="text"
+                    defaultValue={item.memo}
+                    onChange={(e) => handleUpdate(item.id, 'memo', e.target.value)}
+                  />
+                </InputWrapper>
+              ) : (
+                <InfoWrapper>
+                  <span>유통기한</span>
+                  <p>{item.expiredAt}</p>
+                  <span>간단 메모</span>
+                  <p>{item.memo}</p>
+                </InfoWrapper>
+              )}
+            </Item>
+          </ItemWrapper>
+        ))}
+      </GridContainer>
     </Container>
   );
 };
@@ -135,7 +160,103 @@ const TitleWrapper = styled.div`
   }
 `;
 
+const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`;
+
 const ItemWrapper = styled.div`
-  margin: 10px 0 10px 0;
-  padding: 14px;
+  padding: 3px;
+`;
+
+const Item = styled.div`
+  background-color: ${(props) => props.theme.colors.grayishWhite};
+  padding: 13px;
+  border-radius: 10px;
+`;
+
+const Title = styled.p`
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+`;
+
+const DeleteCheck = styled.div`
+  margin-bottom: 10px;
+
+  & > span {
+    margin-right: 5px;
+  }
+`;
+
+const StyledCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  cursor: pointer;
+  margin-right: 10px;
+  accent-color: ${(props) => props.theme.colors.navy};
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const InputWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  place-items: left;
+
+  & > p {
+    font-size: 14px;
+    color: ${(props) => props.theme.colors.darkGray};
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+`;
+
+const DateInput = styled.input`
+  max-width: 135px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 12px;
+`;
+
+const MemoInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+`;
+
+const InfoWrapper = styled.div`
+  & > span {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 14px;
+    color: ${(props) => props.theme.colors.darkGray};
+    font-weight: 600;
+  }
+
+  & > p:nth-child(2) {
+    margin-bottom: 10px;
+  }
+
+  & > p:nth-child(4) {
+    max-width: 300px;
+    overflow-y: scroll;
+    overflow-y: hidden;
+
+    &::-webkit-scrollbar {
+      height: 8px;
+      background-color: ${(props) => props.theme.colors.lightGray};
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: ${(props) => props.theme.colors.gray};
+      border-radius: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: ${(props) => props.theme.colors.darkGray};
+    }
+  }
 `;
