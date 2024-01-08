@@ -1,4 +1,6 @@
-export const BASE_URL = 'http://localhost:3001' as const; // TODO: 이후에 서버 올라가면 변경
+export const BASE_URL = 'http://fridge-rescue.ap-northeast-2.elasticbeanstalk.com/' as const;
+
+export const MOCK_SERVER_URL = 'http://localhost:3001' as const;
 
 export const ROOT_URL = 'http://localhost:5173/';
 

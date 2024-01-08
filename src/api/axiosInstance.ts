@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_URL } from '../constants/api';
+import { BASE_URL, MOCK_SERVER_URL } from '../constants/api';
 import { checkAndSetToken, handleTokenError } from './interceptors';
 
 // 인증이 필요한 페이지에서 토큰검사 후 데이터를 패칭할때 사용할 인스턴스
@@ -14,10 +14,19 @@ export const axiosAuth = axios.create({
 
 // 인증이 필요하지 않은 페이지에서 데이터를 패칭할때 사용할 인스턴스
 export const axiosDefault = axios.create({
-  baseURL: BASE_URL,
+  baseURL: MOCK_SERVER_URL,
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
+  },
+});
+
+// 파일 전송시 데이터 전송할 인스턴스
+export const axiosFormData = axios.create({
+  baseURL: BASE_URL,
+  timeout: 5000,
+  headers: {
+    'Content-Type': 'multipart/form-data',
   },
 });
 
@@ -25,3 +34,7 @@ export const axiosDefault = axios.create({
 axiosAuth.interceptors.request.use(checkAndSetToken, (error) => Promise.reject(error));
 
 axiosAuth.interceptors.response.use((response) => response, handleTokenError);
+
+axiosFormData.interceptors.request.use(checkAndSetToken, (error) => Promise.reject(error));
+
+axiosFormData.interceptors.response.use((response) => response, handleTokenError);
