@@ -1,65 +1,51 @@
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { useState } from 'react';
 import { styled } from 'styled-components';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { BasicButton } from './common/BasicButton';
 import { theme } from '../styles/theme';
 import { device } from '../styles/media';
+import type { AddIngredient } from '../types/ingredientType';
 
 interface Props {
-  name: string;
-  expiredAt: string;
-  memo: string;
-  updateIngredientDetails: (index: number, field: string, value: string) => void;
-  index: number;
-  isSave: boolean;
+  handleIngredientDetails: (index: number, field: string, value: string) => void;
+  deleteAddedIngredient: (index: number) => void;
+  ingredientDetails: AddIngredient[];
 }
 
-export const IngredientInfo = ({
-  name,
-  expiredAt,
-  memo,
-  updateIngredientDetails,
-  index,
-  isSave,
+export const AddIngredientInfo = ({
+  handleIngredientDetails,
+  deleteAddedIngredient,
+  ingredientDetails,
 }: Props) => {
-  const [expanded, setExpanded] = useState<string | false>('');
-
-  const handleChange = (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
-    setExpanded(newExpanded ? panel : false);
+  const handleExpiredAtChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+    memo: string
+  ) => {
+    handleIngredientDetails(index, e.target.value, memo);
   };
 
-  const handleExpiredAtChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateIngredientDetails(index, e.target.value, memo);
-  };
-
-  const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    updateIngredientDetails(index, expiredAt, e.target.value);
+  const handleMemoChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    index: number,
+    expiredAt: string
+  ) => {
+    handleIngredientDetails(index, expiredAt, e.target.value);
   };
 
   return (
-    <Container>
-      <Accordion expanded={expanded === name} onChange={handleChange(name)}>
-        <AccordionSummary
-          aria-controls="panel1d-content"
-          id="panel1d-header"
-          expandIcon={<ExpandMoreIcon />}
-        >
-          <IngredientTitle>{name}</IngredientTitle>
-        </AccordionSummary>
-        <AccordionDetails>
+    <>
+      {ingredientDetails.map((ingredient, index) => (
+        <Container key={index}>
+          <IngredientTitle>{ingredient.name}</IngredientTitle>
           <Info>
             <Section>
               <Title>
                 <p> 유통기한</p>
               </Title>
               <Expiration
-                style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
                 required
-                readOnly={isSave}
                 type="date"
-                value={expiredAt}
-                onChange={handleExpiredAtChange}
+                value={ingredient.expiredAt}
+                onChange={(e) => handleExpiredAtChange(e, index, ingredient.memo)}
               ></Expiration>
             </Section>
             <Section>
@@ -67,24 +53,23 @@ export const IngredientInfo = ({
                 <p>간단 메모</p>
               </Title>
               <Memo
-                style={isSave ? { backgroundColor: '#f8f8f8' } : { backgroundColor: 'white' }}
                 required
-                readOnly={isSave}
-                value={memo}
-                onChange={(e) => handleMemoChange(e)}
+                value={ingredient.memo}
+                onChange={(e) => handleMemoChange(e, index, ingredient.expiredAt)}
               />
             </Section>
             <BasicButton
               type="button"
               $bgcolor={theme.colors.orange}
               $fontcolor={theme.colors.white}
+              onClick={() => deleteAddedIngredient(index)}
             >
               삭제
             </BasicButton>
           </Info>
-        </AccordionDetails>
-      </Accordion>
-    </Container>
+        </Container>
+      ))}
+    </>
   );
 };
 
@@ -93,7 +78,9 @@ const Container = styled.div`
   width: 100%;
 
   & > div {
-    background-color: #f8f8f8;
+    background-color: ${(props) => props.theme.colors.grayishWhite};
+    border-radius: 10px;
+    padding: 10px;
   }
 `;
 
@@ -105,7 +92,8 @@ const IngredientTitle = styled.p`
 const Info = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
+  padding: 14px;
 
   & > button {
     max-width: 50px;
@@ -152,7 +140,6 @@ const Expiration = styled.input`
   border: none;
   border-radius: 5px;
   padding: 0 10px;
-  margin-bottom: 30px;
   transition: all 0.3s ease;
 
   &:focus {
@@ -161,6 +148,7 @@ const Expiration = styled.input`
 `;
 
 const Memo = styled.textarea`
+  height: 40px;
   resize: none;
   border: none;
   border-radius: 5px;

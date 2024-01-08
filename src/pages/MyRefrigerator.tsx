@@ -2,26 +2,20 @@ import { styled } from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/IngredientSearchForm';
-import { IngredientInfo } from '../components/IngredientInfo';
+import { AddIngredientInfo } from '../components/AddIngredientInfo';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useEffect, useState } from 'react';
-
-interface Ingredient {
-  name: string;
-  expiredAt: string;
-  memo: string;
-}
+import type { AddIngredient } from '../types/ingredientType';
+import { MyIngredientList } from '../components/MyIngredientList';
 
 export const MyRefrigerator = () => {
   const { addItemList, setAddItemList } = useSelectItem();
-  const [ingredientDetails, setIngredientDetails] = useState<Ingredient[]>(
+  const [ingredientDetails, setIngredientDetails] = useState<AddIngredient[]>(
     addItemList.map((name) => ({ name, expiredAt: '', memo: '' }))
   );
-  const [isSave, setIsSave] = useState(false);
 
   useEffect(() => {
-    setIsSave(false);
     const newItems = addItemList.filter(
       (item) => !ingredientDetails.some((detail) => detail.name === item)
     );
@@ -32,14 +26,25 @@ export const MyRefrigerator = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addItemList]);
 
-  const updateIngredientDetails = (index: number, expiredAt: string, memo: string) => {
+  const handleIngredientDetails = (index: number, expiredAt: string, memo: string) => {
     const newDetails = [...ingredientDetails];
     newDetails[index] = { ...newDetails[index], expiredAt, memo };
     setIngredientDetails(newDetails);
   };
 
+  const deleteAddedIngredient = (index: number) => {
+    const newDetailList = ingredientDetails.filter((_, idx) => index !== idx);
+    const newItemList = addItemList.filter((_, idx) => index !== idx);
+    setIngredientDetails(newDetailList);
+    setAddItemList(newItemList);
+  };
+
   const handleSave = async () => {
-    setIsSave(!isSave);
+    console.log('저장될 리스트', ingredientDetails);
+
+    // TODO: 여기에 서버에 보내는 로직을 추가
+    setIngredientDetails([]);
+    setAddItemList([]);
   };
 
   return (
@@ -48,37 +53,23 @@ export const MyRefrigerator = () => {
       <Container>
         <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
         <Wrapper>
-          {ingredientDetails.map((ingredient, index) => (
-            <IngredientInfo
-              key={index}
-              name={ingredient.name}
-              expiredAt={ingredient.expiredAt}
-              memo={ingredient.memo}
-              updateIngredientDetails={updateIngredientDetails}
-              index={index}
-              isSave={isSave}
-            />
-          ))}
+          <AddIngredientInfo
+            ingredientDetails={ingredientDetails}
+            handleIngredientDetails={handleIngredientDetails}
+            deleteAddedIngredient={deleteAddedIngredient}
+          />
+          {ingredientDetails.length > 0 && (
+            <BasicButton
+              type="button"
+              $bgcolor={theme.colors.orange}
+              $fontcolor={theme.colors.white}
+              onClick={handleSave}
+            >
+              재료 추가
+            </BasicButton>
+          )}
         </Wrapper>
-        {isSave ? (
-          <BasicButton
-            type="button"
-            $bgcolor={theme.colors.orange}
-            $fontcolor={theme.colors.white}
-            onClick={handleSave}
-          >
-            수정
-          </BasicButton>
-        ) : (
-          <BasicButton
-            type="button"
-            $bgcolor={theme.colors.orange}
-            $fontcolor={theme.colors.white}
-            onClick={handleSave}
-          >
-            저장
-          </BasicButton>
-        )}
+        <MyIngredientList />
       </Container>
     </>
   );
@@ -99,4 +90,8 @@ const Wrapper = styled.div`
   grid-template-columns: 1fr;
   place-items: center;
   gap: 5px;
+
+  & > button {
+    margin-top: 20px;
+  }
 `;

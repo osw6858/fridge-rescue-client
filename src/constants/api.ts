@@ -8,6 +8,7 @@ export const END_POINTS = {
   MEMBERS: 'members',
   RECIPES: 'recipes',
   TOKEN: 'token/refresh',
+  INGREDIENT: 'ingredient',
 } as const;
 
 export const HTTP_STATUS_CODE = {} as const;
