@@ -20,21 +20,22 @@ export const useCustomSuspenseQuery = <TQueryFnData, TQueryKey extends QueryKey 
 };
 
 export const useCustomMutation = <TData, TError, TVariables, TContext>(
-  mutationFn: MutationFunction<TData, TVariables>
+  mutationFn: MutationFunction<TData, TVariables>,
+  onSuccess?: ((data: TData, variables: TVariables, context: TContext) => unknown) | undefined,
+  onError?:
+    | ((error: TError, variables: TVariables, context: TContext | undefined) => unknown)
+    | undefined
 ) => {
-  const mutation = useMutation<TData, TError, TVariables, TContext>({
+  const { data, error, isError, isPending, isSuccess } = useMutation<
+    TData,
+    TError,
+    TVariables,
+    TContext
+  >({
     mutationFn,
-    // TODO: 성공, 에러시 함수 작성
-    // onSuccess: (data, variables, context) => {},
-    // onError: (error, variables, context) => {},
+    onSuccess,
+    onError,
   });
 
-  return {
-    mutate: mutation.mutate,
-    data: mutation.data,
-    error: mutation.error,
-    isError: mutation.isError,
-    isLoading: mutation.isPending,
-    isSuccess: mutation.isSuccess,
-  };
+  return { data, error, isError, isPending, isSuccess };
 };
