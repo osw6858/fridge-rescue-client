@@ -1,0 +1,77 @@
+{
+  "members": [
+    { "id": 1, "name": "실명", "nickName": "나에요", "email": "example@email.com" },
+    { "id": 2, "name": "실명2", "nickName": "나에요2", "email": "example@email2com" },
+    { "id": 3, "name": "실명3", "nickName": "나에요3", "email": "example@email3.com" },
+    { "id": 4, "name": "실명4", "nickName": "나에요4", "email": "example@email4.com" }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "title": "떡볶이",
+      "summary": "맛있는 쌀떡볶이",
+      "recipeImageUrl": "https://i.namu.wiki/i/A5AIHovo1xwuEjs7V8-aKpZCSWY2gN3mZEPR9fymaez_J7ufmI9B7YyDBu6kZy9TC9VWJatXVJZbDjcYLO2S8Q.webp",
+      "reviewCount": 13,
+      "createdAt": "2024-01-01",
+      "member": { "id": 1, "nickName": "나에요" }
+    },
+    {
+      "id": 2,
+      "title": "쌀국수",
+      "summary": "맛있는 쌀국수",
+      "recipeImageUrl": "https://recipe1.ezmember.co.kr/cache/recipe/2020/09/06/ee00d6e59def943bc0eb0354fb58a00d1.jpg",
+      "reviewCount": 32,
+      "createdAt": "2024-01-02",
+      "member": { "id": 2, "nickName": "나에요2" }
+    },
+    {
+      "id": 3,
+      "title": "국밥",
+      "summary": "맛있는 국밥",
+      "recipeImageUrl": "https://oasisproduct.cdn.ntruss.com/69525/detail/detail_69525_1_6028a937-9c60-4449-9717-b0f12295cb6e.jpg",
+      "reviewCount": 322,
+      "createdAt": "2024-01-03",
+      "member": { "id": 3, "nickName": "나에요3" }
+    },
+    {
+      "id": 4,
+      "title": "로즈마리",
+      "summary": "맛있는 로즈마리",
+      "recipeImageUrl": "https://src.hidoc.co.kr/image/lib/2019/11/12/20191112145145470_0.jpg",
+      "reviewCount": 3123,
+      "createdAt": "2024-01-04",
+      "member": { "id": 4, "nickName": "나에요4" }
+    }
+  ],
+  "fridge": [
+    {
+      "id": 1,
+      "list": [
+        {
+          "id": 1,
+          "name": "로즈마리",
+          "expriedAt": "2099-05-05",
+          "memo": "내가 키우는 로즈마리"
+        },
+        {
+          "id": 2,
+          "name": "당근",
+          "expriedAt": "2024-05-16",
+          "memo": "내가 키우는 당근"
+        },
+        {
+          "id": 3,
+          "name": "밀가루",
+          "expriedAt": "2024-05-26",
+          "memo": "내가 키우는 밀가루"
+        },
+        {
+          "id": 4,
+          "name": "떡",
+          "expriedAt": "2024-07-15",
+          "memo": "내가 키우는 떡"
+        }
+      ]
+    }
+  ]
+}
