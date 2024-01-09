@@ -1,16 +1,12 @@
-import { RecipeCard } from './common/RecipeCard';
-import { QUERY_KEY } from '../constants/queryKey';
 import { styled } from 'styled-components';
-import type { Recipe } from '../types/recipeType';
-import { getNewRecipe } from '../api/recipe/getNewRecipe';
-import { useSuspenseQuery } from '@tanstack/react-query';
 
 export const CardList = () => {
-  const { data } = useSuspenseQuery({ queryKey: [QUERY_KEY.NEW_RECIPE], queryFn: getNewRecipe });
+  // const { data } = useSuspenseQuery({ queryKey: [QUERY_KEY.NEW_RECIPE], queryFn: getNewRecipe });
+  // console.log(data);
 
   return (
     <Card>
-      {data?.map((info: Recipe) => (
+      {/* {data?.map((info: Recipe) => (
         <RecipeCard
           key={info.id}
           recipeTitle={info.title}
@@ -19,7 +15,7 @@ export const CardList = () => {
           matchedFoodList={['당근', '무']}
           size="small"
         />
-      ))}
+      ))} */}
     </Card>
   );
 };

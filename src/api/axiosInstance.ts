@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BASE_URL, MOCK_SERVER_URL } from '../constants/api';
 import { checkAndSetToken, handleTokenError } from './interceptors';
+import { BASE_URL } from '../constants/api';
 
 // 인증이 필요한 페이지에서 토큰검사 후 데이터를 패칭할때 사용할 인스턴스
 export const axiosAuth = axios.create({
@@ -14,7 +14,7 @@ export const axiosAuth = axios.create({
 
 // 인증이 필요하지 않은 페이지에서 데이터를 패칭할때 사용할 인스턴스
 export const axiosDefault = axios.create({
-  baseURL: MOCK_SERVER_URL,
+  baseURL: BASE_URL,
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',

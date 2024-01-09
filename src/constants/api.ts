@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://fridge-rescue.ap-northeast-2.elasticbeanstalk.com/' as const;
+export const BASE_URL = '/api' as const;
 
 export const MOCK_SERVER_URL = 'http://localhost:3001' as const;
 
