@@ -5,14 +5,14 @@ import { useState } from 'react';
 import type { Ingredient } from '../types/ingredientType';
 import { BasicButton } from './common/BasicButton';
 import { theme } from '../styles/theme';
-import { useCustomQuery } from '../hooks/api/customQueries';
+import { useQuery } from '@tanstack/react-query';
 
 interface UpdatedItem {
   [key: number]: Ingredient;
 }
 
 export const MyIngredientList = () => {
-  const { data } = useCustomQuery([QUERY_KEY.ADD_INGREDIENT], getIngredient);
+  const { data } = useQuery({ queryKey: [QUERY_KEY.ADD_INGREDIENT], queryFn: getIngredient });
   const [edit, setEdit] = useState<boolean>(false);
   const [deletedItems, setDeletedItems] = useState<number[]>([]);
   const [updatedItems, setUpdatedItems] = useState<UpdatedItem>({});
