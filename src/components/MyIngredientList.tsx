@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { getIngredient } from '../api/ingredient/getIngredient';
 import { QUERY_KEY } from '../constants/queryKey';
 import styled from 'styled-components';
@@ -6,16 +5,14 @@ import { useState } from 'react';
 import type { Ingredient } from '../types/ingredientType';
 import { BasicButton } from './common/BasicButton';
 import { theme } from '../styles/theme';
+import { useQuery } from '@tanstack/react-query';
 
 interface UpdatedItem {
   [key: number]: Ingredient;
 }
 
 export const MyIngredientList = () => {
-  const { data } = useQuery<Ingredient[]>({
-    queryKey: [QUERY_KEY.ADD_INGREDIENT],
-    queryFn: getIngredient,
-  });
+  const { data } = useQuery({ queryKey: [QUERY_KEY.ADD_INGREDIENT], queryFn: getIngredient });
   const [edit, setEdit] = useState<boolean>(false);
   const [deletedItems, setDeletedItems] = useState<number[]>([]);
   const [updatedItems, setUpdatedItems] = useState<UpdatedItem>({});

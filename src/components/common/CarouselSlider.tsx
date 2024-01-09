@@ -9,7 +9,7 @@ interface RecipeProps {
 
 export const CarouselSlider = ({ popularRecipeList }: RecipeProps) => {
   return (
-    <Carousel>
+    <Carousel animation="slide">
       {popularRecipeList.map((_, index) => (
         <div key={index}>
           <Lank>{index + 1}위</Lank>
