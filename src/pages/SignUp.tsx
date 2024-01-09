@@ -3,20 +3,48 @@ import logo from '../assets/logo.png';
 import { BasicInput } from '../components/common/BasicInput';
 import { BasicButton } from '../components/common/BasicButton';
 import { Link } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { signUp } from '../api/auth/signUp';
 
 export const SignUp = () => {
+  const { mutate } = useMutation({
+    mutationFn: signUp,
+    onSuccess: () => console.log('성공'),
+    onError: (error) => console.error(error),
+  });
+
+  const handleSingUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      mail: { value: string };
+      pw: { value: string };
+      pwconfirm: { value: string };
+      nickname: { value: string };
+    };
+    const params = {
+      name: '저에요',
+      nickname: target.nickname.value,
+      email: target.mail.value,
+      password: target.pw.value,
+    };
+
+    console.log(params);
+
+    mutate(params);
+  };
+
   return (
     <SignUpContainer>
       <img src={logo} alt="logo" className="logo-image" />
-      <form>
+      <form onSubmit={(e) => handleSingUp(e)}>
         <div className="inputs">
           <label htmlFor="mail">이메일</label>
           <BasicInput id="mail" type="email" placeholder="이메일을 입력해 주세요" />
           <label htmlFor="pw">비밀번호</label>
           <BasicInput id="pw" type="password" placeholder="비밀번호를 입력해 주세요" />
-          <label htmlFor="pw-confirm">비밀번호 확인</label>
+          <label htmlFor="pwconfirm">비밀번호 확인</label>
           <BasicInput
-            id="pw-confirm"
+            id="pwconfirm"
             type="password"
             placeholder="비밀번호를 한번 더 입력해 주세요"
           />
