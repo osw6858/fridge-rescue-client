@@ -1,13 +1,13 @@
 import { styled } from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { useSelectItem } from '../hooks/useSelectItem';
-import { IngredientSearchForm } from '../components/IngredientSearchForm';
-import { AddIngredientInfo } from '../components/AddIngredientInfo';
+import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
+import { AddIngredientInfo } from '../components/pages/fridge/AddIngredientInfo';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useEffect, useState } from 'react';
 import type { AddIngredient } from '../types/ingredientType';
-import { MyIngredientList } from '../components/MyIngredientList';
+import { MyIngredientList } from '../components/pages/fridge/MyIngredientList';
 
 export const MyRefrigerator = () => {
   const { addItemList, setAddItemList } = useSelectItem();

@@ -1,11 +1,11 @@
-import { getIngredient } from '../api/ingredient/getIngredient';
-import { QUERY_KEY } from '../constants/queryKey';
+import { QUERY_KEY } from '../../../constants/queryKey';
 import styled from 'styled-components';
 import { useState } from 'react';
-import type { Ingredient } from '../types/ingredientType';
-import { BasicButton } from './common/BasicButton';
-import { theme } from '../styles/theme';
+import type { Ingredient } from '../../../types/ingredientType';
+import { BasicButton } from '../../common/BasicButton';
+import { theme } from '../../../styles/theme';
 import { useQuery } from '@tanstack/react-query';
+import { getIngredient } from '../../../api/fridge';
 
 interface UpdatedItem {
   [key: number]: Ingredient;

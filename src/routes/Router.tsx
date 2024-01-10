@@ -14,7 +14,6 @@ export const Router = () => {
   return (
     <Routes>
       <Route index element={<Index />} />
-      {/** add/ => 화면 테스트용 임시 라우팅 */}
       <Route path="/add" element={<AddRecipe />} />
       <Route path="/refrigerator" element={<MyRefrigerator />} />
       <Route path="/signin" element={<SignIn />} />

@@ -4,7 +4,7 @@ import { BasicTitle } from '../components/common/BasicTitle';
 import { RiBookmarkLine } from 'react-icons/ri';
 import { IoHeartOutline } from 'react-icons/io5';
 import { PiSiren } from 'react-icons/pi';
-import { RecipeReviewList } from '../components/pages/Recipe/RecipeReviewList';
+import { RecipeReviewList } from '../components/pages/recipe/RecipeReviewList';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { useNavigate } from 'react-router-dom';

@@ -1,8 +1,8 @@
 import { styled } from 'styled-components';
-import { BasicButton } from './common/BasicButton';
-import { theme } from '../styles/theme';
-import { device } from '../styles/media';
-import type { AddIngredient } from '../types/ingredientType';
+import { BasicButton } from '../../common/BasicButton';
+import { theme } from '../../../styles/theme';
+import { device } from '../../../styles/media';
+import type { AddIngredient } from '../../../types/ingredientType';
 
 interface Props {
   handleIngredientDetails: (index: number, field: string, value: string) => void;

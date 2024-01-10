@@ -1,5 +1,5 @@
-import { END_POINTS } from '../../constants/api';
-import { axiosDefault } from '../axiosInstance';
+import { END_POINTS } from '../constants/api';
+import { axiosDefault } from './axiosInstance';
 
 export const getNewRecipe = async () => {
   try {
