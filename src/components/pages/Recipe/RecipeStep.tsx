@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
-import { BasicButton } from './common/BasicButton';
-import { theme } from '../styles/theme';
+import { BasicButton } from '../../common/BasicButton';
+import { theme } from '../../../styles/theme';
 import { type ChangeEvent } from 'react';
 
 interface stepProps {

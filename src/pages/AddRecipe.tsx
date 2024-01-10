@@ -2,10 +2,10 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { theme } from '../styles/theme';
-import { RecipeStep } from '../components/RecipeStep';
+import { RecipeStep } from '../components/pages/recipe/RecipeStep';
 import { useState, type ChangeEvent } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
-import { IngredientSearchForm } from '../components/IngredientSearchForm';
+import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import { IngredientList } from '../components/common/IngredientList';
 
 interface Step {

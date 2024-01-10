@@ -1,9 +1,9 @@
 import { Chip, InputAdornment, TextField } from '@mui/material';
 import { useState, type ChangeEvent, useEffect } from 'react';
 import { styled } from 'styled-components';
-import { BasicButton } from './common/BasicButton';
-import { theme } from '../styles/theme';
-import { device } from '../styles/media';
+import { BasicButton } from '../../common/BasicButton';
+import { theme } from '../../../styles/theme';
+import { device } from '../../../styles/media';
 
 interface SearchFormPorps {
   addItemList: string[];

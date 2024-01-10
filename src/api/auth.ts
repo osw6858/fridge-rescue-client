@@ -1,5 +1,5 @@
-import { END_POINTS } from '../../constants/api';
-import { axiosDefault } from '../axiosInstance';
+import { END_POINTS } from '../constants/api';
+import { axiosDefault } from './axiosInstance';
 
 interface SignUpProps {
   name: string;
