@@ -12,13 +12,9 @@ export const getNewRecipe = async () => {
   }
 };
 
-export const getDetailRecipe = async () => {
+export const getDetailRecipe = async (recipeId: string) => {
   try {
-    const result = await axiosDefault.get(END_POINTS.RECIPES, {
-      params: {
-        recipeId: 1,
-      },
-    });
+    const result = await axiosDefault.get(`${END_POINTS.RECIPES}/${recipeId}`);
     return result.data;
   } catch (error) {
     throw new Error(`${error}`);

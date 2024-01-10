@@ -7,10 +7,16 @@ import { PiSiren } from 'react-icons/pi';
 import { RecipeReviewList } from '../components/pages/recipe/RecipeReviewList';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getDetailRecipe } from '../api/recipe';
+import { QUERY_KEY } from '../constants/queryKey';
+import axios from 'axios';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
+  const { pathname } = useLocation();
+  const recipeId = pathname.split('/').pop() || '';
   const [cookingCompletion, setCookingCompletion] = useState(false);
 
   const onAgree = () => {
@@ -20,6 +26,11 @@ export const RecipeView = () => {
   const handleCookingCompletion = (isComplete: boolean) => {
     setCookingCompletion(isComplete);
   };
+
+  const { data } = useQuery({
+    queryKey: [QUERY_KEY.DETAIL_RECIPE],
+    queryFn: () => getDetailRecipe(recipeId),
+  });
 
   return (
     <RecipeViewContainer>
