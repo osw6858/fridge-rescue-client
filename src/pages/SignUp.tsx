@@ -4,7 +4,7 @@ import { BasicInput } from '../components/common/BasicInput';
 import { BasicButton } from '../components/common/BasicButton';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { signUp } from '../api/auth/signUp';
+import { signUp } from '../api/auth';
 
 export const SignUp = () => {
   const { mutate } = useMutation({
