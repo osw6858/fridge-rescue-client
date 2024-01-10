@@ -1,26 +1,34 @@
 import styled from 'styled-components';
-import { CarouselSlider } from '../components/common/CarouselSlider';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { Suspense } from 'react';
 import { CardList } from '../components/CardList';
 import { FallBack } from '../components/common/FallBack';
+import { Carousel } from '../components/common/Carousel';
 
 export const Index = () => {
+  const testImage = [
+    'https://blog.kakaocdn.net/dn/bBeQzv/btq4dw1SNcQ/7b9ROACX8r0oWRUckQKib0/img.png',
+    'https://img.hankyung.com/photo/202108/99.26501439.1-1200x.jpg',
+    'https://d12zq4w4guyljn.cloudfront.net/750_750_20220702061143834_photo_4fceeae73135.jpg',
+  ];
+
   return (
-    <IndexContainer>
-      <Title>
-        <BasicTitle title="최신 레시피" />
-        <MoreButton>더보기</MoreButton>
-      </Title>
-      <Suspense fallback={<FallBack length={5} />}>
-        <CardList />
-      </Suspense>
-      <Title>
-        <BasicTitle title="인기 레시피" />
-        <MoreButton>더보기</MoreButton>
-      </Title>
-      <CarouselSlider popularRecipeList={[1, 2, 3]} />
-    </IndexContainer>
+    <>
+      <IndexContainer>
+        <Title>
+          <BasicTitle title="최신 레시피" />
+          <MoreButton>더보기</MoreButton>
+        </Title>
+        <Suspense fallback={<FallBack length={5} />}>
+          <CardList />
+        </Suspense>
+        <Title>
+          <BasicTitle title="인기 레시피" />
+          <MoreButton>더보기</MoreButton>
+        </Title>
+        <Carousel carouselImageInfo={testImage} dotsState viewCount={1} />
+      </IndexContainer>
+    </>
   );
 };
 
