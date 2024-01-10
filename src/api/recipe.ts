@@ -11,3 +11,16 @@ export const getNewRecipe = async () => {
     throw new Error(`${error}`);
   }
 };
+
+export const getDetailRecipe = async () => {
+  try {
+    const result = await axiosDefault.get(END_POINTS.RECIPES, {
+      params: {
+        recipeId: 1,
+      },
+    });
+    return result.data;
+  } catch (error) {
+    throw new Error(`${error}`);
+  }
+};
