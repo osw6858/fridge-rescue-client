@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { Suspense } from 'react';
-import { CardList } from '../components/CardList';
 import { FallBack } from '../components/common/FallBack';
 import { Carousel } from '../components/common/Carousel';
+import { CardList } from '../components/common/CardList';
 
 export const Index = () => {
   const testImage = [
