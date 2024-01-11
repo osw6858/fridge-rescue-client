@@ -11,3 +11,12 @@ export const getNewRecipe = async () => {
     throw new Error(`${error}`);
   }
 };
+
+export const getDetailRecipe = async (recipeId: string) => {
+  try {
+    const result = await axiosDefault.get(`${END_POINTS.RECIPES}/${recipeId}`);
+    return result.data;
+  } catch (error) {
+    throw new Error(`${error}`);
+  }
+};
