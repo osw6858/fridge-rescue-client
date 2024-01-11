@@ -28,6 +28,7 @@ export const END_POINTS = {
   REVIEWS: 'reviews',
   REPORT: 'report',
   COOKS: 'cooks',
+  SUGGEST: 'suggest',
 } as const;
 
 export const HTTP_STATUS_CODE = {} as const;
