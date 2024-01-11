@@ -4,6 +4,7 @@ import { BasicTitle } from '../components/common/BasicTitle';
 import { RiBookmarkLine } from 'react-icons/ri';
 import { BsExclamationSquare } from 'react-icons/bs';
 import { PiSiren, PiCookingPotDuotone, PiEyeDuotone } from 'react-icons/pi';
+import { GiCook } from 'react-icons/gi';
 import { RecipeReviewList } from '../components/pages/recipe/RecipeReviewList';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
@@ -12,7 +13,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getDetailRecipe } from '../api/recipe';
 import { QUERY_KEY } from '../constants/queryKey';
 import { formatDate } from '../utils/formatDate';
-import type { RecipeStep } from '../types/recipeType';
+import { Chip } from '@mui/material';
+import type { Ingredient, RecipeSteps } from '../types/recipeType';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
@@ -74,8 +76,25 @@ export const RecipeView = () => {
           <div className="thumbnail">
             <img src="https://img.siksinhot.com/place/1515555441230703.jpg" alt="썸네일" />
           </div>
+          <p className="summary">{data?.summary}</p>
 
-          {data?.recipeSteps.map((step: RecipeStep) => {
+          <div className="ingredient">
+            <h3>
+              <GiCook />
+              재료
+            </h3>
+            <span className="chips">
+              {data?.recipeIngredients.map((ingredient: Ingredient) => {
+                return (
+                  <>
+                    <Chip label={`${ingredient.name} ${ingredient.amount}`} key={ingredient.name} />
+                  </>
+                );
+              })}
+            </span>
+          </div>
+
+          {data?.recipeSteps.map((step: RecipeSteps) => {
             return (
               <div className="step" key={step.stepNo}>
                 <img
@@ -172,6 +191,31 @@ const RecipeViewContainer = styled.div`
   }
 
   .recipe-step {
+    .ingredient {
+      border: 1px solid ${(props) => props.theme.colors.lightGray};
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+
+      h3 {
+        color: ${(props) => props.theme.colors.black};
+        margin: 0 0 12px 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+    }
+
+    .summary {
+      padding: 24px 0;
+    }
+
     .thumbnail {
       margin: 12px 0;
       width: 100%;
