@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { RiBookmarkLine } from 'react-icons/ri';
-import { IoHeartOutline } from 'react-icons/io5';
-import { PiSiren } from 'react-icons/pi';
+import { BsExclamationSquare } from 'react-icons/bs';
+import { PiSiren, PiCookingPotDuotone, PiEyeDuotone } from 'react-icons/pi';
 import { RecipeReviewList } from '../components/pages/recipe/RecipeReviewList';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
@@ -11,7 +11,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getDetailRecipe } from '../api/recipe';
 import { QUERY_KEY } from '../constants/queryKey';
-import axios from 'axios';
+import { formatDate } from '../utils/formatDate';
+import type { RecipeStep } from '../types/recipeType';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
@@ -30,30 +31,42 @@ export const RecipeView = () => {
   const { data } = useQuery({
     queryKey: [QUERY_KEY.DETAIL_RECIPE],
     queryFn: () => getDetailRecipe(recipeId),
+    select: (data) => data.data,
   });
 
+  // TODO : 더미 데이터 이미지 없음 -> 실 데이터 가져올 때 이미지만 연동하면 됨
   return (
     <RecipeViewContainer>
       <div className="recipe-detail">
         <div className="header">
-          <BasicTitle title="존맛탱 마약 떡볶이 만들기" />
-          <RiBookmarkLine />
+          <BasicTitle title={data?.title} />
         </div>
         <div className="post-info">
           <div>
-            <span className="name">띠띠</span>
-            <span className="date">2024-01-02</span>
-            <span className="count">조회수 10</span>
+            <span className="name">{data?.author.nickname}</span>
+            <span className="date">{formatDate(data?.createdAt)}</span>
+            <span className="count">
+              <span>
+                <PiEyeDuotone /> {data?.viewCount}
+              </span>
+              <span>
+                <PiCookingPotDuotone />
+                {data?.reviewCount}
+              </span>
+            </span>
           </div>
           <div>
             <div className="icons">
               <span>
-                <IoHeartOutline />
+                <RiBookmarkLine />
               </span>
-              <span>2</span>
+              <span>{data?.bookmarkCount}</span>
             </div>
-            <div>
-              <PiSiren />
+            <div className="icons">
+              <span>
+                <PiSiren />
+              </span>
+              <span>{data?.reportCount}</span>
             </div>
           </div>
         </div>
@@ -61,27 +74,24 @@ export const RecipeView = () => {
           <div className="thumbnail">
             <img src="https://img.siksinhot.com/place/1515555441230703.jpg" alt="썸네일" />
           </div>
-          <div className="step">
-            <img
-              src="https://www.goodtraemall.co.kr/shopimages/cepa0001/006001000017.jpg?1670307118"
-              alt="단계별 레시피"
-            />
-            <div>1. 떡을 야무지게 불립니다.</div>
-          </div>
-          <div className="step">
-            <img
-              src="https://www.goodtraemall.co.kr/shopimages/cepa0001/006001000017.jpg?1670307118"
-              alt="단계별 레시피"
-            />
-            <div>2. 떡을 야무지게 불립니다.</div>
-          </div>
-          <div className="step">
-            <img
-              src="https://www.goodtraemall.co.kr/shopimages/cepa0001/006001000017.jpg?1670307118"
-              alt="단계별 레시피"
-            />
-            <div>3. 떡을 야무지게 불립니다.</div>
-          </div>
+
+          {data?.recipeSteps.map((step: RecipeStep) => {
+            return (
+              <div className="step" key={step.stepNo}>
+                <img
+                  src="https://www.goodtraemall.co.kr/shopimages/cepa0001/006001000017.jpg?1670307118"
+                  alt="단계별 레시피"
+                />
+                <div>{step.stepContents}</div>
+                {step.stepTip && (
+                  <div className="tip">
+                    <BsExclamationSquare />
+                    tip : {step.stepTip}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
         <BasicButton
           $bgcolor="#ff8527"
@@ -151,6 +161,13 @@ const RecipeViewContainer = styled.div`
 
     .count {
       color: ${(props) => props.theme.colors.darkGray};
+      display: flex;
+      gap: 12px;
+
+      & > span {
+        display: flex;
+        gap: 3px;
+      }
     }
   }
 
@@ -176,11 +193,23 @@ const RecipeViewContainer = styled.div`
       align-items: center;
       gap: 12px;
       grid-template-columns: 30% 1fr;
+      margin-top: 36px;
 
       img {
         width: 100%;
         height: auto;
         display: block;
+      }
+
+      .tip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: ${(props) => props.theme.colors.darkGray};
+      }
+
+      svg {
+        color: ${(props) => props.theme.colors.orange};
       }
     }
   }

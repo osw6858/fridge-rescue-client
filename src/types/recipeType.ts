@@ -12,3 +12,10 @@ export interface Recipe {
   createdAt: string;
   member: Member;
 }
+
+export interface RecipeStep {
+  stepContents: string;
+  stepImageUrl: string;
+  stepNo: number;
+  stepTip: string;
+}
