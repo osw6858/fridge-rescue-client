@@ -86,9 +86,7 @@ export const RecipeView = () => {
             <span className="chips">
               {data?.recipeIngredients.map((ingredient: Ingredient) => {
                 return (
-                  <>
-                    <Chip label={`${ingredient.name} ${ingredient.amount}`} key={ingredient.name} />
-                  </>
+                  <Chip label={`${ingredient.name} ${ingredient.amount}`} key={ingredient.name} />
                 );
               })}
             </span>
