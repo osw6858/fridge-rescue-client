@@ -1,5 +1,5 @@
 import { END_POINTS } from '../constants/api';
-import type { Ingredient } from '../types/ingredientType';
+import type { Ingredient, Suggest } from '../types/ingredientType';
 import { axiosDefault } from './axiosInstance';
 
 export const getIngredient = async () => {

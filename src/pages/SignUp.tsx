@@ -2,67 +2,122 @@ import styled from 'styled-components';
 import logo from '../assets/logo.png';
 import { BasicInput } from '../components/common/BasicInput';
 import { BasicButton } from '../components/common/BasicButton';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { fetchSignUp } from '../api/auth';
+import { emailAuth, fetchSignUp } from '../api/auth';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { useState } from 'react';
 import type { AxiosError } from 'axios';
+import { Controller, useForm } from 'react-hook-form';
 
-interface ErrorMsgData {
+interface Data {
   email?: string;
-  name?: string;
-  nickname?: string;
   password?: string;
+  nickname?: string;
 }
 
 interface SignUpError {
   message: string;
-  data: ErrorMsgData;
+  data?: Data;
+}
+
+interface ErrorMsg {
+  emailError?: string | undefined;
+  passwordError?: string | undefined;
+  nicknameError?: string | undefined;
+}
+
+interface InputData {
+  email?: string;
+  pw?: string;
+  pwconfirm?: string;
+  nickname?: string;
 }
 
 export const SignUp = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [errorMsgData, setErrorMsgData] = useState<ErrorMsgData>({});
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState<ErrorMsg>();
+  const [authCode, setAuthCode] = useState<string | undefined>('');
 
   const handleError = (error: AxiosError) => {
     const errorData = error.response?.data as SignUpError;
-    // TODO: 스위치 케이스문으로 바꾸기
-    console.log(errorData);
-    if (errorData.message === '유효성 검사 실패') {
-      setErrorMsgData(errorData.data);
-    } else if (errorData.message === '이미 존재하는 이메일입니다.') {
-      setErrorMsg(errorData.message);
+
+    // TODO: 에러 메시지가 더 많을 경우 switch case로 변경하기
+    if (errorData.message === '이미 존재하는 이메일입니다.') {
+      setErrorMsg({ emailError: errorData.message });
+    } else if (errorData.message === '이미 존재하는 닉네임 입니다.') {
+      setErrorMsg({ nicknameError: errorData.message });
     }
   };
 
-  const { mutate } = useMutation({
+  const handleSignUpSuccess = () => {
+    setIsOpen(true);
+  };
+
+  const handleEmailAuthError = () => {
+    // eslint-disable-next-line no-alert
+    alert('인증에 실패했습니다! 로그인 후 다시 시도해 주세요.');
+    navigate('/');
+  };
+
+  // NOTICE: 아직 서버 인증이 안풀려서 올바르게 인증해도 401에러가 뜸
+  const handleEmailAuthSuccess = () => {
+    // eslint-disable-next-line no-alert
+    alert('인증에 성공했습니다! 로그인 해 주세요.');
+    navigate('/');
+  };
+
+  const signUpMutation = useMutation({
     mutationFn: fetchSignUp,
-    onSuccess: () => console.log('성공'),
+    onSuccess: handleSignUpSuccess,
     onError: handleError,
   });
 
-  const handleSingUp = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setErrorMsgData({});
+  const emailAuthMutation = useMutation({
+    mutationFn: emailAuth,
+    onError: handleEmailAuthError,
+    onSuccess: handleEmailAuthSuccess,
+  });
 
-    const target = e.target as typeof e.target & {
-      mail: { value: string };
-      pw: { value: string };
-      pwconfirm: { value: string };
-      nickname: { value: string };
-    };
+  const handleSingUp = async (data: InputData) => {
+    setErrorMsg({ emailError: '', passwordError: '', nicknameError: '' });
+
     const params = {
-      name: 'ddd',
-      nickname: target.nickname.value,
-      email: target.mail.value,
-      password: target.pw.value,
+      email: data.email as string,
+      password: data.pw as string,
+      nickname: data.nickname as string,
     };
-    mutate(params);
-    setIsOpen(true);
+
+    signUpMutation.mutate(params);
+    // setIsOpen(true);
   };
+
+  const handleAuthAgree = () => {
+    if (!authCode) {
+      // eslint-disable-next-line no-alert
+      alert('코드 확인에 실패했습니다. 로그인 후 다시 시도해 주세요.');
+      navigate('/');
+      return;
+    }
+    emailAuthMutation.mutate(authCode);
+  };
+
+  const handleAuthCancle = () => {
+    // eslint-disable-next-line no-alert
+    alert('이후 로그인 후 마이페이서 인증이 가능합니다.');
+    navigate('/');
+  };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm();
+  const onSubmit = handleSingUp;
+
+  const password = watch('pw');
 
   return (
     <SignUpContainer>
@@ -70,35 +125,96 @@ export const SignUp = () => {
         <ConfirmModal
           isOpen={isOpen}
           handleOpen={setIsOpen}
-          title="이메일 인증"
-          description="로그인 후 이메일 인증을 마쳐야 서비스 이용이 가능합니다."
-        />
+          title="회원가입이 완료되었습니다!"
+          description="가입한 이메일로 발송된 코드 인증시 나만의 냉장고가 생성됩니다."
+          onAgree={handleAuthAgree}
+          onCancle={handleAuthCancle}
+        >
+          <AuthInput>
+            <BasicInput
+              type="number"
+              placeholder="인증코드 입력"
+              onChange={(e) => setAuthCode(e?.target.value)}
+            ></BasicInput>
+          </AuthInput>
+        </ConfirmModal>
       )}
       <img src={logo} alt="logo" className="logo-image" />
-      <form onSubmit={(e) => handleSingUp(e)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="inputs">
           <div>
             <label htmlFor="mail">이메일</label>
-            {errorMsgData && <ErrorMessage>{errorMsgData.email}</ErrorMessage>}
-            {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
+            {errorMsg && <ErrorMessage>{errorMsg.emailError}</ErrorMessage>}
+            {errors.email && <ErrorMessage>이메일 입력은 필수 입니다.</ErrorMessage>}
           </div>
-          <BasicInput id="mail" type="email" placeholder="이메일을 입력해 주세요" />
+          <Controller
+            name="email"
+            control={control}
+            defaultValue=""
+            rules={{ required: '이메일을 입력해 주세요.' }}
+            render={({ field }) => (
+              <BasicInput id="mail" type="email" placeholder="이메일을 입력해 주세요" {...field} />
+            )}
+          />
           <div>
             <label htmlFor="pw">비밀번호</label>
-            {errorMsgData && <ErrorMessage>{errorMsgData.password}</ErrorMessage>}
+            {errorMsg && <ErrorMessage>{errorMsg.passwordError}</ErrorMessage>}
+            {errors.pw && <ErrorMessage>비밀번호 입력은 필수 입니다.</ErrorMessage>}
           </div>
-          <BasicInput id="pw" type="password" placeholder="비밀번호를 입력해 주세요" />
-          <label htmlFor="pwconfirm">비밀번호 확인</label>
-          <BasicInput
-            id="pwconfirm"
-            type="password"
-            placeholder="비밀번호를 한번 더 입력해 주세요"
+          <Controller
+            name="pw"
+            control={control}
+            defaultValue=""
+            rules={{ required: '비밀번호를 입력해 주세요.' }}
+            render={({ field }) => (
+              <BasicInput
+                id="pw"
+                type="password"
+                placeholder="비밀번호를 입력해 주세요"
+                {...field}
+              />
+            )}
+          />
+          <div>
+            <label htmlFor="pwconfirm">비밀번호 확인</label>
+            {errors.pwconfirm && <ErrorMessage>두개의 비밀번호가 일치 하지 않습니다.</ErrorMessage>}
+          </div>
+          <Controller
+            name="pwconfirm"
+            control={control}
+            defaultValue=""
+            rules={{
+              required: '비밀번호를 한번 더 입력해 주세요.',
+              validate: (value) => value === password,
+            }}
+            render={({ field }) => (
+              <BasicInput
+                id="pwconfirm"
+                type="password"
+                placeholder="비밀번호를 한번 더 입력해 주세요"
+                {...field}
+              />
+            )}
           />
           <div>
             <label htmlFor="nickname">닉네임</label>
-            {errorMsgData && <ErrorMessage>{errorMsgData.nickname}</ErrorMessage>}
+            {errorMsg && <ErrorMessage>{errorMsg.nicknameError}</ErrorMessage>}
+            {errors.nickname && <ErrorMessage>닉네임 입력은 필수 입니다.</ErrorMessage>}
           </div>
-          <BasicInput id="nickname" type="text" placeholder="사용할 닉네임을 입력하세요" />
+          <Controller
+            name="nickname"
+            control={control}
+            defaultValue=""
+            rules={{ required: '사용할 닉네임을 입력하세요' }}
+            render={({ field }) => (
+              <BasicInput
+                id="nickname"
+                type="text"
+                placeholder="사용할 닉네임을 입력하세요"
+                {...field}
+              />
+            )}
+          />
         </div>
         <BasicButton type="submit" $bgcolor="#FF8527" $fontcolor="#fff" $hoverbgcolor="#ff750c">
           회원 가입
@@ -146,6 +262,18 @@ const SignUpContainer = styled.div`
 
   button {
     margin-top: 24px;
+  }
+`;
+
+const AuthInput = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & > input {
+    max-width: 150px;
+    margin-bottom: 10px;
+    max-height: 25px;
+    text-align: center;
   }
 `;
 

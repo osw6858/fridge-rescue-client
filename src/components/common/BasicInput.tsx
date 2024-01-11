@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import styled from 'styled-components';
 
 interface BasicInputProps {
@@ -8,17 +9,20 @@ interface BasicInputProps {
   value?: string;
 }
 
-export const BasicInput = ({ id, type, placeholder, onChange, value }: BasicInputProps) => {
-  return (
-    <BasicInputWrap
-      id={id}
-      type={type}
-      placeholder={placeholder}
-      onChange={onChange}
-      value={value}
-    ></BasicInputWrap>
-  );
-};
+export const BasicInput = forwardRef<HTMLInputElement, BasicInputProps>(
+  ({ id, type, placeholder, onChange, value }, ref) => {
+    return (
+      <BasicInputWrap
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        onChange={onChange}
+        value={value}
+        ref={ref}
+      ></BasicInputWrap>
+    );
+  }
+);
 
 const BasicInputWrap = styled.input`
   object-fit: contain;

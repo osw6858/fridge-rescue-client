@@ -7,12 +7,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import styled from 'styled-components';
 
 interface ConfirmModalProps {
+  children?: React.ReactNode;
   isOpen: boolean;
   handleOpen: (isOpen: boolean) => void;
   buttonName?: string;
   title: string;
   description?: string;
   onAgree?: () => void;
+  onCancle?: () => void;
 }
 
 export const ConfirmModal = ({
@@ -22,6 +24,8 @@ export const ConfirmModal = ({
   title,
   description,
   onAgree,
+  onCancle,
+  children,
 }: ConfirmModalProps) => {
   const handleAgree = () => {
     handleOpen(false);
@@ -29,6 +33,7 @@ export const ConfirmModal = ({
   };
   const handleCancel = () => {
     handleOpen(false);
+    if (onCancle) onCancle();
   };
 
   return (
@@ -44,6 +49,7 @@ export const ConfirmModal = ({
         <DialogContent>
           <DialogContentText id="alert-dialog-description">{description}</DialogContentText>
         </DialogContent>
+        {children}
         <StyledDialogActions>
           <Button onClick={handleAgree} autoFocus>
             확인
