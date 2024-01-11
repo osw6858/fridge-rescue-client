@@ -103,7 +103,7 @@ export const SignUp = () => {
     emailAuthMutation.mutate(authCode);
   };
 
-  const handleAuthCancle = () => {
+  const handleAuthCancel = () => {
     // eslint-disable-next-line no-alert
     alert('이후 로그인 후 마이페이서 인증이 가능합니다.');
     navigate('/');
@@ -128,7 +128,7 @@ export const SignUp = () => {
           title="회원가입이 완료되었습니다!"
           description="가입한 이메일로 발송된 코드 인증시 나만의 냉장고가 생성됩니다."
           onAgree={handleAuthAgree}
-          onCancle={handleAuthCancle}
+          onCancel={handleAuthCancel}
         >
           <AuthInput>
             <BasicInput

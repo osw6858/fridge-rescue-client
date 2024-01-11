@@ -14,7 +14,7 @@ interface ConfirmModalProps {
   title: string;
   description?: string;
   onAgree?: () => void;
-  onCancle?: () => void;
+  onCancel?: () => void;
 }
 
 export const ConfirmModal = ({
@@ -24,7 +24,7 @@ export const ConfirmModal = ({
   title,
   description,
   onAgree,
-  onCancle,
+  onCancel,
   children,
 }: ConfirmModalProps) => {
   const handleAgree = () => {
@@ -33,7 +33,7 @@ export const ConfirmModal = ({
   };
   const handleCancel = () => {
     handleOpen(false);
-    if (onCancle) onCancle();
+    if (onCancel) onCancel();
   };
 
   return (
