@@ -8,7 +8,12 @@ interface SignUpProps {
   password: string;
 }
 
-export const signUp = async (params: SignUpProps) => {
+export const fetchSignUp = async (params: SignUpProps) => {
   const { data } = await axiosDefault.post(END_POINTS.JOIN, params);
+  return data;
+};
+
+export const emailAuth = async (email: string) => {
+  const { data } = await axiosDefault.post(END_POINTS.CONFIRM, email);
   return data;
 };

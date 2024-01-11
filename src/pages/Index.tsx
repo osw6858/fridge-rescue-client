@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { Suspense } from 'react';
-import { CardList } from '../components/CardList';
+import { CardList } from '../components/common/CardList';
 import { FallBack } from '../components/common/FallBack';
 import { Carousel } from '../components/common/Carousel';
 
