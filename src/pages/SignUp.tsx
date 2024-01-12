@@ -51,33 +51,25 @@ export const SignUp = () => {
     }
   };
 
-  const handleSignUpSuccess = () => {
-    setIsOpen(true);
-  };
-
-  const handleEmailAuthError = () => {
-    // eslint-disable-next-line no-alert
-    alert('인증에 실패했습니다! 로그인 후 다시 시도해 주세요.');
-    navigate('/');
-  };
-
-  // NOTICE: 아직 서버 인증이 안풀려서 올바르게 인증해도 401에러가 뜸
-  const handleEmailAuthSuccess = () => {
-    // eslint-disable-next-line no-alert
-    alert('인증에 성공했습니다! 로그인 해 주세요.');
-    navigate('/');
-  };
-
   const signUpMutation = useMutation({
     mutationFn: fetchSignUp,
-    onSuccess: handleSignUpSuccess,
+    onSuccess: () => setIsOpen(true),
     onError: handleError,
   });
 
   const emailAuthMutation = useMutation({
     mutationFn: emailAuth,
-    onError: handleEmailAuthError,
-    onSuccess: handleEmailAuthSuccess,
+    onError: () => {
+      // eslint-disable-next-line no-alert
+      alert('인증에 실패했습니다! 로그인 후 다시 시도해 주세요.');
+      navigate('/');
+    },
+    onSuccess: () => {
+      // NOTICE: 아직 서버 인증이 안풀려서 올바르게 인증해도 401에러가 뜸
+      // eslint-disable-next-line no-alert
+      alert('인증에 성공했습니다! 로그인 해 주세요.');
+      navigate('/');
+    },
   });
 
   const handleSingUp = async (data: InputData) => {
