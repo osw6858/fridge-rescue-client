@@ -30,7 +30,8 @@ export const handleTokenError = async (error: AxiosError) => {
       const response = await axiosAuth.post<Token>(END_POINTS.TOKEN, refreshToken);
 
       if (response.status === 200) {
-        const { accessToken } = response.data;
+        const header = response.headers;
+        const accessToken = header['access-token'];
 
         originalRequest.headers.Authorization = accessToken;
 
