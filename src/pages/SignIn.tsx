@@ -9,7 +9,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { fetchSignIn } from '../api/auth';
 import type { AxiosError } from 'axios';
-import { ACCESS_TOKEN_KEY } from '../constants/api';
+import { ACCESS_TOKEN_KEY, USER_STATUS_KEY } from '../constants/api';
 import { useState } from 'react';
 
 interface InputData {
@@ -49,6 +49,7 @@ export const SignIn = () => {
     const { token, refreshToken } = data;
 
     setTokenAndRefreshToken(token, refreshToken);
+    sessionStorage.setItem(USER_STATUS_KEY, data.data.roleType);
     navigate('/');
   };
 

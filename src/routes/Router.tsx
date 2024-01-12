@@ -21,12 +21,14 @@ export const Router = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
       </Route>
-      <Route element={<PrivateRoute authentication />}>
+      <Route element={<PrivateRoute authentication allowGuest />}>
         <Route path="/add" element={<AddRecipe />} />
-        <Route path="/refrigerator" element={<MyRefrigerator />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/scrap" element={<Scrap />} />
         <Route path="/review-post" element={<ReviewPost />} />
+      </Route>
+      <Route element={<PrivateRoute authentication />}>
+        <Route path="/refrigerator" element={<MyRefrigerator />} />
       </Route>
     </Routes>
   );

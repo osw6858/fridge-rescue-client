@@ -8,7 +8,7 @@ import { BasicInput } from '../common/BasicInput';
 import { BasicButton } from '../common/BasicButton';
 import { currentCategoryAtom } from '../../store/menu';
 import { TbBellFilled } from 'react-icons/tb';
-import { ACCESS_TOKEN_KEY } from '../../constants/api';
+import { ACCESS_TOKEN_KEY, USER_STATUS_KEY } from '../../constants/api';
 
 export const Header = () => {
   const isLogin = !!sessionStorage.getItem(ACCESS_TOKEN_KEY);
@@ -34,6 +34,7 @@ export const Header = () => {
   const handleLogOut = () => {
     navigation('/');
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(USER_STATUS_KEY);
     document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     // eslint-disable-next-line no-alert
     alert('로그아웃 되었습니다.');
