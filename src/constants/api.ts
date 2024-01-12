@@ -6,6 +6,10 @@ export const ROOT_URL = 'http://localhost:5173/';
 
 export const ACCESS_TOKEN_KEY = 'refrigeKey' as const; // TODO: 임시 로컬스토리지 key 임으로 추후 합의 후 변경 필요
 
+export const USER_STATUS_KEY = 'userState' as const;
+
+export const USER_NICKNAME_KEY = 'nickName';
+
 export const END_POINTS = {
   MEMBERS: 'members',
   RECIPES: 'recipes',

@@ -1,7 +1,7 @@
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ACCESS_TOKEN_KEY, END_POINTS, ROOT_URL } from '../constants/api';
 import { axiosAuth } from './axiosInstance';
-import type { Token } from '../types/tokenType';
+import { getRefreshToken } from '../utils/getRefreshToken';
 
 export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
   if (!config.headers || config.headers.Authorization) return config;
@@ -25,14 +25,16 @@ export const handleTokenError = async (error: AxiosError) => {
 
   if (error.response && error.response.status === 401) {
     try {
-      const response = await axiosAuth.post<Token>(END_POINTS.TOKEN);
+      const refreshToken = getRefreshToken('refreshToken');
+      const response = await axiosAuth.post(END_POINTS.TOKEN, refreshToken);
 
       if (response.status === 200) {
-        const { accessToken } = response.data;
+        const header = response.headers;
+        const accessToken = header['access-token'];
 
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        originalRequest.headers.Authorization = accessToken;
 
-        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken.replace('Bearer', ''));
 
         return axiosAuth(originalRequest);
       }
