@@ -32,9 +32,9 @@ export const handleTokenError = async (error: AxiosError) => {
       if (response.status === 200) {
         const { accessToken } = response.data;
 
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        originalRequest.headers.Authorization = accessToken;
 
-        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken.replace('Bearer', ''));
 
         return axiosAuth(originalRequest);
       }

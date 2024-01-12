@@ -42,7 +42,7 @@ export const SignIn = () => {
     const refreshToken = rowRefresh.replace('Bearer', '');
 
     sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
-    document.cookie = `refreshToken=${refreshToken}; path=/; max-age=31536000; samesite=strict`;
+    document.cookie = `refreshToken=${refreshToken}; path=/; max-age=2592000; samesite=strict`;
   };
 
   const signInSuccess = (data: SignInProps) => {
