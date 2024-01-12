@@ -16,6 +16,7 @@ export const Router = () => {
     <Routes>
       <Route index element={<Index />} />
       <Route path="/recipe/:recipeId" element={<RecipeView />} />
+      <Route path="/recipe" element={<Recipe />} />
       <Route element={<PrivateRoute authentication={false} />}>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
@@ -25,7 +26,6 @@ export const Router = () => {
         <Route path="/refrigerator" element={<MyRefrigerator />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/scrap" element={<Scrap />} />
-        <Route path="/recipe" element={<Recipe />} />
         <Route path="/review-post" element={<ReviewPost />} />
       </Route>
     </Routes>
