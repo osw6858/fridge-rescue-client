@@ -3,22 +3,123 @@ import logo from '../assets/logo.png';
 import { BasicInput } from '../components/common/BasicInput';
 import { BasicButton } from '../components/common/BasicButton';
 import { FcGoogle } from 'react-icons/fc';
-import { HiMiniChatBubbleOvalLeft } from 'react-icons/hi2';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { theme } from '../styles/theme';
+import { Controller, useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { fetchSignIn } from '../api/auth';
+import type { AxiosError } from 'axios';
+import { ACCESS_TOKEN_KEY } from '../constants/api';
+import { useState } from 'react';
+
+interface InputData {
+  email?: string;
+  pw?: string;
+}
+
+interface SignInProps {
+  data: {
+    id: number;
+    nickname: string;
+    roleType: string;
+  };
+  token: string;
+  refreshToken: string;
+}
+
+interface ErrorData {
+  code: number;
+  error: string;
+}
 
 export const SignIn = () => {
+  const navigate = useNavigate();
+
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const setTokenAndRefreshToken = (rowToken: string, rowRefresh: string) => {
+    const token = rowToken.replace('Bearer', '');
+    const refreshToken = rowRefresh.replace('Bearer', '');
+
+    sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
+    document.cookie = `refreshToken=${refreshToken}; path=/; max-age=31536000; samesite=strict`;
+  };
+
+  const signInSuccess = (data: SignInProps) => {
+    const { token, refreshToken } = data;
+
+    setTokenAndRefreshToken(token, refreshToken);
+    navigate('/');
+  };
+
+  const signInError = (errors: AxiosError) => {
+    const res = errors.response?.data as ErrorData;
+    const { error } = res;
+
+    setErrorMsg(error);
+  };
+
+  const signUpMutation = useMutation({
+    mutationFn: fetchSignIn,
+    onSuccess: signInSuccess,
+    onError: signInError,
+  });
+
+  const handleSignIn = (signInData: InputData) => {
+    const params = {
+      email: signInData.email as string,
+      password: signInData.pw as string,
+    };
+
+    signUpMutation.mutate(params);
+  };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = handleSignIn;
+
   return (
     <SignInContainer>
       <img src={logo} alt="logo" className="logo-image" />
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="inputs">
-          <label htmlFor="mail">이메일</label>
-          <BasicInput id="mail" type="email" placeholder="이메일을 입력해 주세요" />
-          <label htmlFor="pw">비밀번호</label>
-          <BasicInput id="pw" type="password" placeholder="비밀번호를 입력해 주세요" />
+          <div>
+            <label htmlFor="mail">이메일</label>
+            {errors.email && <ErrorMessage>이메일 입력은 필수 입니다.</ErrorMessage>}
+          </div>
+          <Controller
+            name="email"
+            control={control}
+            defaultValue=""
+            rules={{ required: '이메일을 입력해 주세요.' }}
+            render={({ field }) => (
+              <BasicInput id="mail" type="email" placeholder="이메일을 입력해 주세요." {...field} />
+            )}
+          />
+          <div>
+            <label htmlFor="pw">비밀번호</label>
+            {errors.pw && <ErrorMessage>비밀번호 입력은 필수 입니다.</ErrorMessage>}
+          </div>
+          <Controller
+            name="pw"
+            control={control}
+            defaultValue=""
+            rules={{ required: '비밀번호를 입력해 주세요.' }}
+            render={({ field }) => (
+              <BasicInput
+                id="pw"
+                type="password"
+                placeholder="비밀번호를 입력해 주세요"
+                {...field}
+              />
+            )}
+          />
         </div>
         <div className="buttons">
+          {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
           <BasicButton
             type="submit"
             $bgcolor={theme.colors.orange}
@@ -27,9 +128,7 @@ export const SignIn = () => {
           >
             이메일 로그인
           </BasicButton>
-
           <div className="line-text">간편 로그인</div>
-
           <BasicButton
             type="button"
             $bgcolor={theme.colors.white}
@@ -39,17 +138,6 @@ export const SignIn = () => {
             <div className="icon-button">
               <FcGoogle />
               구글 계정으로 로그인
-            </div>
-          </BasicButton>
-          <BasicButton
-            type="button"
-            $bgcolor="#FEE502"
-            $hoverbgcolor="#ffe100"
-            $bordercolor="#ffe100"
-          >
-            <div className="icon-button">
-              <HiMiniChatBubbleOvalLeft />
-              카카오 로그인
             </div>
           </BasicButton>
         </div>
@@ -129,4 +217,11 @@ const SignInContainer = styled.div`
     margin: 16px 0;
     cursor: pointer;
   }
+`;
+
+const ErrorMessage = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  color: red;
+  margin-left: 5px;
 `;

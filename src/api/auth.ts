@@ -7,9 +7,23 @@ interface SignUpProps {
   password: string;
 }
 
+interface SignInProps {
+  email: string;
+  password: string;
+}
+
 export const fetchSignUp = async (params: SignUpProps) => {
   const { data } = await axiosDefault.post(END_POINTS.JOIN, params);
   return data;
+};
+
+export const fetchSignIn = async (params: SignInProps) => {
+  const { data, headers } = await axiosDefault.post(END_POINTS.LOGIN, params);
+
+  const token = headers['access-token'];
+  const refreshToken = headers['refresh-token'];
+
+  return { data, token, refreshToken };
 };
 
 export const emailAuth = async (code: string) => {
