@@ -1,7 +1,6 @@
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ACCESS_TOKEN_KEY, END_POINTS, ROOT_URL } from '../constants/api';
 import { axiosAuth } from './axiosInstance';
-import type { Token } from '../types/tokenType';
 import { getRefreshToken } from '../utils/getRefreshToken';
 
 export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
@@ -27,7 +26,7 @@ export const handleTokenError = async (error: AxiosError) => {
   if (error.response && error.response.status === 401) {
     try {
       const refreshToken = getRefreshToken('refreshToken');
-      const response = await axiosAuth.post<Token>(END_POINTS.TOKEN, refreshToken);
+      const response = await axiosAuth.post(END_POINTS.TOKEN, refreshToken);
 
       if (response.status === 200) {
         const header = response.headers;
