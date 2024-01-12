@@ -1,34 +1,51 @@
 import styled from 'styled-components';
 import { IoMdArrowRoundDown } from 'react-icons/io';
+import { useState } from 'react';
+import { ImageModal } from '../../common/ImageModal';
 
 export const RecipeReview = () => {
+  const [isImageModalOpened, setImageModalOpen] = useState(false);
+
+  const handleImageModal = (isOpen: boolean) => {
+    setImageModalOpen(isOpen);
+  };
+
   // TODO : ID 받아서 해당 게시글 더보기 toggle 구현
   return (
-    <RecipeReviewContainer>
-      <div className="review-image">
-        <img
-          src="https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/bskh/image/cXN5XKBUKfmpGaxWVTIMnLlSH6E"
-          alt="리뷰 썸네일"
+    <>
+      <RecipeReviewContainer>
+        <div className="review-image" role="button" onClick={() => handleImageModal(true)}>
+          <img
+            src="https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/bskh/image/cXN5XKBUKfmpGaxWVTIMnLlSH6E"
+            alt="리뷰 썸네일"
+          />
+        </div>
+        <div className="description">
+          <div className="title">저두요!</div>
+          <div className="review-info">
+            <span>2023-01-02</span>
+            <span>띠띠</span>
+          </div>
+          <div className="content">
+            저도 한번 만들어 봤는데요! 저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번
+            만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어
+            봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어
+            봤는데요!저도 한번 만들어 봤는데요!
+          </div>
+          <div className="arrow">
+            <span>더보기</span>
+            <IoMdArrowRoundDown />
+          </div>
+        </div>
+      </RecipeReviewContainer>
+      {isImageModalOpened && (
+        <ImageModal
+          imageUrl="https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/bskh/image/cXN5XKBUKfmpGaxWVTIMnLlSH6E"
+          alt="음식"
+          handleImageModal={handleImageModal}
         />
-      </div>
-      <div className="description">
-        <div className="title">저두요!</div>
-        <div className="review-info">
-          <span>2023-01-02</span>
-          <span>띠띠</span>
-        </div>
-        <div className="content">
-          저도 한번 만들어 봤는데요! 저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번
-          만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어
-          봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어
-          봤는데요!저도 한번 만들어 봤는데요!
-        </div>
-        <div className="arrow">
-          <span>더보기</span>
-          <IoMdArrowRoundDown />
-        </div>
-      </div>
-    </RecipeReviewContainer>
+      )}
+    </>
   );
 };
 
