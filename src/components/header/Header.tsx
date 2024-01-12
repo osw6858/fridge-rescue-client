@@ -1,30 +1,22 @@
 import { useNavigate } from 'react-router';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { SideBar } from '../common/SideBar';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BasicInput } from '../common/BasicInput';
 import { BasicButton } from '../common/BasicButton';
 import { currentCategoryAtom } from '../../store/menu';
 import { TbBellFilled } from 'react-icons/tb';
 import { ACCESS_TOKEN_KEY, USER_STATUS_KEY } from '../../constants/api';
+import { AuthStateAtom } from '../../store/auth';
 
 export const Header = () => {
-  const isLogin = !!sessionStorage.getItem(ACCESS_TOKEN_KEY);
   const [sideBar, setSideBar] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(isLogin);
-
-  useEffect(() => {
-    if (isLogin) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, [isLogin]);
 
   const navigation = useNavigate();
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
+  const [authState, setAuthState] = useRecoilState(AuthStateAtom);
 
   const handleLogin = () => {
     navigation('/signin');
@@ -33,9 +25,12 @@ export const Header = () => {
 
   const handleLogOut = () => {
     navigation('/');
+
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     sessionStorage.removeItem(USER_STATUS_KEY);
+
     document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    setAuthState(false);
     // eslint-disable-next-line no-alert
     alert('로그아웃 되었습니다.');
   };
@@ -44,7 +39,7 @@ export const Header = () => {
     <Container>
       <Wrapper>
         <BasicInput id="text" type="email" placeholder="레시피를 검색해 주세요." />
-        {isLoggedIn ? (
+        {authState ? (
           <>
             <BasicButton
               onClick={handleLogOut}

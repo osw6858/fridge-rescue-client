@@ -11,6 +11,8 @@ import { fetchSignIn } from '../api/auth';
 import type { AxiosError } from 'axios';
 import { ACCESS_TOKEN_KEY, USER_STATUS_KEY } from '../constants/api';
 import { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { AuthStateAtom } from '../store/auth';
 
 interface InputData {
   email?: string;
@@ -36,6 +38,7 @@ export const SignIn = () => {
   const navigate = useNavigate();
 
   const [errorMsg, setErrorMsg] = useState('');
+  const setAuthState = useSetRecoilState(AuthStateAtom);
 
   const setTokenAndRefreshToken = (rowToken: string, rowRefresh: string) => {
     const token = rowToken.replace('Bearer', '');
@@ -45,11 +48,13 @@ export const SignIn = () => {
     document.cookie = `refreshToken=${refreshToken}; path=/; max-age=2592000; samesite=strict`;
   };
 
-  const signInSuccess = (data: SignInProps) => {
-    const { token, refreshToken } = data;
+  const signInSuccess = (res: SignInProps) => {
+    const { token, refreshToken, data } = res;
 
     setTokenAndRefreshToken(token, refreshToken);
-    sessionStorage.setItem(USER_STATUS_KEY, data.data.roleType);
+    sessionStorage.setItem(USER_STATUS_KEY, data.roleType);
+    setAuthState(true);
+
     navigate('/');
   };
 
