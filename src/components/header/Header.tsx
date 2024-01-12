@@ -3,14 +3,25 @@ import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { SideBar } from '../common/SideBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BasicInput } from '../common/BasicInput';
 import { BasicButton } from '../common/BasicButton';
 import { currentCategoryAtom } from '../../store/menu';
 import { TbBellFilled } from 'react-icons/tb';
+import { ACCESS_TOKEN_KEY } from '../../constants/api';
 
 export const Header = () => {
+  const isLogin = !!sessionStorage.getItem(ACCESS_TOKEN_KEY);
   const [sideBar, setSideBar] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(isLogin);
+
+  useEffect(() => {
+    if (isLogin) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [isLogin]);
 
   const navigation = useNavigate();
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
@@ -20,11 +31,31 @@ export const Header = () => {
     setCurrentCategory('');
   };
 
+  const handleLogOut = () => {
+    navigation('/');
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    // eslint-disable-next-line no-alert
+    alert('로그아웃 되었습니다.');
+  };
+
   return (
     <Container>
       <Wrapper>
         <BasicInput id="text" type="email" placeholder="레시피를 검색해 주세요." />
-        <div>
+        {isLoggedIn ? (
+          <>
+            <BasicButton
+              onClick={handleLogOut}
+              type="button"
+              $bgcolor="#FF8527"
+              $fontcolor="#fff"
+              $hoverbgcolor="#ff750c"
+            >
+              로그아웃
+            </BasicButton>
+            <TbBellFilled onClick={() => setSideBar(true)} />
+          </>
+        ) : (
           <BasicButton
             onClick={handleLogin}
             type="button"
@@ -34,8 +65,7 @@ export const Header = () => {
           >
             로그인
           </BasicButton>
-        </div>
-        <TbBellFilled onClick={() => setSideBar(true)} />
+        )}
       </Wrapper>
       {sideBar && <SideBar isOpen={sideBar} handleSidebar={() => setSideBar(false)} />}
     </Container>

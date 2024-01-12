@@ -15,10 +15,10 @@ export const Router = () => {
   return (
     <Routes>
       <Route index element={<Index />} />
+      <Route path="/recipe/:recipeId" element={<RecipeView />} />
       <Route element={<PrivateRoute authentication={false} />}>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/recipe/:recipeId" element={<RecipeView />} />
       </Route>
       <Route element={<PrivateRoute authentication />}>
         <Route path="/add" element={<AddRecipe />} />

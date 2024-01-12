@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import { Navigate, Outlet } from 'react-router-dom';
 import { ACCESS_TOKEN_KEY } from '../constants/api';
 
@@ -12,7 +13,10 @@ export const PrivateRoute = ({ authentication }: PrivateRouteProps) => {
 
   if (authentication) {
     return isAuthenticated === null || isAuthenticated === 'false' ? (
-      <Navigate to="/signin" />
+      <>
+        {alert('로그인이 필요합니다.')}
+        <Navigate to="/signin" />
+      </>
     ) : (
       <Outlet />
     );
