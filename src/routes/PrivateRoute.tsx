@@ -19,7 +19,7 @@ export const PrivateRoute = ({ authentication, allowGuest }: PrivateRouteProps) 
       return <Navigate to="/signin" />;
     }
     if (userStatus === 'GUEST' && !allowGuest) {
-      alert('게스트 사용자는 냉장고를 만들 수 없습니다. 이메일 인증을 해주세요.');
+      alert('이메일 인증을 먼저 진행 해주세요.');
       return <Navigate to="/mypage" />;
     }
     return <Outlet />;
