@@ -34,6 +34,7 @@ export const Header = () => {
   const handleLogOut = () => {
     navigation('/');
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     // eslint-disable-next-line no-alert
     alert('로그아웃 되었습니다.');
   };
