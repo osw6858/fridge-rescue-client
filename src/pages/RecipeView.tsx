@@ -5,7 +5,6 @@ import { RiBookmarkLine } from 'react-icons/ri';
 import { BsExclamationSquare } from 'react-icons/bs';
 import { PiSiren, PiCookingPotDuotone, PiEyeDuotone } from 'react-icons/pi';
 import { GiCook } from 'react-icons/gi';
-import { RecipeReviewList } from '../components/pages/recipe/RecipeReviewList';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -15,12 +14,19 @@ import { QUERY_KEY } from '../constants/queryKey';
 import { formatDate } from '../utils/formatDate';
 import { Chip } from '@mui/material';
 import type { Ingredient, RecipeSteps } from '../types/recipeType';
+import { RecipeReviewList } from '../components/pages/Recipe/RecipeReviewList';
+import { ImageModal } from '../components/common/ImageModal';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
   const { pathname } = useLocation();
   const recipeId = pathname.split('/').pop() || '';
   const [cookingCompletion, setCookingCompletion] = useState(false);
+  const [isImageModalOpened, setImageModalOpen] = useState(false);
+
+  const handleImageModal = (isOpen: boolean) => {
+    setImageModalOpen(isOpen);
+  };
 
   const onAgree = () => {
     navigation('/review-post');
@@ -38,98 +44,109 @@ export const RecipeView = () => {
 
   // TODO : 더미 데이터 이미지 없음 -> 실 데이터 가져올 때 이미지만 연동하면 됨
   return (
-    <RecipeViewContainer>
-      <div className="recipe-detail">
-        <div className="header">
-          <BasicTitle title={data?.title} />
-        </div>
-        <div className="post-info">
-          <div>
-            <span className="name">{data?.author.nickname}</span>
-            <span className="date">{formatDate(data?.createdAt)}</span>
-            <span className="count">
-              <span>
-                <PiEyeDuotone /> {data?.viewCount}
-              </span>
-              <span>
-                <PiCookingPotDuotone />
-                {data?.reviewCount}
-              </span>
-            </span>
+    <>
+      <RecipeViewContainer>
+        <div className="recipe-detail">
+          <div className="header">
+            <BasicTitle title={data?.title} />
           </div>
-          <div>
-            <div className="icons">
-              <span>
-                <RiBookmarkLine />
+          <div className="post-info">
+            <div>
+              <span className="name">{data?.author.nickname}</span>
+              <span className="date">{formatDate(data?.createdAt)}</span>
+              <span className="count">
+                <span>
+                  <PiEyeDuotone /> {data?.viewCount}
+                </span>
+                <span>
+                  <PiCookingPotDuotone />
+                  {data?.reviewCount}
+                </span>
               </span>
-              <span>{data?.bookmarkCount}</span>
             </div>
-            <div className="icons">
-              <span>
-                <PiSiren />
-              </span>
-              <span>{data?.reportCount}</span>
-            </div>
-          </div>
-        </div>
-        <div className="recipe-step">
-          <div className="thumbnail">
-            <img src="https://img.siksinhot.com/place/1515555441230703.jpg" alt="썸네일" />
-          </div>
-          <p className="summary">{data?.summary}</p>
-
-          <div className="ingredient">
-            <h3>
-              <GiCook />
-              재료
-            </h3>
-            <span className="chips">
-              {data?.recipeIngredients.map((ingredient: Ingredient) => {
-                return (
-                  <Chip label={`${ingredient.name} ${ingredient.amount}`} key={ingredient.name} />
-                );
-              })}
-            </span>
-          </div>
-
-          {data?.recipeSteps.map((step: RecipeSteps) => {
-            return (
-              <div className="step" key={step.stepNo}>
-                <img
-                  src="https://www.goodtraemall.co.kr/shopimages/cepa0001/006001000017.jpg?1670307118"
-                  alt="단계별 레시피"
-                />
-                <div>{step.stepContents}</div>
-                {step.stepTip && (
-                  <div className="tip">
-                    <BsExclamationSquare />
-                    tip : {step.stepTip}
-                  </div>
-                )}
+            <div>
+              <div className="icons">
+                <span>
+                  <RiBookmarkLine />
+                </span>
+                <span>{data?.bookmarkCount}</span>
               </div>
-            );
-          })}
+              <div className="icons">
+                <span>
+                  <PiSiren />
+                </span>
+                <span>{data?.reportCount}</span>
+              </div>
+            </div>
+          </div>
+          <div className="recipe-step">
+            <div className="thumbnail">
+              <img src="https://img.siksinhot.com/place/1515555441230703.jpg" alt="썸네일" />
+            </div>
+            <p className="summary">{data?.summary}</p>
+
+            <div className="ingredient">
+              <h3>
+                <GiCook />
+                재료
+              </h3>
+              <span className="chips">
+                {data?.recipeIngredients.map((ingredient: Ingredient) => {
+                  return (
+                    <Chip label={`${ingredient.name} ${ingredient.amount}`} key={ingredient.name} />
+                  );
+                })}
+              </span>
+            </div>
+
+            {data?.recipeSteps.map((step: RecipeSteps) => {
+              return (
+                <div className="step" key={step.stepNo}>
+                  <div role="button" onClick={() => handleImageModal(true)}>
+                    <img
+                      src="https://www.goodtraemall.co.kr/shopimages/cepa0001/006001000017.jpg?1670307118"
+                      alt="단계별 레시피"
+                    />
+                  </div>
+                  <div>{step.stepContents}</div>
+                  {step.stepTip && (
+                    <div className="tip">
+                      <BsExclamationSquare />
+                      tip : {step.stepTip}
+                    </div>
+                  )}
+                  {isImageModalOpened && (
+                    <ImageModal
+                      imageUrl={step.stepImageUrl}
+                      alt="음식 재료"
+                      handleImageModal={handleImageModal}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <BasicButton
+            $bgcolor="#ff8527"
+            type="text"
+            $fontcolor="#fff"
+            onClick={() => handleCookingCompletion(true)}
+          >
+            요리 완료
+          </BasicButton>
         </div>
-        <BasicButton
-          $bgcolor="#ff8527"
-          type="text"
-          $fontcolor="#fff"
-          onClick={() => handleCookingCompletion(true)}
-        >
-          요리 완료
-        </BasicButton>
-      </div>
-      <RecipeReviewList />
-      {cookingCompletion && (
-        <ConfirmModal
-          title="레시피 후기를 남길까요?"
-          description="레시피 후기 등록 페이지로 이동합니다"
-          isOpen={cookingCompletion}
-          handleOpen={handleCookingCompletion}
-          onAgree={onAgree}
-        />
-      )}
-    </RecipeViewContainer>
+        <RecipeReviewList />
+        {cookingCompletion && (
+          <ConfirmModal
+            title="레시피 후기를 남길까요?"
+            description="레시피 후기 등록 페이지로 이동합니다"
+            isOpen={cookingCompletion}
+            handleOpen={handleCookingCompletion}
+            onAgree={onAgree}
+          />
+        )}
+      </RecipeViewContainer>
+    </>
   );
 };
 
@@ -248,10 +265,10 @@ const RecipeViewContainer = styled.div`
         align-items: center;
         gap: 6px;
         color: ${(props) => props.theme.colors.darkGray};
-      }
 
-      svg {
-        color: ${(props) => props.theme.colors.orange};
+        & > svg {
+          color: ${(props) => props.theme.colors.orange};
+        }
       }
     }
   }
