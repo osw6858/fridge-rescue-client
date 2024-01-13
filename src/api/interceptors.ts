@@ -1,7 +1,14 @@
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { ACCESS_TOKEN_KEY, END_POINTS, ROOT_URL } from '../constants/api';
+import {
+  ACCESS_TOKEN_KEY,
+  END_POINTS,
+  ROOT_URL,
+  USER_NICKNAME_KEY,
+  USER_STATUS_KEY,
+} from '../constants/api';
 import { axiosAuth } from './axiosInstance';
 import { getRefreshToken } from '../utils/getRefreshToken';
+import axios from 'axios';
 
 let isRefreshing = false;
 
@@ -50,6 +57,16 @@ export const handleTokenError = async (error: AxiosError) => {
         return axiosAuth(originalRequest);
       }
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+        sessionStorage.removeItem(USER_STATUS_KEY);
+        sessionStorage.removeItem(USER_NICKNAME_KEY);
+
+        document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        // eslint-disable-next-line no-alert
+        alert('토큰이 만료되었습니다. 다시 로그인해 주세요.');
+        window.location.href = `${ROOT_URL}signin`;
+      }
       throw new Error(`${error}`);
     }
   }
