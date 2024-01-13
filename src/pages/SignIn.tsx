@@ -41,17 +41,11 @@ export const SignIn = () => {
   const setAuthState = useSetRecoilState(AuthStateAtom);
   const setUserNickName = useSetRecoilState(NickNameAtom);
 
-  const setTokenAndRefreshToken = (rowToken: string, rowRefresh: string) => {
-    const token = rowToken.replace('Bearer', '');
-    const refreshToken = rowRefresh.replace('Bearer', '');
+  const signInSuccess = (res: SignInProps) => {
+    const { token, refreshToken, data } = res;
 
     sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
     document.cookie = `refreshToken=${refreshToken}; path=/; max-age=2592000; samesite=strict`;
-  };
-
-  const signInSuccess = (res: SignInProps) => {
-    const { token, refreshToken, data } = res;
-    setTokenAndRefreshToken(token, refreshToken);
 
     sessionStorage.setItem(USER_STATUS_KEY, data.roleType);
     sessionStorage.setItem(USER_NICKNAME_KEY, data.nickname);

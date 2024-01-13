@@ -44,6 +44,13 @@ export const Header = () => {
     <Container>
       <Wrapper>
         <BasicInput id="text" type="email" placeholder="레시피를 검색해 주세요." />
+        {userNickName && (
+          <Nickname>
+            <StyledLink to="/mypage">
+              <span>{`${userNickName}님`}</span>
+            </StyledLink>
+          </Nickname>
+        )}
         {authState ? (
           <>
             <BasicButton
@@ -68,13 +75,6 @@ export const Header = () => {
             로그인
           </BasicButton>
         )}
-        {userNickName && (
-          <Nickname>
-            <StyledLink to="/mypage">
-              <span>{`${userNickName}님 환영합니다.`}</span>
-            </StyledLink>
-          </Nickname>
-        )}
       </Wrapper>
       {sideBar && <SideBar isOpen={sideBar} handleSidebar={() => setSideBar(false)} />}
     </Container>
@@ -93,9 +93,8 @@ const Container = styled.header`
 `;
 
 const Wrapper = styled.div`
-  position: relative;
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto auto auto;
   align-items: center;
   gap: 12px;
   width: 768px;
@@ -130,7 +129,6 @@ export const StyledLink = styled(Link)`
 `;
 
 const Nickname = styled.p`
-  position: absolute;
   font-size: 14px;
 
   bottom: -27px;
