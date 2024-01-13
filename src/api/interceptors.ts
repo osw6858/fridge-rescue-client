@@ -3,9 +3,9 @@ import { ACCESS_TOKEN_KEY, END_POINTS, ROOT_URL } from '../constants/api';
 import { axiosAuth } from './axiosInstance';
 import { getRefreshToken } from '../utils/getRefreshToken';
 
-export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
-  if (!config.headers || config.headers.Authorization) return config;
+let isRefreshing = false;
 
+export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
   const accessToken = sessionStorage.getItem(ACCESS_TOKEN_KEY);
   if (!accessToken) {
     window.location.href = ROOT_URL;
@@ -13,7 +13,7 @@ export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
   }
 
   // eslint-disable-next-line no-param-reassign
-  config.headers.Authorization = `Bearer ${accessToken}`;
+  config.headers.Authorization = accessToken;
 
   return config;
 };
@@ -23,10 +23,20 @@ export const handleTokenError = async (error: AxiosError) => {
 
   if (!error.response || !originalRequest) throw new Error('에러가 발생했습니다.');
 
-  if (error.response && error.response.status === 401) {
+  if (error.response && error.response.status === 401 && !isRefreshing) {
+    isRefreshing = true;
+
     try {
       const refreshToken = getRefreshToken('refreshToken');
-      const response = await axiosAuth.post(END_POINTS.TOKEN, refreshToken);
+      const response = await axiosAuth.post(
+        END_POINTS.REISSUE,
+        {},
+        {
+          headers: {
+            'Refresh-Token': refreshToken,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const header = response.headers;
@@ -34,8 +44,9 @@ export const handleTokenError = async (error: AxiosError) => {
 
         originalRequest.headers.Authorization = accessToken;
 
-        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken.replace('Bearer', ''));
+        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
 
+        isRefreshing = false;
         return axiosAuth(originalRequest);
       }
     } catch (error) {

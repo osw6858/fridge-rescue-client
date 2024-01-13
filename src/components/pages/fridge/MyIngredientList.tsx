@@ -12,7 +12,11 @@ interface UpdatedItem {
 }
 
 export const MyIngredientList = () => {
-  const { data } = useQuery({ queryKey: [QUERY_KEY.ADD_INGREDIENT], queryFn: getIngredient });
+  const { data } = useQuery({
+    queryKey: [QUERY_KEY.ADD_INGREDIENT],
+    queryFn: getIngredient,
+  });
+
   const [edit, setEdit] = useState<boolean>(false);
   const [deletedItems, setDeletedItems] = useState<number[]>([]);
   const [updatedItems, setUpdatedItems] = useState<UpdatedItem>({});

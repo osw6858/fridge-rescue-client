@@ -9,7 +9,6 @@ export const axiosAuth = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
 });
 
 // 인증이 필요하지 않은 페이지에서 데이터를 패칭할때 사용할 인스턴스

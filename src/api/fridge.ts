@@ -1,14 +1,10 @@
 import { END_POINTS } from '../constants/api';
 import type { Ingredient, Suggest } from '../types/ingredientType';
-import { axiosDefault } from './axiosInstance';
+import { axiosAuth, axiosDefault } from './axiosInstance';
 
 export const getIngredient = async () => {
-  try {
-    const response = await axiosDefault.get<Ingredient[]>(END_POINTS.INGREDIENT);
-    return response.data;
-  } catch (error) {
-    throw new Error(`${error}`);
-  }
+  const response = await axiosAuth.get<Ingredient[]>(END_POINTS.FRIDGE);
+  return response.data;
 };
 
 export const getIngredientSuggest = async () => {
