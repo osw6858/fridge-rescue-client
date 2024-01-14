@@ -2,9 +2,11 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../../common/BasicButton';
 import { theme } from '../../../styles/theme';
 import { type ChangeEvent } from 'react';
+import { FaPlus } from 'react-icons/fa6';
 
 interface stepProps {
   image: File | null;
+  content: string;
   index: number;
   deleteStep: (index: number) => void;
   handleImageStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
@@ -14,6 +16,7 @@ interface stepProps {
 
 export const RecipeStep = ({
   image,
+  content,
   index,
   deleteStep,
   handleImageStep,
@@ -23,49 +26,51 @@ export const RecipeStep = ({
   return (
     <>
       <DeleteButton>
-        <BasicButton
-          type="button"
-          $bgcolor={theme.colors.orange}
-          $fontcolor={theme.colors.white}
-          onClick={() => deleteStep(index)}
-        >
-          단계 삭제
-        </BasicButton>
+        {index >= 1 && (
+          <BasicButton
+            type="button"
+            $bgcolor={theme.colors.orange}
+            $fontcolor={theme.colors.white}
+            onClick={() => deleteStep(index)}
+          >
+            단계 삭제
+          </BasicButton>
+        )}
       </DeleteButton>
       <RecipeContainer>
         <div>
           {image ? (
-            <>
-              <UploadImage src={URL.createObjectURL(image)} alt="업로드된 이미지" />
-              <ButtonWrapper>
-                <BasicButton
-                  type="button"
-                  $bgcolor={theme.colors.orange}
-                  $fontcolor={theme.colors.white}
-                  onClick={() => deleteImageStep(index)}
-                >
-                  사진 삭제
-                </BasicButton>
-              </ButtonWrapper>
-            </>
+            <ImageWrapper>
+              <UploadImage
+                className="uploadImg"
+                src={URL.createObjectURL(image)}
+                alt="업로드된 이미지"
+              />
+              <BasicButton
+                type="button"
+                $bgcolor={theme.colors.orange}
+                $fontcolor={theme.colors.white}
+                onClick={() => deleteImageStep(index)}
+              >
+                삭제
+              </BasicButton>
+            </ImageWrapper>
           ) : (
             <>
-              <TempImage>
-                <p>이미지</p>
-              </TempImage>
+              <Placeholder htmlFor={`${index}file`}>
+                <p>이미지 추가</p>
+                <PlusIcon />
+              </Placeholder>
               <FileInput
                 type="file"
-                id="file"
+                id={`${index}file`}
                 accept="image/*"
                 onChange={(event) => handleImageStep(event, index)}
               />
-              <FileLabel htmlFor="file">
-                <p>사진추가</p>
-              </FileLabel>
             </>
           )}
         </div>
-        <Content onChange={(event) => handleContentStep(event, index)}></Content>
+        <Content value={content} onChange={(event) => handleContentStep(event, index)}></Content>
       </RecipeContainer>
     </>
   );
@@ -75,6 +80,10 @@ const RecipeContainer = styled.div`
   display: flex;
   margin-top: 20px;
   margin-bottom: 20px;
+
+  .uploadImg:hover {
+    opacity: 0.8;
+  }
 `;
 
 const DeleteButton = styled.div`
@@ -88,45 +97,43 @@ const UploadImage = styled.img`
   margin-bottom: 10px;
 `;
 
-const TempImage = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  width: 200px;
-  height: 200px;
-  background-color: ${(props) => props.theme.colors.gray};
-`;
-
 const FileInput = styled.input`
   display: none;
 `;
 
-const ButtonWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-`;
-
-const FileLabel = styled.label`
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  padding: 10px 20px;
-  background-color: ${(props) => props.theme.colors.orange};
-  color: white;
-  cursor: pointer;
-  margin-right: 5px;
-`;
-
 const Content = styled.textarea`
   width: 90%;
-  height: 200px;
+  height: 260px;
   margin-left: 20px;
   border-radius: 10px;
   padding: 12px;
   font-size: 18px;
   border: 1px solid ${(props) => props.theme.colors.gray};
   resize: none;
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+`;
+
+const Placeholder = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 200px;
+  height: 200px;
+  border: 3px dashed ${(props) => props.theme.colors.blue}90;
+  border-radius: 5px;
+  color: ${(props) => props.theme.colors.blue};
+  cursor: pointer;
+
+  P {
+    margin-bottom: 17px;
+  }
+`;
+
+const PlusIcon = styled(FaPlus)`
+  font-size: 24px;
+  margin-bottom: 4px;
 `;

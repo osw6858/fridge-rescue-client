@@ -7,6 +7,7 @@ import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import { IngredientList } from '../components/common/IngredientList';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
+import { FaPlus } from 'react-icons/fa6';
 
 interface Step {
   image: File | null;
@@ -17,6 +18,13 @@ export const AddRecipe = () => {
   const { selectedItem, setSelectedItem, addItemList, setAddItemList } = useSelectItem();
   const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+
+  const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const thumbnail = event.target.files && event.target.files[0];
+      setThumbnail(thumbnail);
+    }
+  };
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const newImage = [...step];
@@ -31,13 +39,6 @@ export const AddRecipe = () => {
     }
   };
 
-  const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const thumbnail = event.target.files && event.target.files[0];
-      setThumbnail(thumbnail);
-    }
-  };
-
   const handleContentStep = (event: ChangeEvent<HTMLTextAreaElement>, index: number) => {
     const newContent = [...step];
     newContent[index] = {
@@ -45,14 +46,6 @@ export const AddRecipe = () => {
       content: event.target.value,
     };
     setStep(newContent);
-  };
-
-  const deleteStep = (index: number) => {
-    setStep(step.filter((_, idx) => idx !== index));
-  };
-
-  const addStep = () => {
-    setStep([...step, { image: null, content: '' }]);
   };
 
   const deleteImageStep = (index: number) => {
@@ -94,9 +87,14 @@ export const AddRecipe = () => {
       formData.append(`step[${index}][content]`, item.content);
     });
 
+    console.log(step);
+
     // 이후 axios를 사용
   };
 
+  const handleDeleteStep = (index: number) => {
+    setStep(step.filter((_, idx) => idx !== index));
+  };
   return (
     <>
       <TitleWrapper>
@@ -117,11 +115,18 @@ export const AddRecipe = () => {
         <RecipeTitle placeholder="레시피 제목 입력" name="title" />
         <Thumbnail>
           <ImageContainer>
-            {thumbnail ? <ImagePreview src={URL.createObjectURL(thumbnail)} /> : <Placeholder />}
+            {thumbnail ? (
+              <ImagePreview src={URL.createObjectURL(thumbnail)} />
+            ) : (
+              <Placeholder htmlFor="thumbnail">
+                <p>레시피의 썸네일을 등록하세요!</p>
+                <PlusIcon />
+              </Placeholder>
+            )}
           </ImageContainer>
           <InputContainer>
             <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
-            {thumbnail ? (
+            {thumbnail && (
               <BasicButton
                 type="button"
                 $bgcolor={theme.colors.orange}
@@ -130,17 +135,16 @@ export const AddRecipe = () => {
               >
                 썸네일 삭제
               </BasicButton>
-            ) : (
-              <InputLabel htmlFor="thumbnail">썸네일 업로드</InputLabel>
             )}
           </InputContainer>
         </Thumbnail>
-        {step.map((e, i) => (
+        {step.map((e, index) => (
           <RecipeStep
-            key={i}
-            index={i}
+            key={index}
+            index={index}
             image={e.image}
-            deleteStep={deleteStep}
+            content={e.content}
+            deleteStep={handleDeleteStep}
             deleteImageStep={deleteImageStep}
             handleImageStep={handleImageStep}
             handleContentStep={handleContentStep}
@@ -150,7 +154,7 @@ export const AddRecipe = () => {
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          onClick={addStep}
+          onClick={() => setStep([...step, { image: null, content: '' }])}
         >
           +
         </BasicButton>
@@ -213,10 +217,21 @@ const ImagePreview = styled.img`
   object-fit: cover;
 `;
 
-const Placeholder = styled.div`
+export const Placeholder = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-  background-color: ${(props) => props.theme.colors.gray};
+  border: 3px dashed ${(props) => props.theme.colors.blue}90;
+  border-radius: 5px;
+  color: ${(props) => props.theme.colors.blue};
+  cursor: pointer;
+
+  P {
+    margin-bottom: 17px;
+  }
 `;
 
 const Input = styled.input`
@@ -227,15 +242,7 @@ const InputContainer = styled.div`
   position: relative;
 `;
 
-const InputLabel = styled.label`
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  padding: 10px 20px;
-  background-color: ${(props) => props.theme.colors.orange};
-  color: white;
-  cursor: pointer;
-  margin-right: 5px;
+const PlusIcon = styled(FaPlus)`
+  font-size: 24px;
+  margin-bottom: 4px;
 `;
