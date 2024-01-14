@@ -72,14 +72,6 @@ export const AddRecipe = () => {
 
     formData.append(`recipeTitle`, title);
 
-    // TODO: 예외처리 보강
-    if (thumbnail) {
-      formData.append(`recipeImage`, thumbnail);
-    } else {
-      console.error('썸네일을 등록해 주세요!');
-      return;
-    }
-
     step.forEach((item, index) => {
       if (item.image) {
         formData.append(`step[${index}][image]`, item.image);
@@ -159,11 +151,11 @@ export const AddRecipe = () => {
           +
         </BasicButton>
         <ButtonWrapper>
-          <BasicButton type="submit" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
-            완료
-          </BasicButton>
           <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
             돌아가기
+          </BasicButton>
+          <BasicButton type="submit" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
+            완료
           </BasicButton>
         </ButtonWrapper>
       </WriteContainer>
@@ -191,15 +183,16 @@ const RecipeTitle = styled.input`
 `;
 
 const ButtonWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 200px 200px;
-  gap: 4px;
-  margin-top: 40px;
-  justify-content: end;
+  display: flex;
+  margin-top: 50px;
+
+  button:nth-child(1) {
+    margin-right: 10px;
+  }
 `;
 
 const Thumbnail = styled.div`
-  margin: 10px 0 40px 0;
+  margin: 10px 0 5px 0;
 `;
 
 const ImageContainer = styled.div`
@@ -240,6 +233,7 @@ const Input = styled.input`
 
 const InputContainer = styled.div`
   position: relative;
+  margin-bottom: 20px;
 `;
 
 const PlusIcon = styled(FaPlus)`

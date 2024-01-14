@@ -3,6 +3,7 @@ import { BasicButton } from '../../common/BasicButton';
 import { theme } from '../../../styles/theme';
 import { type ChangeEvent } from 'react';
 import { FaPlus } from 'react-icons/fa6';
+import { FaTrash } from 'react-icons/fa';
 
 interface stepProps {
   image: File | null;
@@ -25,18 +26,20 @@ export const RecipeStep = ({
 }: stepProps) => {
   return (
     <>
-      <DeleteButton>
-        {index >= 1 && (
+      <TopWrapper>
+        {image && (
           <BasicButton
             type="button"
             $bgcolor={theme.colors.orange}
             $fontcolor={theme.colors.white}
-            onClick={() => deleteStep(index)}
+            onClick={() => deleteImageStep(index)}
           >
-            단계 삭제
+            이미지 삭제
           </BasicButton>
         )}
-      </DeleteButton>
+        {index >= 1 && <StyledTrash onClick={() => deleteStep(index)} />}
+      </TopWrapper>
+
       <RecipeContainer>
         <div>
           {image ? (
@@ -46,14 +49,6 @@ export const RecipeStep = ({
                 src={URL.createObjectURL(image)}
                 alt="업로드된 이미지"
               />
-              <BasicButton
-                type="button"
-                $bgcolor={theme.colors.orange}
-                $fontcolor={theme.colors.white}
-                onClick={() => deleteImageStep(index)}
-              >
-                삭제
-              </BasicButton>
             </ImageWrapper>
           ) : (
             <>
@@ -76,25 +71,25 @@ export const RecipeStep = ({
   );
 };
 
-const RecipeContainer = styled.div`
-  display: flex;
-  margin-top: 20px;
-  margin-bottom: 20px;
+const TopWrapper = styled.div`
+  height: 45px;
+  position: relative;
 
-  .uploadImg:hover {
-    opacity: 0.8;
+  button {
+    max-width: 90px;
   }
 `;
 
-const DeleteButton = styled.div`
-  display: grid;
-  justify-content: end;
+const RecipeContainer = styled.div`
+  display: flex;
+  margin-bottom: 20px;
 `;
 
 const UploadImage = styled.img`
   width: 200px;
   height: 200px;
   margin-bottom: 10px;
+  border-radius: 5px;
 `;
 
 const FileInput = styled.input`
@@ -103,7 +98,7 @@ const FileInput = styled.input`
 
 const Content = styled.textarea`
   width: 90%;
-  height: 260px;
+  height: 200px;
   margin-left: 20px;
   border-radius: 10px;
   padding: 12px;
@@ -136,4 +131,20 @@ const Placeholder = styled.label`
 const PlusIcon = styled(FaPlus)`
   font-size: 24px;
   margin-bottom: 4px;
+`;
+
+const StyledTrash = styled(FaTrash)`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  fill: ${(props) => props.theme.colors.darkGray};
+  min-width: 25px;
+  min-height: 25px;
+  margin-bottom: 10px;
+  margin-right: 5px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
