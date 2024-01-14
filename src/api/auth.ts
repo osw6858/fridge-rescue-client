@@ -30,3 +30,8 @@ export const emailAuth = async (code: string) => {
   const { data } = await axiosDefault.post(END_POINTS.CONFIRM, code);
   return data;
 };
+
+export const fetchSocialSignIn = async (provider: string) => {
+  const { data } = await axiosDefault.get(`${END_POINTS.OAUTH}${provider}`);
+  return data;
+};
