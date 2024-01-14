@@ -30,8 +30,8 @@ export const RecipeStep = ({
         {image && (
           <BasicButton
             type="button"
-            $bgcolor={theme.colors.orange}
-            $fontcolor={theme.colors.white}
+            $bgcolor={theme.colors.grayishWhite}
+            $fontcolor={theme.colors.black}
             onClick={() => deleteImageStep(index)}
           >
             이미지 삭제
@@ -74,9 +74,11 @@ export const RecipeStep = ({
 const TopWrapper = styled.div`
   height: 45px;
   position: relative;
-
+  display: flex;
+  align-items: center;
   button {
     max-width: 90px;
+    padding: 3px 3px 3px 3px;
   }
 `;
 

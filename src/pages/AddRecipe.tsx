@@ -106,6 +106,16 @@ export const AddRecipe = () => {
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
         <RecipeTitle placeholder="레시피 제목 입력" name="title" />
         <Thumbnail>
+          {thumbnail && (
+            <BasicButton
+              type="button"
+              $bgcolor={theme.colors.grayishWhite}
+              $fontcolor={theme.colors.black}
+              onClick={() => setThumbnail(null)}
+            >
+              썸네일 삭제
+            </BasicButton>
+          )}
           <ImageContainer>
             {thumbnail ? (
               <ImagePreview src={URL.createObjectURL(thumbnail)} />
@@ -118,16 +128,6 @@ export const AddRecipe = () => {
           </ImageContainer>
           <InputContainer>
             <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
-            {thumbnail && (
-              <BasicButton
-                type="button"
-                $bgcolor={theme.colors.orange}
-                $fontcolor={theme.colors.white}
-                onClick={() => setThumbnail(null)}
-              >
-                썸네일 삭제
-              </BasicButton>
-            )}
           </InputContainer>
         </Thumbnail>
         {step.map((e, index) => (
@@ -193,6 +193,12 @@ const ButtonWrapper = styled.div`
 
 const Thumbnail = styled.div`
   margin: 10px 0 5px 0;
+
+  button {
+    max-width: 90px;
+    padding: 3px 3px 3px 3px;
+    margin-bottom: 10px;
+  }
 `;
 
 const ImageContainer = styled.div`
