@@ -107,14 +107,16 @@ export const AddRecipe = () => {
         <RecipeTitle placeholder="레시피 제목 입력" name="title" />
         <Thumbnail>
           {thumbnail && (
-            <BasicButton
-              type="button"
-              $bgcolor={theme.colors.grayishWhite}
-              $fontcolor={theme.colors.black}
-              onClick={() => setThumbnail(null)}
-            >
-              썸네일 삭제
-            </BasicButton>
+            <DeleteWrapper>
+              <BasicButton
+                type="button"
+                $bgcolor={theme.colors.grayishWhite}
+                $fontcolor={theme.colors.black}
+                onClick={() => setThumbnail(null)}
+              >
+                썸네일 삭제
+              </BasicButton>
+            </DeleteWrapper>
           )}
           <ImageContainer>
             {thumbnail ? (
@@ -199,6 +201,11 @@ const Thumbnail = styled.div`
     padding: 3px 3px 3px 3px;
     margin-bottom: 10px;
   }
+`;
+
+const DeleteWrapper = styled.div`
+  display: flex;
+  justify-content: end;
 `;
 
 const ImageContainer = styled.div`
