@@ -8,6 +8,8 @@ import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearc
 import { IngredientList } from '../components/common/IngredientList';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { FaPlus } from 'react-icons/fa6';
+import { useMutation } from '@tanstack/react-query';
+import { addNewRecipe } from '../api/recipe';
 
 interface Step {
   image: File | null;
@@ -57,8 +59,19 @@ export const AddRecipe = () => {
     setStep(newStep);
   };
 
+  const addRecipeMutation = useMutation({
+    mutationFn: addNewRecipe,
+    onError: (error) => console.log(error),
+  });
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (thumbnail === null) {
+      alert('대표 이미지는 필수 입니다.');
+      return;
+    }
+
     const target = e.target as typeof e.target & {
       title: { value: string };
     };
@@ -72,16 +85,16 @@ export const AddRecipe = () => {
 
     formData.append(`recipeTitle`, title);
 
+    formData.append(`recipeImage`, thumbnail);
+
     step.forEach((item, index) => {
       if (item.image) {
-        formData.append(`step[${index}][image]`, item.image);
+        formData.append(`stepImages[${index}]`, item.image);
       }
-      formData.append(`step[${index}][content]`, item.content);
+      formData.append(`recipe[${index}]`, item.content);
     });
 
-    console.log(step);
-
-    // 이후 axios를 사용
+    addRecipeMutation.mutate(formData);
   };
 
   const handleDeleteStep = (index: number) => {

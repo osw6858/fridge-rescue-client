@@ -1,5 +1,5 @@
 import { END_POINTS } from '../constants/api';
-import { axiosDefault } from './axiosInstance';
+import { axiosDefault, axiosFormData } from './axiosInstance';
 
 export const getNewRecipe = async () => {
   try {
@@ -19,4 +19,9 @@ export const getDetailRecipe = async (recipeId: string) => {
   } catch (error) {
     throw new Error(`${error}`);
   }
+};
+
+export const addNewRecipe = async (formData: FormData) => {
+  const { data } = await axiosFormData.post(END_POINTS.RECIPES, formData);
+  return data;
 };

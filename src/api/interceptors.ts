@@ -48,12 +48,13 @@ export const handleTokenError = async (error: AxiosError) => {
       );
 
       if (response.status === 200) {
-        const header = response.headers;
-        const accessToken = header['access-token'];
+        const { accessToken, refreshToken } = response.data.data;
 
         originalRequest.headers.Authorization = accessToken;
 
         sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+
+        document.cookie = `refreshToken=${refreshToken}; path=/; max-age=2592000; samesite=strict`;
 
         isRefreshing = false;
         return axiosAuth(originalRequest);
