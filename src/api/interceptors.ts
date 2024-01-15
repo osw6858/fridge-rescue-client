@@ -28,7 +28,9 @@ export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
 export const handleTokenError = async (error: AxiosError) => {
   const originalRequest = error.config;
 
-  if (!error.response || !originalRequest) throw new Error('에러가 발생했습니다.');
+  if (!error.response || !originalRequest) {
+    return Promise.reject(error);
+  }
 
   if (error.response && error.response.status === 401 && !isRefreshing) {
     isRefreshing = true;
@@ -67,9 +69,9 @@ export const handleTokenError = async (error: AxiosError) => {
         alert('토큰이 만료되었습니다. 다시 로그인해 주세요.');
         window.location.href = `${ROOT_URL}signin`;
       }
-      throw new Error(`${error}`);
+      return Promise.reject(error);
     }
   }
 
-  throw new Error(`${error}`);
+  return Promise.reject(error);
 };
