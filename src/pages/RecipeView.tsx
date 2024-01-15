@@ -14,8 +14,8 @@ import { QUERY_KEY } from '../constants/queryKey';
 import { formatDate } from '../utils/formatDate';
 import { Chip } from '@mui/material';
 import type { Ingredient, RecipeSteps } from '../types/recipeType';
-import { RecipeReviewList } from '../components/pages/Recipe/RecipeReviewList';
 import { ImageModal } from '../components/common/ImageModal';
+import { RecipeReviewList } from '../components/pages/recipe/RecipeReviewList';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
@@ -29,7 +29,7 @@ export const RecipeView = () => {
   };
 
   const onAgree = () => {
-    navigation('/review-post');
+    navigation('/review/ingredient');
   };
 
   const handleCookingCompletion = (isComplete: boolean) => {
@@ -42,7 +42,8 @@ export const RecipeView = () => {
     select: (data) => data.data,
   });
 
-  // TODO : 더미 데이터 이미지 없음 -> 실 데이터 가져올 때 이미지만 연동하면 됨
+  console.log(data?.recipeImageUrl);
+
   return (
     <>
       <RecipeViewContainer>
@@ -81,7 +82,7 @@ export const RecipeView = () => {
           </div>
           <div className="recipe-step">
             <div className="thumbnail">
-              <img src="https://img.siksinhot.com/place/1515555441230703.jpg" alt="썸네일" />
+              <img src={data?.recipeImageUrl} alt="썸네일" />
             </div>
             <p className="summary">{data?.summary}</p>
 
@@ -103,10 +104,7 @@ export const RecipeView = () => {
               return (
                 <div className="step" key={step.stepNo}>
                   <div role="button" onClick={() => handleImageModal(true)}>
-                    <img
-                      src="https://www.goodtraemall.co.kr/shopimages/cepa0001/006001000017.jpg?1670307118"
-                      alt="단계별 레시피"
-                    />
+                    <img src={step?.stepImageUrl} alt="단계별 레시피" />
                   </div>
                   <div>{step.stepContents}</div>
                   {step.stepTip && (
@@ -138,8 +136,8 @@ export const RecipeView = () => {
         <RecipeReviewList />
         {cookingCompletion && (
           <ConfirmModal
-            title="레시피 후기를 남길까요?"
-            description="레시피 후기 등록 페이지로 이동합니다"
+            title="요리를 완료할까요?"
+            description="냉장고 재료 수정 페이지로 이동합니다"
             isOpen={cookingCompletion}
             handleOpen={handleCookingCompletion}
             onAgree={onAgree}
@@ -252,6 +250,9 @@ const RecipeViewContainer = styled.div`
       align-items: center;
       gap: 12px;
       grid-template-columns: 30% 1fr;
+      grid-template-areas:
+        'image content'
+        'tip tip';
       margin-top: 36px;
 
       img {
@@ -261,6 +262,7 @@ const RecipeViewContainer = styled.div`
       }
 
       .tip {
+        grid-area: tip;
         display: flex;
         align-items: center;
         gap: 6px;

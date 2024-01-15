@@ -28,12 +28,12 @@ export const ReviewPost = () => {
 
   return (
     <ReviewPostContainer>
-      <BasicTitle title="요리 후기 등록" />
+      <BasicTitle title="레시피 후기 등록" />
       <form onSubmit={(e) => handleSubmit(e)}>
         <DragAndDrop text="완성된 요리의" onImageDrop={handleImageDrop} formDataKey="image" />
         <div className="description">
           <BasicInput type="text" placeholder="제목을 입력하세요" id="title" />
-          <BasicTextArea placeholder="요리 후기를 입력하세요" id="content" />
+          <BasicTextArea placeholder="레시피 후기를 입력하세요" id="content" />
         </div>
         <div className="buttons">
           <BasicButton
