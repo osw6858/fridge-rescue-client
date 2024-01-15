@@ -29,9 +29,10 @@ export const IngredientList = ({
 
   return (
     <ListWrapper>
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row" spacing={1} className="chip-list">
         {titleList?.map((title, i) => (
           <Chip
+            className="chip"
             color={selected[i] ? 'warning' : 'default'}
             key={i}
             label={title}
@@ -45,4 +46,16 @@ export const IngredientList = ({
 
 const ListWrapper = styled.div`
   margin-top: 20px;
+  width: 100%;
+
+  .chip-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    justify-items: center;
+  }
+
+  .chip {
+    width: 130px;
+  }
 `;

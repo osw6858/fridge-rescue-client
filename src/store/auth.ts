@@ -7,6 +7,6 @@ export const AuthStateAtom = atom({
 });
 
 export const NickNameAtom = atom({
-  key: 'NNickNameAtomick',
+  key: 'NickNameAtomick',
   default: sessionStorage.getItem(USER_NICKNAME_KEY) ?? '',
 });

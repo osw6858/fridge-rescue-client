@@ -10,6 +10,7 @@ import { ReviewPost } from '../pages/ReviewPost';
 import { RecipeView } from '../pages/RecipeView';
 import { Recipe } from '../pages/Recipe';
 import { PrivateRoute } from './PrivateRoute';
+import { EditIngredient } from '../pages/EditIngredient';
 
 export const Router = () => {
   return (
@@ -28,7 +29,8 @@ export const Router = () => {
         <Route path="/scrap" element={<Scrap />} />
         <Route path="/add" element={<AddRecipe />} />
         <Route path="/refrigerator" element={<MyRefrigerator />} />
-        <Route path="/review-post" element={<ReviewPost />} />
+        <Route path="/review/ingredient" element={<EditIngredient />} />
+        <Route path="/review/post" element={<ReviewPost />} />
       </Route>
     </Routes>
   );
