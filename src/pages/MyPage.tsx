@@ -5,6 +5,7 @@ import { NicknameEdit } from '../components/pages/myPage/NicknameEdit';
 import { PasswordEdit } from '../components/pages/myPage/PasswordEdit';
 import { PushList } from '../components/pages/myPage/PushList';
 import { ConfirmModal } from '../components/common/ConfirmModal';
+import { EmailAuth } from '../components/pages/myPage/EmailAuth';
 
 export const MyPage = () => {
   const [logoutModal, setLogoutModal] = useState(false);
@@ -25,6 +26,8 @@ export const MyPage = () => {
         return <NicknameEdit />;
       case '비밀번호 변경':
         return <PasswordEdit />;
+      case '이메일 인증':
+        return <EmailAuth />;
       default:
         return null;
     }
