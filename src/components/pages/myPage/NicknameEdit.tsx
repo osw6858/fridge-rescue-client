@@ -8,18 +8,26 @@ import { useMutation } from '@tanstack/react-query';
 import { editNickname } from '../../../api/member';
 import { ConfirmModal } from '../../common/ConfirmModal';
 import { useState } from 'react';
+import type { AxiosError } from 'axios';
+import type { ErrorResponse } from 'react-router-dom';
 
 export const NicknameEdit = () => {
   const [nickname, setNickname] = useRecoilState(NickNameAtom);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: (newNickname: string) => editNickname(newNickname),
     onSuccess: (data) => {
       setNickname(data.data.nickname);
+      setError(null);
     },
-    onError: (err) => console.error(err),
-    // TODO: 백엔드 닉네임 중복 에러 내려주면 코드 추가
+    onError: (err) => {
+      const axiosError = err as AxiosError<ErrorResponse>;
+      if (axiosError.response) {
+        setError(axiosError.response.data.data.nickname);
+      }
+    },
   });
 
   const handleEditNickname = (newNickname: string) => {
@@ -32,6 +40,7 @@ export const NicknameEdit = () => {
       <NicknameEditContainer>
         <p>현재 닉네임 : {nickname}</p>
         <BasicInput id="nickname" type="text" placeholder="변경할 닉네임을 입력하세요" />
+        {error && <p className="err-message">{error}</p>}
         <br />
         <BasicButton
           type="button"
@@ -73,8 +82,7 @@ const NicknameEditContainer = styled.form`
     padding: 6px 0;
   }
 
-  .error {
+  .err-message {
     color: red;
-    float: right;
   }
 `;
