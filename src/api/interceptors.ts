@@ -76,7 +76,7 @@ export const handleTokenError = async (error: AxiosError) => {
         alert('토큰이 만료되었습니다. 다시 로그인해 주세요.');
         window.location.href = `${ROOT_URL}signin`;
       }
-
+      isRefreshing = false;
       return Promise.reject(error);
     }
   }
