@@ -9,17 +9,17 @@ interface Ingredient {
 interface AddedIngredient {
   addItemList: Ingredient[] | undefined;
   setAddItemList: (name: string, amount: string) => void;
-  deletItem: (name: string) => void;
+  deleteItem: (name: string) => void;
 }
 
-export const UsedIngrident = ({ addItemList, setAddItemList, deletItem }: AddedIngredient) => {
+export const UsedIngrident = ({ addItemList, setAddItemList, deleteItem }: AddedIngredient) => {
   return (
     <AddIngrident>
       {addItemList?.map((e, i) => (
         <Ingridient key={i}>
           <div>
             <span>{e.name}</span>
-            <MdClose onClick={() => deletItem(e.name)} />
+            <MdClose onClick={() => deleteItem(e.name)} />
           </div>
           <input
             type="text"

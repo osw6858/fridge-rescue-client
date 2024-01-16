@@ -13,7 +13,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
 
-interface StepImage {
+export interface StepImage {
   image: File | null;
 }
 
@@ -26,7 +26,7 @@ interface InputData {
   };
 }
 
-interface Ingredient {
+export interface Ingredient {
   name: string;
   amount: string;
 }
@@ -140,7 +140,16 @@ export const AddRecipe = () => {
       }
     });
 
-    addRecipeMutation.mutate(formData);
+    const finalData = {
+      title: data.title.title,
+      summary: data.summary.summary,
+      recipeImage: thumbnail,
+      steps,
+      ingredient,
+      stepImage,
+    };
+
+    addRecipeMutation.mutate(finalData);
   };
 
   const handleDeleteStep = (index: number) => {
@@ -159,7 +168,7 @@ export const AddRecipe = () => {
       <UsedIngrident
         addItemList={ingredient}
         setAddItemList={setIngridentAmount}
-        deletItem={deleteIngredientByName}
+        deleteItem={deleteIngredientByName}
       />
       <WriteContainer onSubmit={handleSubmit(onSubmit)}>
         <Controller
