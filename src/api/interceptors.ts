@@ -6,7 +6,7 @@ import {
   USER_NICKNAME_KEY,
   USER_STATUS_KEY,
 } from '../constants/api';
-import { axiosAuth } from './axiosInstance';
+import { axiosAuth, axiosFormData } from './axiosInstance';
 import { getRefreshToken } from '../utils/getRefreshToken';
 import axios from 'axios';
 
@@ -20,13 +20,15 @@ export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
   }
 
   // eslint-disable-next-line no-param-reassign
-  config.headers.Authorization = accessToken;
+  config.headers.Authorization = `Bearer ${accessToken}`;
 
   return config;
 };
 
 export const handleTokenError = async (error: AxiosError) => {
   const originalRequest = error.config;
+
+  const contentType = originalRequest?.headers['Content-Type'];
 
   if (!error.response || !originalRequest) {
     return Promise.reject(error);
@@ -42,18 +44,23 @@ export const handleTokenError = async (error: AxiosError) => {
         {},
         {
           headers: {
-            'Refresh-Token': refreshToken,
+            'Refresh-Token': `Bearer ${refreshToken}`,
           },
         }
       );
 
       if (response.status === 200) {
-        const header = response.headers;
-        const accessToken = header['access-token'];
+        const { data } = response.data;
 
-        originalRequest.headers.Authorization = accessToken;
+        originalRequest.headers.Authorization = `Bearer ${data}`;
 
-        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+        sessionStorage.setItem(ACCESS_TOKEN_KEY, data);
+
+        document.cookie = `refreshToken=${refreshToken}; path=/; max-age=2592000; samesite=strict`;
+
+        if (!contentType) {
+          return axiosFormData(originalRequest);
+        }
 
         isRefreshing = false;
         return axiosAuth(originalRequest);
@@ -69,6 +76,7 @@ export const handleTokenError = async (error: AxiosError) => {
         alert('토큰이 만료되었습니다. 다시 로그인해 주세요.');
         window.location.href = `${ROOT_URL}signin`;
       }
+      isRefreshing = false;
       return Promise.reject(error);
     }
   }

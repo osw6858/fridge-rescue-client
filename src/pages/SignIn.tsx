@@ -6,13 +6,14 @@ import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
 import { theme } from '../styles/theme';
 import { Controller, useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { fetchSignIn } from '../api/auth';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { fetchSignIn, fetchSocialSignIn } from '../api/auth';
 import type { AxiosError } from 'axios';
 import { ACCESS_TOKEN_KEY, USER_NICKNAME_KEY, USER_STATUS_KEY } from '../constants/api';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { AuthStateAtom, NickNameAtom } from '../store/auth';
+import { QUERY_KEY } from '../constants/queryKey';
 
 interface InputData {
   email?: string;
@@ -38,6 +39,8 @@ export const SignIn = () => {
   const navigate = useNavigate();
 
   const [errorMsg, setErrorMsg] = useState('');
+  const [isSocialSignIn, setIsSocialSignIn] = useState(false);
+
   const setAuthState = useSetRecoilState(AuthStateAtom);
   const setUserNickName = useSetRecoilState(NickNameAtom);
 
@@ -45,20 +48,19 @@ export const SignIn = () => {
     const { token, refreshToken, data } = res;
 
     sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
-    document.cookie = `refreshToken=${refreshToken}; path=/; max-age=2592000; samesite=strict`;
-
     sessionStorage.setItem(USER_STATUS_KEY, data.roleType);
     sessionStorage.setItem(USER_NICKNAME_KEY, data.nickname);
+    document.cookie = `refreshToken=${refreshToken}; path=/; max-age=2592000; samesite=strict`;
 
     setAuthState(true);
     setUserNickName(data.nickname);
+
     navigate('/');
   };
 
   const signInError = (errors: AxiosError) => {
     const res = errors.response?.data as ErrorData;
     const { error } = res;
-
     setErrorMsg(error);
   };
 
@@ -68,12 +70,25 @@ export const SignIn = () => {
     onError: signInError,
   });
 
+  const { data, error, isFetching } = useQuery({
+    queryKey: [QUERY_KEY.SOCIAL_SIGNIN],
+    queryFn: () => fetchSocialSignIn('GOOGLE'),
+    enabled: isSocialSignIn,
+  });
+
+  console.log(data, error);
+
+  useEffect(() => {
+    if (isFetching) {
+      setIsSocialSignIn(false);
+    }
+  }, [isFetching]);
+
   const handleSignIn = (signInData: InputData) => {
     const params = {
       email: signInData.email as string,
       password: signInData.pw as string,
     };
-
     signUpMutation.mutate(params);
   };
 
@@ -137,6 +152,7 @@ export const SignIn = () => {
             $bgcolor={theme.colors.white}
             $hoverbgcolor="#ececec"
             $bordercolor="#c0c0c0"
+            onClick={() => setIsSocialSignIn(!isSocialSignIn)}
           >
             <div className="icon-button">
               <FcGoogle />

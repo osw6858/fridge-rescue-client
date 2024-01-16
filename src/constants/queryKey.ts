@@ -3,4 +3,5 @@ export const QUERY_KEY = {
   NEW_RECIPE: 'newRecipe',
   DETAIL_RECIPE: 'detailRecipe',
   ADD_INGREDIENT: 'addIngredient',
+  SOCIAL_SIGNIN: `socialSignIn`,
 } as const;

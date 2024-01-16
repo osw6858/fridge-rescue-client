@@ -7,16 +7,28 @@ import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import { IngredientList } from '../components/common/IngredientList';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
+import { FaPlus } from 'react-icons/fa6';
+import { useMutation } from '@tanstack/react-query';
+import { addNewRecipe } from '../api/recipe';
+import { BasicInput } from '../components/common/BasicInput';
 
 interface Step {
   image: File | null;
   content: string;
+  tip: string;
 }
 
 export const AddRecipe = () => {
   const { selectedItem, setSelectedItem, addItemList, setAddItemList } = useSelectItem();
-  const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
+  const [step, setStep] = useState<Step[]>([{ image: null, content: '', tip: '' }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+
+  const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const thumbnail = event.target.files && event.target.files[0];
+      setThumbnail(thumbnail);
+    }
+  };
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const newImage = [...step];
@@ -26,15 +38,9 @@ export const AddRecipe = () => {
       newImage[index] = {
         image: file,
         content: newImage[index].content,
+        tip: newImage[index].tip,
       };
       setStep(newImage);
-    }
-  };
-
-  const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const thumbnail = event.target.files && event.target.files[0];
-      setThumbnail(thumbnail);
     }
   };
 
@@ -43,16 +49,20 @@ export const AddRecipe = () => {
     newContent[index] = {
       image: newContent[index].image,
       content: event.target.value,
+      tip: newContent[index].tip,
     };
     setStep(newContent);
   };
 
-  const deleteStep = (index: number) => {
-    setStep(step.filter((_, idx) => idx !== index));
-  };
+  const handleTipStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+    const newTip = [...step];
 
-  const addStep = () => {
-    setStep([...step, { image: null, content: '' }]);
+    newTip[index] = {
+      image: newTip[index].image,
+      tip: event.target.value,
+      content: newTip[index].content,
+    };
+    setStep(newTip);
   };
 
   const deleteImageStep = (index: number) => {
@@ -64,45 +74,63 @@ export const AddRecipe = () => {
     setStep(newStep);
   };
 
+  const addRecipeMutation = useMutation({
+    mutationFn: addNewRecipe,
+    onError: (error) => console.log(error),
+  });
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (thumbnail === null) {
+      // eslint-disable-next-line no-alert
+      alert('대표 이미지는 필수 입니다.');
+      return;
+    }
+
+    console.log(step);
+
     const target = e.target as typeof e.target & {
       title: { value: string };
+      summary: { value: string };
     };
     const title = target.title.value;
+
+    const summary = target.summary.value;
+
+    console.log(step);
 
     const formData = new FormData();
 
     selectedItem.forEach((ingredient, index) => {
-      formData.append(`usedIngredient[${index}]`, ingredient);
+      formData.append(`name[${index + 1}]`, ingredient);
     });
 
-    formData.append(`recipeTitle`, title);
-
-    // TODO: 예외처리 보강
-    if (thumbnail) {
-      formData.append(`recipeImage`, thumbnail);
-    } else {
-      console.error('썸네일을 등록해 주세요!');
-      return;
-    }
+    formData.append(`title`, title);
+    formData.append('summary', summary);
+    formData.append(`recipeImage`, thumbnail);
 
     step.forEach((item, index) => {
       if (item.image) {
-        formData.append(`step[${index}][image]`, item.image);
+        formData.append(`stepImages[${index + 1}]`, item.image);
       }
-      formData.append(`step[${index}][content]`, item.content);
+      formData.append(`recipe[${index + 1}]`, item.content);
+      formData.append(`steptip[${index + 1}]`, item.tip);
     });
 
-    // 이후 axios를 사용
+    addRecipeMutation.mutate(formData);
   };
 
+  const handleDeleteStep = (index: number) => {
+    setStep(step.filter((_, idx) => idx !== index));
+  };
   return (
     <>
       <TitleWrapper>
         <BasicTitle title="어떤 재료를 사용할까요?" />
       </TitleWrapper>
       <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
+
       <IngredientList
         setSelectedIngredient={setSelectedItem}
         usedIngredient={selectedItem}
@@ -115,51 +143,64 @@ export const AddRecipe = () => {
       />
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
         <RecipeTitle placeholder="레시피 제목 입력" name="title" />
+        <Summary>
+          <BasicInput type="text" id="summary" placeholder="레시피 요약 입력"></BasicInput>
+        </Summary>
         <Thumbnail>
-          <ImageContainer>
-            {thumbnail ? <ImagePreview src={URL.createObjectURL(thumbnail)} /> : <Placeholder />}
-          </ImageContainer>
-          <InputContainer>
-            <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
-            {thumbnail ? (
+          {thumbnail && (
+            <DeleteWrapper>
               <BasicButton
                 type="button"
-                $bgcolor={theme.colors.orange}
-                $fontcolor={theme.colors.white}
+                $bgcolor={theme.colors.grayishWhite}
+                $fontcolor={theme.colors.black}
                 onClick={() => setThumbnail(null)}
               >
                 썸네일 삭제
               </BasicButton>
+            </DeleteWrapper>
+          )}
+          <ImageContainer>
+            {thumbnail ? (
+              <ImagePreview src={URL.createObjectURL(thumbnail)} />
             ) : (
-              <InputLabel htmlFor="thumbnail">썸네일 업로드</InputLabel>
+              <Placeholder htmlFor="thumbnail">
+                <p>레시피의 썸네일을 등록하세요!</p>
+                <PlusIcon />
+              </Placeholder>
             )}
+          </ImageContainer>
+          <InputContainer>
+            <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
           </InputContainer>
         </Thumbnail>
-        {step.map((e, i) => (
+        {step.map((e, index) => (
           <RecipeStep
-            key={i}
-            index={i}
+            key={index}
+            index={index}
             image={e.image}
-            deleteStep={deleteStep}
+            content={e.content}
+            tip={e.tip}
+            deleteStep={handleDeleteStep}
             deleteImageStep={deleteImageStep}
             handleImageStep={handleImageStep}
             handleContentStep={handleContentStep}
+            handleTipStep={handleTipStep}
           />
         ))}
         <BasicButton
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          onClick={addStep}
+          onClick={() => setStep([...step, { image: null, content: '', tip: '' }])}
         >
           +
         </BasicButton>
         <ButtonWrapper>
-          <BasicButton type="submit" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
-            완료
-          </BasicButton>
           <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
             돌아가기
+          </BasicButton>
+          <BasicButton type="submit" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
+            완료
           </BasicButton>
         </ButtonWrapper>
       </WriteContainer>
@@ -186,16 +227,39 @@ const RecipeTitle = styled.input`
   outline: none;
 `;
 
+const Summary = styled.div`
+  label {
+  }
+
+  & > input {
+    border: none;
+    width: 100%;
+    outline: none;
+  }
+`;
+
 const ButtonWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 200px 200px;
-  gap: 4px;
-  margin-top: 40px;
-  justify-content: end;
+  display: flex;
+  margin-top: 50px;
+
+  button:nth-child(1) {
+    margin-right: 10px;
+  }
 `;
 
 const Thumbnail = styled.div`
-  margin: 10px 0 40px 0;
+  margin: 10px 0 5px 0;
+
+  button {
+    max-width: 90px;
+    padding: 3px 3px 3px 3px;
+    margin-bottom: 10px;
+  }
+`;
+
+const DeleteWrapper = styled.div`
+  display: flex;
+  justify-content: end;
 `;
 
 const ImageContainer = styled.div`
@@ -213,10 +277,21 @@ const ImagePreview = styled.img`
   object-fit: cover;
 `;
 
-const Placeholder = styled.div`
+export const Placeholder = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-  background-color: ${(props) => props.theme.colors.gray};
+  border: 3px dashed ${(props) => props.theme.colors.blue}90;
+  border-radius: 5px;
+  color: ${(props) => props.theme.colors.blue};
+  cursor: pointer;
+
+  P {
+    margin-bottom: 17px;
+  }
 `;
 
 const Input = styled.input`
@@ -225,17 +300,10 @@ const Input = styled.input`
 
 const InputContainer = styled.div`
   position: relative;
+  margin-bottom: 20px;
 `;
 
-const InputLabel = styled.label`
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  padding: 10px 20px;
-  background-color: ${(props) => props.theme.colors.orange};
-  color: white;
-  cursor: pointer;
-  margin-right: 5px;
+const PlusIcon = styled(FaPlus)`
+  font-size: 24px;
+  margin-bottom: 4px;
 `;
