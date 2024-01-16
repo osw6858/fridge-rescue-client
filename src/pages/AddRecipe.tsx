@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { theme } from '../styles/theme';
-import { useState, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent, useEffect } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import { FaPlus } from 'react-icons/fa6';
@@ -11,12 +11,13 @@ import { addNewRecipe } from '../api/recipe';
 import { BasicInput } from '../components/common/BasicInput';
 import { Controller, useForm } from 'react-hook-form';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
+import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
 
 interface Step {
   image: File | null;
 }
 
-interface Test {
+interface InputData {
   [index: number | string]: {
     content: string;
     tip: string;
@@ -25,10 +26,37 @@ interface Test {
   };
 }
 
+interface Ingredient {
+  name: string;
+  amount: string;
+}
+
 export const AddRecipe = () => {
   const { selectedItem, addItemList, setAddItemList } = useSelectItem();
   const [step, setStep] = useState<Step[]>([{ image: null }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [ingredient, setIngredient] = useState<Ingredient[]>();
+
+  useEffect(() => {
+    const uniqueAddItemList = Array.from(new Set(addItemList));
+    setIngredient(uniqueAddItemList.map((name) => ({ name, amount: '' })));
+  }, [addItemList]);
+
+  const setIngridentAmount = (name: string, amount: string) => {
+    const newIngrident = ingredient?.map((item) =>
+      item.name === name ? { ...item, amount } : item
+    );
+
+    setIngredient(newIngrident);
+  };
+
+  const deleteIngredientByName = (name: string) => {
+    const updatedIngredients = ingredient?.filter((item) => item.name !== name);
+    setIngredient(updatedIngredients);
+
+    const updatedAddItemList = addItemList?.filter((itemName) => itemName !== name);
+    setAddItemList(updatedAddItemList);
+  };
 
   const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -63,7 +91,7 @@ export const AddRecipe = () => {
     onError: (error) => console.log(error),
   });
 
-  const handleAddRecipe = async (data: Test) => {
+  const handleAddRecipe = async (data: InputData) => {
     if (thumbnail === null) {
       // eslint-disable-next-line no-alert
       alert('썸네일은 필수 입니다.');
@@ -109,19 +137,19 @@ export const AddRecipe = () => {
   const { control, handleSubmit } = useForm();
   const onSubmit = handleAddRecipe;
 
+  console.log(ingredient);
+
   return (
     <>
       <TitleWrapper>
         <BasicTitle title="어떤 재료를 사용할까요?" />
       </TitleWrapper>
       <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
-      <AddIngrident>
-        {addItemList.map((e) => (
-          <div>
-            <p>{e}</p>
-          </div>
-        ))}
-      </AddIngrident>
+      <UsedIngrident
+        addItemList={ingredient}
+        setAddItemList={setIngridentAmount}
+        deletItem={deleteIngredientByName}
+      />
       <WriteContainer onSubmit={handleSubmit(onSubmit)}>
         <Controller
           name="title.title"
@@ -221,12 +249,6 @@ const RecipeTitle = styled.input`
   font-size: 24px;
   padding-left: 10px;
   outline: none;
-`;
-
-const AddIngrident = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  place-items: center;
 `;
 
 const Summary = styled.div`
