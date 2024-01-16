@@ -5,22 +5,29 @@ import { theme } from '../styles/theme';
 import { useState, type ChangeEvent } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
-import { IngredientList } from '../components/common/IngredientList';
-import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { FaPlus } from 'react-icons/fa6';
 import { useMutation } from '@tanstack/react-query';
 import { addNewRecipe } from '../api/recipe';
 import { BasicInput } from '../components/common/BasicInput';
+import { Controller, useForm } from 'react-hook-form';
+import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 
 interface Step {
   image: File | null;
-  content: string;
-  tip: string;
+}
+
+interface Test {
+  [index: number | string]: {
+    content: string;
+    tip: string;
+    title: string;
+    summary: string;
+  };
 }
 
 export const AddRecipe = () => {
-  const { selectedItem, setSelectedItem, addItemList, setAddItemList } = useSelectItem();
-  const [step, setStep] = useState<Step[]>([{ image: null, content: '', tip: '' }]);
+  const { selectedItem, addItemList, setAddItemList } = useSelectItem();
+  const [step, setStep] = useState<Step[]>([{ image: null }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
 
   const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,32 +44,9 @@ export const AddRecipe = () => {
     if (file) {
       newImage[index] = {
         image: file,
-        content: newImage[index].content,
-        tip: newImage[index].tip,
       };
       setStep(newImage);
     }
-  };
-
-  const handleContentStep = (event: ChangeEvent<HTMLTextAreaElement>, index: number) => {
-    const newContent = [...step];
-    newContent[index] = {
-      image: newContent[index].image,
-      content: event.target.value,
-      tip: newContent[index].tip,
-    };
-    setStep(newContent);
-  };
-
-  const handleTipStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
-    const newTip = [...step];
-
-    newTip[index] = {
-      image: newTip[index].image,
-      tip: event.target.value,
-      content: newTip[index].content,
-    };
-    setStep(newTip);
   };
 
   const deleteImageStep = (index: number) => {
@@ -79,26 +63,23 @@ export const AddRecipe = () => {
     onError: (error) => console.log(error),
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleAddRecipe = async (data: Test) => {
     if (thumbnail === null) {
       // eslint-disable-next-line no-alert
-      alert('대표 이미지는 필수 입니다.');
+      alert('썸네일은 필수 입니다.');
       return;
     }
 
-    console.log(step);
+    const finalStep = step.map((item, index) => {
+      const { content } = data[index];
+      const { tip } = data[index];
 
-    const target = e.target as typeof e.target & {
-      title: { value: string };
-      summary: { value: string };
-    };
-    const title = target.title.value;
-
-    const summary = target.summary.value;
-
-    console.log(step);
+      return {
+        ...item,
+        content,
+        tip,
+      };
+    });
 
     const formData = new FormData();
 
@@ -106,11 +87,11 @@ export const AddRecipe = () => {
       formData.append(`name[${index + 1}]`, ingredient);
     });
 
-    formData.append(`title`, title);
-    formData.append('summary', summary);
+    formData.append(`title`, data.title.title);
+    formData.append('summary', data.summary.summary);
     formData.append(`recipeImage`, thumbnail);
 
-    step.forEach((item, index) => {
+    finalStep.forEach((item, index) => {
       if (item.image) {
         formData.append(`stepImages[${index + 1}]`, item.image);
       }
@@ -124,27 +105,46 @@ export const AddRecipe = () => {
   const handleDeleteStep = (index: number) => {
     setStep(step.filter((_, idx) => idx !== index));
   };
+
+  const { control, handleSubmit } = useForm();
+  const onSubmit = handleAddRecipe;
+
   return (
     <>
       <TitleWrapper>
         <BasicTitle title="어떤 재료를 사용할까요?" />
       </TitleWrapper>
       <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
-
-      <IngredientList
-        setSelectedIngredient={setSelectedItem}
-        usedIngredient={selectedItem}
-        titleList={['원래 냉장고 재료']}
-      />
-      <IngredientList
-        setSelectedIngredient={setSelectedItem}
-        usedIngredient={selectedItem}
-        titleList={addItemList}
-      />
-      <WriteContainer onSubmit={(e) => handleSubmit(e)}>
-        <RecipeTitle placeholder="레시피 제목 입력" name="title" />
+      <AddIngrident>
+        {addItemList.map((e) => (
+          <div>
+            <p>{e}</p>
+          </div>
+        ))}
+      </AddIngrident>
+      <WriteContainer onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="title.title"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <RecipeTitle id="title.title" placeholder="레시피 제목 입력" {...field} />
+          )}
+        />
         <Summary>
-          <BasicInput type="text" id="summary" placeholder="레시피 요약 입력"></BasicInput>
+          <Controller
+            name="summary.summary"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <BasicInput
+                type="text"
+                id="summary.summary"
+                placeholder="레시피 요약 입력"
+                {...field}
+              ></BasicInput>
+            )}
+          />
         </Summary>
         <Thumbnail>
           {thumbnail && (
@@ -175,23 +175,19 @@ export const AddRecipe = () => {
         </Thumbnail>
         {step.map((e, index) => (
           <RecipeStep
-            key={index}
-            index={index}
             image={e.image}
-            content={e.content}
-            tip={e.tip}
-            deleteStep={handleDeleteStep}
+            index={index}
+            control={control}
             deleteImageStep={deleteImageStep}
+            handleDeleteStep={handleDeleteStep}
             handleImageStep={handleImageStep}
-            handleContentStep={handleContentStep}
-            handleTipStep={handleTipStep}
           />
         ))}
         <BasicButton
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          onClick={() => setStep([...step, { image: null, content: '', tip: '' }])}
+          onClick={() => setStep([...step, { image: null }])}
         >
           +
         </BasicButton>
@@ -225,6 +221,12 @@ const RecipeTitle = styled.input`
   font-size: 24px;
   padding-left: 10px;
   outline: none;
+`;
+
+const AddIngrident = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
 `;
 
 const Summary = styled.div`

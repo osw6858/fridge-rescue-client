@@ -4,29 +4,25 @@ import { theme } from '../../../styles/theme';
 import { type ChangeEvent } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 import { FaTrash } from 'react-icons/fa';
+import type { Control } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 interface stepProps {
   image: File | null;
-  content: string;
   index: number;
-  tip: string;
-  deleteStep: (index: number) => void;
-  handleImageStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
-  handleContentStep: (event: ChangeEvent<HTMLTextAreaElement>, index: number) => void;
+  control: Control;
+  handleDeleteStep: (index: number) => void;
   deleteImageStep: (index: number) => void;
-  handleTipStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
+  handleImageStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
 }
 
 export const RecipeStep = ({
   image,
-  content,
   index,
-  tip,
-  deleteStep,
-  handleImageStep,
-  handleContentStep,
+  control,
   deleteImageStep,
-  handleTipStep,
+  handleDeleteStep,
+  handleImageStep,
 }: stepProps) => {
   return (
     <>
@@ -41,7 +37,7 @@ export const RecipeStep = ({
             이미지 삭제
           </BasicButton>
         )}
-        {index >= 1 && <StyledTrash onClick={() => deleteStep(index)} />}
+        {index >= 1 && <StyledTrash onClick={() => handleDeleteStep(index)} />}
       </TopWrapper>
 
       <RecipeContainer>
@@ -60,6 +56,7 @@ export const RecipeStep = ({
                 <p>이미지 추가</p>
                 <PlusIcon />
               </Placeholder>
+
               <FileInput
                 type="file"
                 id={`${index}file`}
@@ -68,18 +65,32 @@ export const RecipeStep = ({
               />
             </>
           )}
-          <input
-            type="text"
-            value={tip}
-            placeholder="당신만의 팁은?"
-            onChange={(event) => handleTipStep(event, index)}
-          ></input>
+          <Controller
+            name={`${index}.tip`}
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <input
+                id={`${index}.tip`}
+                type="text"
+                placeholder="당신만의 팁은?"
+                {...field}
+              ></input>
+            )}
+          />
         </div>
-        <Content
-          value={content}
-          onChange={(event) => handleContentStep(event, index)}
-          placeholder="레시피의 내용을 입력해 주세요."
-        ></Content>
+        <Controller
+          name={`${index}.content`}
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <Content
+              id={`${index}.content`}
+              placeholder="레시피의 내용을 입력해 주세요."
+              {...field}
+            ></Content>
+          )}
+        />
       </RecipeContainer>
     </>
   );
