@@ -2,26 +2,68 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { theme } from '../styles/theme';
-import { useState, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent, useEffect } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
-import { IngredientList } from '../components/common/IngredientList';
-import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { FaPlus } from 'react-icons/fa6';
 import { useMutation } from '@tanstack/react-query';
 import { addNewRecipe } from '../api/recipe';
 import { BasicInput } from '../components/common/BasicInput';
+import { Controller, useForm } from 'react-hook-form';
+import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
+import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
 
-interface Step {
+export interface StepImage {
   image: File | null;
-  content: string;
-  tip: string;
+}
+
+interface InputData {
+  [index: number | string]: {
+    content: string;
+    tip: string;
+    title: string;
+    summary: string;
+  };
+}
+
+export interface Ingredient {
+  name: string;
+  amount: string;
 }
 
 export const AddRecipe = () => {
-  const { selectedItem, setSelectedItem, addItemList, setAddItemList } = useSelectItem();
-  const [step, setStep] = useState<Step[]>([{ image: null, content: '', tip: '' }]);
+  const { addItemList, setAddItemList } = useSelectItem();
+  const [stepImage, setStepImage] = useState<StepImage[]>([{ image: null }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [ingredient, setIngredient] = useState<Ingredient[]>();
+
+  useEffect(() => {
+    const uniqueAddItemList = Array.from(new Set(addItemList));
+
+    const newIngredients = uniqueAddItemList
+      .filter((name) => !ingredient?.some((item) => item.name === name))
+      .map((name) => ({ name, amount: '' }));
+
+    setIngredient((prev) => [...(prev || []), ...newIngredients]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addItemList]);
+
+  const setIngridentAmount = (name: string, amount: string) => {
+    const newIngrident = ingredient?.map((item) =>
+      item.name === name ? { ...item, amount } : item
+    );
+
+    setIngredient(newIngrident);
+  };
+
+  const deleteIngredientByName = (name: string) => {
+    const updatedIngredients = ingredient?.filter((item) => item.name !== name);
+    setIngredient(updatedIngredients);
+
+    const updatedAddItemList = addItemList?.filter((itemName) => itemName !== name);
+    setAddItemList(updatedAddItemList);
+  };
 
   const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -31,47 +73,24 @@ export const AddRecipe = () => {
   };
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
-    const newImage = [...step];
+    const newImage = [...stepImage];
     const file = event.target.files && event.target.files[0];
 
     if (file) {
       newImage[index] = {
         image: file,
-        content: newImage[index].content,
-        tip: newImage[index].tip,
       };
-      setStep(newImage);
+      setStepImage(newImage);
     }
   };
 
-  const handleContentStep = (event: ChangeEvent<HTMLTextAreaElement>, index: number) => {
-    const newContent = [...step];
-    newContent[index] = {
-      image: newContent[index].image,
-      content: event.target.value,
-      tip: newContent[index].tip,
-    };
-    setStep(newContent);
-  };
-
-  const handleTipStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
-    const newTip = [...step];
-
-    newTip[index] = {
-      image: newTip[index].image,
-      tip: event.target.value,
-      content: newTip[index].content,
-    };
-    setStep(newTip);
-  };
-
   const deleteImageStep = (index: number) => {
-    const newStep = [...step];
+    const newStep = [...stepImage];
     newStep[index] = {
       ...newStep[index],
       image: null,
     };
-    setStep(newStep);
+    setStepImage(newStep);
   };
 
   const addRecipeMutation = useMutation({
@@ -79,72 +98,101 @@ export const AddRecipe = () => {
     onError: (error) => console.log(error),
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleAddRecipe = async (data: InputData) => {
     if (thumbnail === null) {
       // eslint-disable-next-line no-alert
-      alert('대표 이미지는 필수 입니다.');
+      alert('썸네일은 필수 입니다.');
       return;
     }
 
-    console.log(step);
+    if (ingredient?.length === 0) {
+      // eslint-disable-next-line no-alert
+      alert('재료를 한개 이상 추가해 주세요.');
+      return;
+    }
 
-    const target = e.target as typeof e.target & {
-      title: { value: string };
-      summary: { value: string };
-    };
-    const title = target.title.value;
+    const steps = stepImage.map((_, index) => {
+      const { content } = data[index];
+      const { tip } = data[index];
 
-    const summary = target.summary.value;
-
-    console.log(step);
+      return {
+        description: content,
+        tip,
+      };
+    });
 
     const formData = new FormData();
 
-    selectedItem.forEach((ingredient, index) => {
-      formData.append(`name[${index + 1}]`, ingredient);
-    });
-
-    formData.append(`title`, title);
-    formData.append('summary', summary);
+    formData.append(`title`, data.title.title);
+    formData.append('summary', data.summary.summary);
     formData.append(`recipeImage`, thumbnail);
 
-    step.forEach((item, index) => {
+    formData.append('steps', new Blob([JSON.stringify(steps)], { type: 'application/json' }));
+
+    formData.append(
+      'ingredients',
+      new Blob([JSON.stringify(ingredient)], { type: 'application/json' })
+    );
+
+    stepImage.forEach((item, index) => {
       if (item.image) {
-        formData.append(`stepImages[${index + 1}]`, item.image);
+        formData.append(`stepImages[${index}]`, item.image);
       }
-      formData.append(`recipe[${index + 1}]`, item.content);
-      formData.append(`steptip[${index + 1}]`, item.tip);
     });
 
-    addRecipeMutation.mutate(formData);
+    const finalData = {
+      title: data.title.title,
+      summary: data.summary.summary,
+      recipeImage: thumbnail,
+      steps,
+      ingredient,
+      stepImage,
+    };
+
+    addRecipeMutation.mutate(finalData);
   };
 
   const handleDeleteStep = (index: number) => {
-    setStep(step.filter((_, idx) => idx !== index));
+    setStepImage(stepImage.filter((_, idx) => idx !== index));
   };
+
+  const { control, handleSubmit } = useForm();
+  const onSubmit = handleAddRecipe;
+
   return (
     <>
       <TitleWrapper>
         <BasicTitle title="어떤 재료를 사용할까요?" />
       </TitleWrapper>
       <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
-
-      <IngredientList
-        setSelectedIngredient={setSelectedItem}
-        usedIngredient={selectedItem}
-        titleList={['원래 냉장고 재료']}
+      <UsedIngrident
+        addItemList={ingredient}
+        setAddItemList={setIngridentAmount}
+        deleteItem={deleteIngredientByName}
       />
-      <IngredientList
-        setSelectedIngredient={setSelectedItem}
-        usedIngredient={selectedItem}
-        titleList={addItemList}
-      />
-      <WriteContainer onSubmit={(e) => handleSubmit(e)}>
-        <RecipeTitle placeholder="레시피 제목 입력" name="title" />
+      <WriteContainer onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="title.title"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <RecipeTitle id="title.title" placeholder="레시피 제목 입력" {...field} />
+          )}
+        />
         <Summary>
-          <BasicInput type="text" id="summary" placeholder="레시피 요약 입력"></BasicInput>
+          <Controller
+            name="summary.summary"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <BasicInput
+                type="text"
+                id="summary.summary"
+                placeholder="레시피 요약 입력"
+                {...field}
+              ></BasicInput>
+            )}
+          />
         </Summary>
         <Thumbnail>
           {thumbnail && (
@@ -173,25 +221,21 @@ export const AddRecipe = () => {
             <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
           </InputContainer>
         </Thumbnail>
-        {step.map((e, index) => (
+        {stepImage.map((e, index) => (
           <RecipeStep
-            key={index}
-            index={index}
             image={e.image}
-            content={e.content}
-            tip={e.tip}
-            deleteStep={handleDeleteStep}
+            index={index}
+            control={control}
             deleteImageStep={deleteImageStep}
+            handleDeleteStep={handleDeleteStep}
             handleImageStep={handleImageStep}
-            handleContentStep={handleContentStep}
-            handleTipStep={handleTipStep}
           />
         ))}
         <BasicButton
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          onClick={() => setStep([...step, { image: null, content: '', tip: '' }])}
+          onClick={() => setStepImage([...stepImage, { image: null }])}
         >
           +
         </BasicButton>
