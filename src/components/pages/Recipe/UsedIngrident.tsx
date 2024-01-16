@@ -37,7 +37,7 @@ const AddIngrident = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   place-items: center;
   gap: 10px;
-  margin: 10px;
+  margin-top: 15px;
 `;
 
 const Ingridient = styled.div`
@@ -49,6 +49,7 @@ const Ingridient = styled.div`
   padding: 10px;
   border-radius: 10px;
   width: 100%;
+  background-color: ${(props) => props.theme.colors.grayishWhite};
 
   div > svg {
     position: absolute;
@@ -66,9 +67,9 @@ const Ingridient = styled.div`
     outline: none;
     width: 70px;
     height: 30px;
-    padding-left: 10px;
     margin-top: 10px;
     outline: none;
     border: 1px solid ${(props) => props.theme.colors.gray};
+    text-align: center;
   }
 `;

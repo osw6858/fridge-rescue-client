@@ -13,7 +13,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
 
-interface Step {
+interface StepImage {
   image: File | null;
 }
 
@@ -32,14 +32,21 @@ interface Ingredient {
 }
 
 export const AddRecipe = () => {
-  const { selectedItem, addItemList, setAddItemList } = useSelectItem();
-  const [step, setStep] = useState<Step[]>([{ image: null }]);
+  const { addItemList, setAddItemList } = useSelectItem();
+  const [stepImage, setStepImage] = useState<StepImage[]>([{ image: null }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [ingredient, setIngredient] = useState<Ingredient[]>();
 
   useEffect(() => {
     const uniqueAddItemList = Array.from(new Set(addItemList));
-    setIngredient(uniqueAddItemList.map((name) => ({ name, amount: '' })));
+
+    const newIngredients = uniqueAddItemList
+      .filter((name) => !ingredient?.some((item) => item.name === name))
+      .map((name) => ({ name, amount: '' }));
+
+    setIngredient((prev) => [...(prev || []), ...newIngredients]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addItemList]);
 
   const setIngridentAmount = (name: string, amount: string) => {
@@ -66,24 +73,24 @@ export const AddRecipe = () => {
   };
 
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
-    const newImage = [...step];
+    const newImage = [...stepImage];
     const file = event.target.files && event.target.files[0];
 
     if (file) {
       newImage[index] = {
         image: file,
       };
-      setStep(newImage);
+      setStepImage(newImage);
     }
   };
 
   const deleteImageStep = (index: number) => {
-    const newStep = [...step];
+    const newStep = [...stepImage];
     newStep[index] = {
       ...newStep[index],
       image: null,
     };
-    setStep(newStep);
+    setStepImage(newStep);
   };
 
   const addRecipeMutation = useMutation({
@@ -98,46 +105,44 @@ export const AddRecipe = () => {
       return;
     }
 
-    const finalStep = step.map((item, index) => {
+    const steps = stepImage.map((_, index) => {
       const { content } = data[index];
       const { tip } = data[index];
 
       return {
-        ...item,
-        content,
+        description: content,
         tip,
       };
     });
 
     const formData = new FormData();
 
-    selectedItem.forEach((ingredient, index) => {
-      formData.append(`name[${index + 1}]`, ingredient);
-    });
-
     formData.append(`title`, data.title.title);
     formData.append('summary', data.summary.summary);
     formData.append(`recipeImage`, thumbnail);
 
-    finalStep.forEach((item, index) => {
+    formData.append('steps', new Blob([JSON.stringify(steps)], { type: 'application/json' }));
+
+    formData.append(
+      'ingredients',
+      new Blob([JSON.stringify(ingredient)], { type: 'application/json' })
+    );
+
+    stepImage.forEach((item, index) => {
       if (item.image) {
-        formData.append(`stepImages[${index + 1}]`, item.image);
+        formData.append(`stepImages[${index}]`, item.image);
       }
-      formData.append(`recipe[${index + 1}]`, item.content);
-      formData.append(`steptip[${index + 1}]`, item.tip);
     });
 
     addRecipeMutation.mutate(formData);
   };
 
   const handleDeleteStep = (index: number) => {
-    setStep(step.filter((_, idx) => idx !== index));
+    setStepImage(stepImage.filter((_, idx) => idx !== index));
   };
 
   const { control, handleSubmit } = useForm();
   const onSubmit = handleAddRecipe;
-
-  console.log(ingredient);
 
   return (
     <>
@@ -201,7 +206,7 @@ export const AddRecipe = () => {
             <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
           </InputContainer>
         </Thumbnail>
-        {step.map((e, index) => (
+        {stepImage.map((e, index) => (
           <RecipeStep
             image={e.image}
             index={index}
@@ -215,7 +220,7 @@ export const AddRecipe = () => {
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          onClick={() => setStep([...step, { image: null }])}
+          onClick={() => setStepImage([...stepImage, { image: null }])}
         >
           +
         </BasicButton>
