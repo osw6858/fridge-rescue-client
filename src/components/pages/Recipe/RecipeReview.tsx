@@ -1,55 +1,63 @@
 import styled from 'styled-components';
-import { IoMdArrowRoundDown } from 'react-icons/io';
+import { IoMdArrowRoundDown, IoMdArrowRoundUp } from 'react-icons/io';
 import { useState } from 'react';
 import { ImageModal } from '../../common/ImageModal';
+import type { Review } from '../../../types/reviewType';
+import { formatDate } from '../../../utils/formatDate';
 
-export const RecipeReview = () => {
+export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
   const [isImageModalOpened, setImageModalOpen] = useState(false);
+  const [showAllContent, setShowAllContent] = useState(false);
 
   const handleImageModal = (isOpen: boolean) => {
     setImageModalOpen(isOpen);
   };
 
-  // TODO : ID 받아서 해당 게시글 더보기 toggle 구현
+  const handleToggleContent = () => {
+    setShowAllContent((prev) => !prev);
+  };
+
   return (
     <>
-      <RecipeReviewContainer>
+      <RecipeReviewContainer $showAllContent={showAllContent}>
         <div className="review-image" role="button" onClick={() => handleImageModal(true)}>
-          <img
-            src="https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/bskh/image/cXN5XKBUKfmpGaxWVTIMnLlSH6E"
-            alt="리뷰 썸네일"
-          />
+          <img src={reviewData.imageUrl} alt="리뷰 썸네일" />
         </div>
         <div className="description">
-          <div className="title">저두요!</div>
+          <div className="title">{reviewData?.title}</div>
           <div className="review-info">
-            <span>2023-01-02</span>
-            <span>띠띠</span>
+            <span>{formatDate(reviewData?.createdAt)}</span>
+            <span>{reviewData?.author?.nickname}</span>
           </div>
           <div className="content">
-            저도 한번 만들어 봤는데요! 저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번
-            만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어
-            봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어
-            봤는데요!저도 한번 만들어 봤는데요!
+            {reviewData.contents} 제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더
+            잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더
+            잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더
+            잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?
           </div>
-          <div className="arrow">
-            <span>더보기</span>
-            <IoMdArrowRoundDown />
+          <div className="arrow" onClick={handleToggleContent} role="button">
+            {showAllContent ? (
+              <>
+                <span>접기</span>
+                <IoMdArrowRoundUp />
+              </>
+            ) : (
+              <>
+                <span>더보기</span>
+                <IoMdArrowRoundDown />
+              </>
+            )}
           </div>
         </div>
       </RecipeReviewContainer>
       {isImageModalOpened && (
-        <ImageModal
-          imageUrl="https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/bskh/image/cXN5XKBUKfmpGaxWVTIMnLlSH6E"
-          alt="음식"
-          handleImageModal={handleImageModal}
-        />
+        <ImageModal imageUrl={reviewData.imageUrl} alt="음식" handleImageModal={handleImageModal} />
       )}
     </>
   );
 };
 
-const RecipeReviewContainer = styled.div`
+const RecipeReviewContainer = styled.div<{ $showAllContent: boolean }>`
   display: grid;
   grid-template-columns: 100px 1fr;
   gap: 24px;
@@ -59,8 +67,9 @@ const RecipeReviewContainer = styled.div`
 
   .review-image {
     img {
-      width: 100%;
-      height: auto;
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
       border-radius: 50%;
       display: block;
     }
@@ -88,7 +97,7 @@ const RecipeReviewContainer = styled.div`
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: ${(props) => (props.$showAllContent ? 'none' : 2)};
       -webkit-box-orient: vertical;
     }
 
