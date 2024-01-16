@@ -10,15 +10,17 @@ import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { FaPlus } from 'react-icons/fa6';
 import { useMutation } from '@tanstack/react-query';
 import { addNewRecipe } from '../api/recipe';
+import { BasicInput } from '../components/common/BasicInput';
 
 interface Step {
   image: File | null;
   content: string;
+  tip: string;
 }
 
 export const AddRecipe = () => {
   const { selectedItem, setSelectedItem, addItemList, setAddItemList } = useSelectItem();
-  const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
+  const [step, setStep] = useState<Step[]>([{ image: null, content: '', tip: '' }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
 
   const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +38,7 @@ export const AddRecipe = () => {
       newImage[index] = {
         image: file,
         content: newImage[index].content,
+        tip: newImage[index].tip,
       };
       setStep(newImage);
     }
@@ -46,8 +49,20 @@ export const AddRecipe = () => {
     newContent[index] = {
       image: newContent[index].image,
       content: event.target.value,
+      tip: newContent[index].tip,
     };
     setStep(newContent);
+  };
+
+  const handleTipStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+    const newTip = [...step];
+
+    newTip[index] = {
+      image: newTip[index].image,
+      tip: event.target.value,
+      content: newTip[index].content,
+    };
+    setStep(newTip);
   };
 
   const deleteImageStep = (index: number) => {
@@ -68,30 +83,39 @@ export const AddRecipe = () => {
     e.preventDefault();
 
     if (thumbnail === null) {
+      // eslint-disable-next-line no-alert
       alert('대표 이미지는 필수 입니다.');
       return;
     }
 
+    console.log(step);
+
     const target = e.target as typeof e.target & {
       title: { value: string };
+      summary: { value: string };
     };
     const title = target.title.value;
+
+    const summary = target.summary.value;
+
+    console.log(step);
 
     const formData = new FormData();
 
     selectedItem.forEach((ingredient, index) => {
-      formData.append(`usedIngredient[${index}]`, ingredient);
+      formData.append(`name[${index + 1}]`, ingredient);
     });
 
-    formData.append(`recipeTitle`, title);
-
+    formData.append(`title`, title);
+    formData.append('summary', summary);
     formData.append(`recipeImage`, thumbnail);
 
     step.forEach((item, index) => {
       if (item.image) {
-        formData.append(`stepImages[${index}]`, item.image);
+        formData.append(`stepImages[${index + 1}]`, item.image);
       }
-      formData.append(`recipe[${index}]`, item.content);
+      formData.append(`recipe[${index + 1}]`, item.content);
+      formData.append(`steptip[${index + 1}]`, item.tip);
     });
 
     addRecipeMutation.mutate(formData);
@@ -106,6 +130,7 @@ export const AddRecipe = () => {
         <BasicTitle title="어떤 재료를 사용할까요?" />
       </TitleWrapper>
       <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
+
       <IngredientList
         setSelectedIngredient={setSelectedItem}
         usedIngredient={selectedItem}
@@ -118,6 +143,9 @@ export const AddRecipe = () => {
       />
       <WriteContainer onSubmit={(e) => handleSubmit(e)}>
         <RecipeTitle placeholder="레시피 제목 입력" name="title" />
+        <Summary>
+          <BasicInput type="text" id="summary" placeholder="레시피 요약 입력"></BasicInput>
+        </Summary>
         <Thumbnail>
           {thumbnail && (
             <DeleteWrapper>
@@ -151,17 +179,19 @@ export const AddRecipe = () => {
             index={index}
             image={e.image}
             content={e.content}
+            tip={e.tip}
             deleteStep={handleDeleteStep}
             deleteImageStep={deleteImageStep}
             handleImageStep={handleImageStep}
             handleContentStep={handleContentStep}
+            handleTipStep={handleTipStep}
           />
         ))}
         <BasicButton
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          onClick={() => setStep([...step, { image: null, content: '' }])}
+          onClick={() => setStep([...step, { image: null, content: '', tip: '' }])}
         >
           +
         </BasicButton>
@@ -195,6 +225,17 @@ const RecipeTitle = styled.input`
   font-size: 24px;
   padding-left: 10px;
   outline: none;
+`;
+
+const Summary = styled.div`
+  label {
+  }
+
+  & > input {
+    border: none;
+    width: 100%;
+    outline: none;
+  }
 `;
 
 const ButtonWrapper = styled.div`

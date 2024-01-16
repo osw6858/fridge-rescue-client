@@ -9,20 +9,24 @@ interface stepProps {
   image: File | null;
   content: string;
   index: number;
+  tip: string;
   deleteStep: (index: number) => void;
   handleImageStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
   handleContentStep: (event: ChangeEvent<HTMLTextAreaElement>, index: number) => void;
   deleteImageStep: (index: number) => void;
+  handleTipStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
 }
 
 export const RecipeStep = ({
   image,
   content,
   index,
+  tip,
   deleteStep,
   handleImageStep,
   handleContentStep,
   deleteImageStep,
+  handleTipStep,
 }: stepProps) => {
   return (
     <>
@@ -64,8 +68,18 @@ export const RecipeStep = ({
               />
             </>
           )}
+          <input
+            type="text"
+            value={tip}
+            placeholder="당신만의 팁은?"
+            onChange={(event) => handleTipStep(event, index)}
+          ></input>
         </div>
-        <Content value={content} onChange={(event) => handleContentStep(event, index)}></Content>
+        <Content
+          value={content}
+          onChange={(event) => handleContentStep(event, index)}
+          placeholder="레시피의 내용을 입력해 주세요."
+        ></Content>
       </RecipeContainer>
     </>
   );
@@ -85,6 +99,14 @@ const TopWrapper = styled.div`
 const RecipeContainer = styled.div`
   display: flex;
   margin-bottom: 20px;
+
+  & > div > input[type='text'] {
+    margin-top: 14px;
+    border-radius: 10px;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid ${(props) => props.theme.colors.gray};
+  }
 `;
 
 const UploadImage = styled.img`
@@ -100,7 +122,7 @@ const FileInput = styled.input`
 
 const Content = styled.textarea`
   width: 90%;
-  height: 200px;
+  height: 247px;
   margin-left: 20px;
   border-radius: 10px;
   padding: 12px;

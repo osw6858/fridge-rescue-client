@@ -20,7 +20,7 @@ export const fetchSignUp = async (params: SignUpProps) => {
 export const fetchSignIn = async (params: SignInProps) => {
   const { data, headers } = await axiosDefault.post(END_POINTS.LOGIN, params);
 
-  const token = headers['access-token'];
+  const { token } = data;
   const refreshToken = headers['refresh-token'];
 
   return { data, token, refreshToken };
