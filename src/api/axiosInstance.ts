@@ -33,7 +33,7 @@ export const axiosReissue = axios.create({
   baseURL: BASE_URL,
   timeout: 5000,
   headers: {
-    'Content-Type': 'multipart/form-data',
+    'Content-Type': 'application/json',
   },
 });
 
