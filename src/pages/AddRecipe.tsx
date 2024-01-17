@@ -121,25 +121,6 @@ export const AddRecipe = () => {
       };
     });
 
-    const formData = new FormData();
-
-    formData.append(`title`, data.title.title);
-    formData.append('summary', data.summary.summary);
-    formData.append(`recipeImage`, thumbnail);
-
-    formData.append('steps', new Blob([JSON.stringify(steps)], { type: 'application/json' }));
-
-    formData.append(
-      'ingredients',
-      new Blob([JSON.stringify(ingredient)], { type: 'application/json' })
-    );
-
-    stepImage.forEach((item, index) => {
-      if (item.image) {
-        formData.append(`stepImages[${index}]`, item.image);
-      }
-    });
-
     const finalData = {
       title: data.title.title,
       summary: data.summary.summary,
