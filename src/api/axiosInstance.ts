@@ -29,7 +29,7 @@ export const axiosFormData = axios.create({
   },
 });
 
-export const axiosReIssu = axios.create({
+export const axiosReissue = axios.create({
   baseURL: BASE_URL,
   timeout: 5000,
   headers: {
@@ -46,4 +46,4 @@ axiosFormData.interceptors.request.use(checkAndSetToken, (error) => Promise.reje
 
 axiosFormData.interceptors.response.use((response) => response, handleTokenError);
 
-axiosReIssu.interceptors.response.use((response) => response, handleTokenError);
+axiosReissue.interceptors.response.use((response) => response, handleTokenError);

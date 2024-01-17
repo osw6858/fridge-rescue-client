@@ -6,7 +6,7 @@ import {
   USER_NICKNAME_KEY,
   USER_STATUS_KEY,
 } from '../constants/api';
-import { axiosAuth, axiosFormData, axiosReIssu } from './axiosInstance';
+import { axiosAuth, axiosFormData, axiosReissue } from './axiosInstance';
 import { getRefreshToken } from '../utils/getRefreshToken';
 import axios from 'axios';
 
@@ -39,7 +39,7 @@ export const handleTokenError = async (error: AxiosError) => {
 
     try {
       const refreshToken = getRefreshToken('refreshToken');
-      const response = await axiosReIssu.post(
+      const response = await axiosReissue.post(
         END_POINTS.REISSUE,
         {},
         {
