@@ -1,9 +1,9 @@
 import { END_POINTS } from '../constants/api';
-import type { Ingredient, Suggest } from '../types/ingredientType';
+import type { Suggest } from '../types/ingredientType';
 import { axiosAuth, axiosDefault } from './axiosInstance';
 
 export const getIngredient = async () => {
-  const response = await axiosAuth.get<Ingredient[]>(END_POINTS.FRIDGE);
+  const response = await axiosAuth.get(END_POINTS.FRIDGE);
   return response.data;
 };
 

@@ -5,4 +5,5 @@ export const QUERY_KEY = {
   ADD_INGREDIENT: 'addIngredient',
   SOCIAL_SIGNIN: `socialSignIn`,
   GET_REVIEW: 'getReview',
+  GET_INGREDIENT: 'getIngredient',
 } as const;
