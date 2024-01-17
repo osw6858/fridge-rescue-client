@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { theme } from '../styles/theme';
-import { useState, type ChangeEvent, useEffect } from 'react';
+import { useState, type ChangeEvent, useEffect, useRef } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import { FaPlus } from 'react-icons/fa6';
@@ -36,6 +36,7 @@ export const AddRecipe = () => {
   const [stepImage, setStepImage] = useState<StepImage[]>([{ image: null }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [ingredient, setIngredient] = useState<Ingredient[]>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const uniqueAddItemList = Array.from(new Set(addItemList));
@@ -69,6 +70,13 @@ export const AddRecipe = () => {
     if (event.target.files && event.target.files[0]) {
       const thumbnail = event.target.files && event.target.files[0];
       setThumbnail(thumbnail);
+    }
+  };
+
+  const onThumbnailRemove = () => {
+    setThumbnail(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -182,7 +190,7 @@ export const AddRecipe = () => {
                 type="button"
                 $bgcolor={theme.colors.grayishWhite}
                 $fontcolor={theme.colors.black}
-                onClick={() => setThumbnail(null)}
+                onClick={onThumbnailRemove}
               >
                 썸네일 삭제
               </BasicButton>
@@ -199,7 +207,13 @@ export const AddRecipe = () => {
             )}
           </ImageContainer>
           <InputContainer>
-            <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
+            <Input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              id="thumbnail"
+              onChange={onThumbnailChange}
+            />
           </InputContainer>
         </Thumbnail>
         {stepImage.map((e, index) => (
