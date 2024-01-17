@@ -65,6 +65,8 @@ export const IngredientAccordion = ({
     });
   };
 
+  console.log(ingredient);
+
   return (
     <IngredientAccordionContainer>
       <Accordion>
@@ -74,7 +76,12 @@ export const IngredientAccordion = ({
           id="panel1-header"
         >
           <Checkbox checked={isChecked} onChange={handleCheckboxChange} />
-          <Typography>{ingredient.name}</Typography>
+          <Typography>
+            <div className="ingredient-title">
+              <span>{ingredient.name}</span>
+              <span> 유통기한 : {ingredient.expiredAt} 까지</span>
+            </div>
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography className="edit-section">
@@ -104,27 +111,39 @@ const IngredientAccordionContainer = styled.div`
   display: flex;
   justify-content: center;
 
-  .MuiPaper-root {
-    height: fit-content;
-  }
-
   .MuiTypography-root {
     font-size: 14px;
   }
-
+  .MuiPaper-root {
+    width: 100%;
+  }
   .edit-section {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     gap: 12px;
+    width: 100%;
 
     input {
+      width: 100%;
       height: 10px;
     }
     button {
-      width: 50px;
+      width: 80px;
     }
   }
   .MuiAccordionSummary-content {
     display: flex;
     align-items: center;
+  }
+
+  .ingredient-title {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    & > span:first-child {
+      font-family: Pretendard-ExtraBold;
+      font-size: 18px;
+    }
   }
 `;

@@ -10,7 +10,7 @@ import { QUERY_KEY } from '../constants/queryKey';
 import { getIngredient } from '../api/fridge';
 import type { Ingredient, IngredientEditList } from '../types/ingredientType';
 import { IngredientAccordion } from '../components/pages/fridge/IngredientAccordion';
-import { CookingCompleteParams, cookingComplete } from '../api/cook';
+import { cookingComplete } from '../api/cook';
 
 export const EditIngredient = () => {
   const navigation = useNavigate();
@@ -96,10 +96,11 @@ export const EditIngredient = () => {
 
 const EditIngredientContainer = styled.div`
   width: 100%;
+  margin: 36px 0;
 
   .ingredient-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 12px;
   }
 
