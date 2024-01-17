@@ -43,10 +43,8 @@ export const addNewRecipe = async (recipeData: AddRecipeData) => {
     new Blob([JSON.stringify(recipeData.ingredient)], { type: 'application/json' })
   );
 
-  recipeData.stepImage.forEach((item, index) => {
-    if (item.image) {
-      formData.append(`stepImages[${index}]`, item.image);
-    }
+  recipeData.stepImage.forEach((item) => {
+    formData.append(`stepImages`, item.image || new Blob());
   });
 
   const { data } = await axiosFormData.post(END_POINTS.RECIPES, formData);
