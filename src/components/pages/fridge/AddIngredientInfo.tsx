@@ -31,6 +31,7 @@ export const AddIngredientInfo = ({
                 defaultValue=""
                 render={({ field }) => (
                   <Expiration
+                    min={new Date().toISOString().split('T')[0]}
                     id={`${ingredient}.expiredAt`}
                     required
                     type="date"

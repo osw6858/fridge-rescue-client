@@ -54,8 +54,8 @@ export const MyRefrigerator = () => {
       ...details,
     }));
 
-    setAddItemList([]);
     addItemList.map((item) => unregister(item));
+    setAddItemList([]);
     addIngridentMutation.mutate(finalData);
   };
 
