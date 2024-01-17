@@ -5,70 +5,83 @@ import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearc
 import { AddIngredientInfo } from '../components/pages/fridge/AddIngredientInfo';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
-import { useEffect, useState } from 'react';
-import type { AddIngredient } from '../types/ingredientType';
 import { MyIngredientList } from '../components/pages/fridge/MyIngredientList';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addIngredient } from '../api/fridge';
+import { QUERY_KEY } from '../constants/queryKey';
+import type { AxiosError } from 'axios';
+
+interface IngredientInputData {
+  [index: string]: {
+    expiredAt: string;
+    memo: string;
+  };
+}
+
+interface ErrorType {
+  data: {
+    expiredAt: string;
+  };
+  message: string;
+}
 
 export const MyRefrigerator = () => {
   const { addItemList, setAddItemList } = useSelectItem();
-  const [ingredientDetails, setIngredientDetails] = useState<AddIngredient[]>(
-    addItemList.map((name) => ({ name, expiredAt: '', memo: '' }))
-  );
+  const { control, handleSubmit, unregister } = useForm();
 
-  useEffect(() => {
-    const newItems = addItemList.filter(
-      (item) => !ingredientDetails.some((detail) => detail.name === item)
-    );
+  const queryClient = useQueryClient();
 
-    const newDetails = newItems.map((name) => ({ name, expiredAt: '', memo: '' }));
+  const addIngridentMutation = useMutation({
+    mutationFn: addIngredient,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_INGREDIENT] }),
+    onError: (error: AxiosError) => {
+      const { data } = error.response?.data as ErrorType;
+      // eslint-disable-next-line no-alert
+      alert(data.expiredAt);
+    },
+  });
 
-    setIngredientDetails((prevDetails) => [...prevDetails, ...newDetails]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addItemList]);
-
-  const handleIngredientDetails = (index: number, expiredAt: string, memo: string) => {
-    const newDetails = [...ingredientDetails];
-    newDetails[index] = { ...newDetails[index], expiredAt, memo };
-    setIngredientDetails(newDetails);
+  const deleteAddedIngredient = (index: number, name: string) => {
+    unregister(name);
+    const newDetailList = addItemList.filter((_, idx) => index !== idx);
+    setAddItemList(newDetailList);
   };
 
-  const deleteAddedIngredient = (index: number) => {
-    const newDetailList = ingredientDetails.filter((_, idx) => index !== idx);
-    const newItemList = addItemList.filter((_, idx) => index !== idx);
-    setIngredientDetails(newDetailList);
-    setAddItemList(newItemList);
-  };
+  const handleSave = (inputData: IngredientInputData) => {
+    const finalData = Object.entries(inputData).map(([name, details]) => ({
+      name,
+      ...details,
+    }));
 
-  const handleSave = async () => {
-    console.log('저장될 리스트', ingredientDetails);
-
-    // TODO: 여기에 서버에 보내는 로직을 추가
-    setIngredientDetails([]);
     setAddItemList([]);
+    addItemList.map((item) => unregister(item));
+    addIngridentMutation.mutate(finalData);
   };
+
+  const onSubmit = handleSave;
 
   return (
     <>
       <BasicTitle title="나의 냉장고" />
       <Container>
         <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
-        <Wrapper>
+        <AddForm onSubmit={handleSubmit(onSubmit)}>
           <AddIngredientInfo
-            ingredientDetails={ingredientDetails}
-            handleIngredientDetails={handleIngredientDetails}
+            control={control}
+            ingredientDetails={addItemList}
             deleteAddedIngredient={deleteAddedIngredient}
           />
-          {ingredientDetails.length > 0 && (
+          {addItemList.length > 0 && (
             <BasicButton
-              type="button"
+              type="submit"
               $bgcolor={theme.colors.orange}
               $fontcolor={theme.colors.white}
-              onClick={handleSave}
             >
               재료 추가
             </BasicButton>
           )}
-        </Wrapper>
+        </AddForm>
         <MyIngredientList />
       </Container>
     </>
@@ -85,7 +98,7 @@ const Container = styled.div`
   }
 `;
 
-const Wrapper = styled.div`
+const AddForm = styled.form`
   display: grid;
   grid-template-columns: 1fr;
   place-items: center;

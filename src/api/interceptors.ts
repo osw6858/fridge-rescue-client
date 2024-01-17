@@ -6,7 +6,7 @@ import {
   USER_NICKNAME_KEY,
   USER_STATUS_KEY,
 } from '../constants/api';
-import { axiosAuth, axiosFormData } from './axiosInstance';
+import { axiosAuth, axiosFormData, axiosReIssu } from './axiosInstance';
 import { getRefreshToken } from '../utils/getRefreshToken';
 import axios from 'axios';
 
@@ -28,23 +28,23 @@ export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
 export const handleTokenError = async (error: AxiosError) => {
   const originalRequest = error.config;
 
-  const contentType = originalRequest?.headers['Content-Type'];
-
   if (!error.response || !originalRequest) {
     return Promise.reject(error);
   }
+
+  const contentType = originalRequest.headers['Content-Type'];
 
   if (error.response && error.response.status === 401 && !isRefreshing) {
     isRefreshing = true;
 
     try {
       const refreshToken = getRefreshToken('refreshToken');
-      const response = await axiosAuth.post(
+      const response = await axiosReIssu.post(
         END_POINTS.REISSUE,
         {},
         {
           headers: {
-            'Refresh-Token': `Bearer ${refreshToken}`,
+            Authorization: `Bearer ${refreshToken}`,
           },
         }
       );
@@ -62,11 +62,10 @@ export const handleTokenError = async (error: AxiosError) => {
           return axiosFormData(originalRequest);
         }
 
-        isRefreshing = false;
         return axiosAuth(originalRequest);
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 403) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
         sessionStorage.removeItem(ACCESS_TOKEN_KEY);
         sessionStorage.removeItem(USER_STATUS_KEY);
         sessionStorage.removeItem(USER_NICKNAME_KEY);
@@ -76,10 +75,16 @@ export const handleTokenError = async (error: AxiosError) => {
         alert('토큰이 만료되었습니다. 다시 로그인해 주세요.');
         window.location.href = `${ROOT_URL}signin`;
       }
-      isRefreshing = false;
+
       return Promise.reject(error);
     }
   }
+
+  if (isRefreshing && error.response.status === 401) {
+    alert('인증에 문제가 발생했습니다.');
+  }
+
+  isRefreshing = false;
 
   return Promise.reject(error);
 };

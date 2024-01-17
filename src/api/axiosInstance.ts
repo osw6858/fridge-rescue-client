@@ -29,6 +29,14 @@ export const axiosFormData = axios.create({
   },
 });
 
+export const axiosReIssu = axios.create({
+  baseURL: BASE_URL,
+  timeout: 5000,
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
+
 // TODO: API에러시 함수 작성하여 두번째 인자로 넣기
 axiosAuth.interceptors.request.use(checkAndSetToken, (error) => Promise.reject(error));
 
@@ -37,3 +45,5 @@ axiosAuth.interceptors.response.use((response) => response, handleTokenError);
 axiosFormData.interceptors.request.use(checkAndSetToken, (error) => Promise.reject(error));
 
 axiosFormData.interceptors.response.use((response) => response, handleTokenError);
+
+axiosReIssu.interceptors.response.use((response) => response, handleTokenError);

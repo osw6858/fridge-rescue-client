@@ -2,7 +2,7 @@
 export const QUERY_KEY = {
   NEW_RECIPE: 'newRecipe',
   DETAIL_RECIPE: 'detailRecipe',
-  ADD_INGREDIENT: 'addIngredient',
+  FRIGE_INGREDIENT: 'frigeIngredient',
   SOCIAL_SIGNIN: `socialSignIn`,
   GET_REVIEW: 'getReview',
 } as const;

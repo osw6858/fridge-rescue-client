@@ -113,12 +113,6 @@ export const AddRecipe = () => {
       return;
     }
 
-    if (ingredient?.length === 0) {
-      // eslint-disable-next-line no-alert
-      alert('재료를 한개 이상 추가해 주세요.');
-      return;
-    }
-
     const steps = stepImage.map((_, index) => {
       const { content } = data[index];
       const { tip } = data[index];
