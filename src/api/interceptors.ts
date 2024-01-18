@@ -44,7 +44,7 @@ export const handleTokenError = async (error: AxiosError) => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${refreshToken}d`,
+            Authorization: `Bearer ${refreshToken}`,
           },
         }
       );

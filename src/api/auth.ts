@@ -14,6 +14,7 @@ interface SignInProps {
 
 interface AuthCode {
   code: string;
+  email?: string;
 }
 
 export const fetchSignUp = async (params: SignUpProps) => {
@@ -31,6 +32,11 @@ export const fetchSignIn = async (params: SignInProps) => {
 };
 
 export const emailAuth = async (code: AuthCode) => {
+  const { data } = await axiosDefault.post(END_POINTS.CONFIRM, code);
+  return data;
+};
+
+export const emailAuthInMyPage = async (code: AuthCode) => {
   const { data } = await axiosAuth.post(END_POINTS.CONFIRM, code);
   return data;
 };

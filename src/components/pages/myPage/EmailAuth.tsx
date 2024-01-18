@@ -1,14 +1,28 @@
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
 import styled from 'styled-components';
 import { BasicInput } from '../../common/BasicInput';
 import { BasicButton } from '../../common/BasicButton';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { emailAuth } from '../../../api/auth';
+import { emailAuthInMyPage } from '../../../api/auth';
+import { axiosAuth } from '../../../api/axiosInstance';
+import { END_POINTS, USER_STATUS_KEY } from '../../../constants/api';
+import type { AxiosError } from 'axios';
 
 export const EmailAuth = () => {
   const [authCode, setAuthCode] = useState<string | undefined>('');
 
-  const { mutate } = useMutation({ mutationFn: emailAuth });
+  const { mutate } = useMutation({
+    mutationFn: emailAuthInMyPage,
+    onSuccess: (data) => {
+      alert('이메일 인증이 완료 되었습니다.');
+      sessionStorage.setItem(USER_STATUS_KEY, data.data.role);
+    },
+    onError: (error: AxiosError) => {
+      console.error(error);
+    },
+  });
 
   const handleSendAuthCode = () => {
     if (!authCode) {
@@ -21,6 +35,11 @@ export const EmailAuth = () => {
     };
     mutate(finalData);
     setAuthCode('');
+  };
+
+  const leave = async () => {
+    const { data } = await axiosAuth.delete(END_POINTS.LEAVE);
+    console.log(data);
   };
 
   return (
@@ -36,6 +55,9 @@ export const EmailAuth = () => {
       <BasicButton onClick={handleSendAuthCode} $bgcolor="#ff8527" type="text" $fontcolor="#fff">
         인증 확인
       </BasicButton>
+      <button type="button" onClick={leave}>
+        탈퇴
+      </button>
     </NicknameEditContainer>
   );
 };

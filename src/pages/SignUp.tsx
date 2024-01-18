@@ -39,6 +39,7 @@ export const SignUp = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<ErrorMsg>();
   const [authCode, setAuthCode] = useState<string | undefined>('');
+  const [email, setEmail] = useState('');
 
   const handleError = (error: AxiosError) => {
     const errorData = error.response?.data as SignUpError;
@@ -80,6 +81,7 @@ export const SignUp = () => {
       password: data.pw as string,
       nickname: data.nickname as string,
     };
+    setEmail(data.email as string);
 
     signUpMutation.mutate(params);
     // setIsOpen(true);
@@ -94,8 +96,11 @@ export const SignUp = () => {
     }
 
     const finalData = {
+      email,
       code: authCode,
     };
+
+    console.log(finalData);
 
     emailAuthMutation.mutate(finalData);
   };
@@ -115,6 +120,8 @@ export const SignUp = () => {
   const onSubmit = handleSingUp;
 
   const password = watch('pw');
+
+  console.log(email);
 
   return (
     <SignUpContainer>
