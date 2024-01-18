@@ -11,6 +11,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addIngredient } from '../api/fridge';
 import { QUERY_KEY } from '../constants/queryKey';
 import type { AxiosError } from 'axios';
+import { Suspense } from 'react';
+import { FallBack } from '../components/common/FallBack';
 
 interface IngredientInputData {
   [index: string]: {
@@ -82,7 +84,15 @@ export const MyRefrigerator = () => {
             </BasicButton>
           )}
         </AddForm>
-        <MyIngredientList />
+        <Suspense
+          fallback={
+            <FallbackWrapper>
+              <FallBack length={3} />
+            </FallbackWrapper>
+          }
+        >
+          <MyIngredientList />
+        </Suspense>
       </Container>
     </>
   );
@@ -107,4 +117,8 @@ const AddForm = styled.form`
   & > button {
     margin-top: 20px;
   }
+`;
+
+const FallbackWrapper = styled.div`
+  margin-top: 40px;
 `;

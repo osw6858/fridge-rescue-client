@@ -5,7 +5,7 @@ import { useState } from 'react';
 import type { FridgeIngredient } from '../../../types/ingredientType';
 import { BasicButton } from '../../common/BasicButton';
 import { theme } from '../../../styles/theme';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { getIngredient, updateIngredient } from '../../../api/fridge';
 
 interface UpdatedItem {
@@ -13,9 +13,10 @@ interface UpdatedItem {
 }
 
 export const MyIngredientList = () => {
-  const { data } = useQuery({
+  const { data } = useSuspenseQuery({
     queryKey: [QUERY_KEY.FRIGE_INGREDIENT],
     queryFn: getIngredient,
+    select: (data) => data.data.fridgeIngredientInfoList,
   });
 
   const queryClient = useQueryClient();
@@ -51,8 +52,7 @@ export const MyIngredientList = () => {
   const handleUpdate = (id: number, field: 'expiredAt' | 'memo', value: string): void => {
     if (!deletedItems.includes(id)) {
       setUpdatedItems((prevItems) => {
-        const currentItem =
-          prevItems[id] ?? data?.data.fridgeIngredientInfoList.find((item) => item.id === id);
+        const currentItem = prevItems[id] ?? data?.find((item) => item.id === id);
         return {
           ...prevItems,
           [id]: {
@@ -90,7 +90,7 @@ export const MyIngredientList = () => {
     <Container>
       <TitleWrapper>
         <p>재료 목록</p>
-        {data && data.data.fridgeIngredientInfoList.length > 0 && (
+        {data && data.length > 0 && (
           <div>
             {edit ? (
               <BasicButton
@@ -115,7 +115,7 @@ export const MyIngredientList = () => {
         )}
       </TitleWrapper>
       <GridContainer>
-        {data?.data.fridgeIngredientInfoList.map((item) => (
+        {data?.map((item) => (
           <ItemWrapper key={item.id}>
             <Item>
               <Title>{item.name}</Title>
