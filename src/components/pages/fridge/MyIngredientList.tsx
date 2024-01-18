@@ -1,23 +1,33 @@
+/* eslint-disable no-alert */
 import { QUERY_KEY } from '../../../constants/queryKey';
 import styled from 'styled-components';
 import { useState } from 'react';
-import type { Ingredient } from '../../../types/ingredientType';
+import type { FridgeIngredient } from '../../../types/ingredientType';
 import { BasicButton } from '../../common/BasicButton';
 import { theme } from '../../../styles/theme';
-import { useQuery } from '@tanstack/react-query';
-import { getIngredient } from '../../../api/fridge';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { getIngredient, updateIngredient } from '../../../api/fridge';
 
 interface UpdatedItem {
-  [key: number]: Ingredient;
+  [key: number]: FridgeIngredient;
 }
 
 export const MyIngredientList = () => {
-  const { data, error } = useQuery({
-    queryKey: [QUERY_KEY.ADD_INGREDIENT],
+  const { data } = useSuspenseQuery({
+    queryKey: [QUERY_KEY.FRIGE_INGREDIENT],
     queryFn: getIngredient,
+    select: (data) => data.data.fridgeIngredientInfoList,
   });
 
-  console.log(error);
+  const queryClient = useQueryClient();
+
+  const updateIngredientMutation = useMutation({
+    mutationFn: updateIngredient,
+    onError: () => {
+      alert('유효기간을 다시 확인해 주세요!.');
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_INGREDIENT] }),
+  });
 
   const [edit, setEdit] = useState<boolean>(false);
   const [deletedItems, setDeletedItems] = useState<number[]>([]);
@@ -42,7 +52,7 @@ export const MyIngredientList = () => {
   const handleUpdate = (id: number, field: 'expiredAt' | 'memo', value: string): void => {
     if (!deletedItems.includes(id)) {
       setUpdatedItems((prevItems) => {
-        const currentItem = data?.find((item) => item.id === id) ?? prevItems[id];
+        const currentItem = prevItems[id] ?? data?.find((item) => item.id === id);
         return {
           ...prevItems,
           [id]: {
@@ -63,44 +73,46 @@ export const MyIngredientList = () => {
     }));
 
     const finalData = {
-      deletedItems,
-      updatedItems: updatedItemsArray,
+      delete: deletedItems,
+      update: updatedItemsArray,
     };
 
-    console.log(finalData);
-
-    // TODO: 이후 서버로 전송 로직 추가
+    updateIngredientMutation.mutate(finalData);
 
     setEdit(false);
     setDeletedItems([]);
     setUpdatedItems({});
   };
 
+  console.log(updatedItems);
+
   return (
     <Container>
       <TitleWrapper>
         <p>재료 목록</p>
-        <div>
-          {edit ? (
-            <BasicButton
-              type="button"
-              onClick={saveChanges}
-              $bgcolor={theme.colors.orange}
-              $fontcolor={theme.colors.white}
-            >
-              저장
-            </BasicButton>
-          ) : (
-            <BasicButton
-              type="button"
-              $bgcolor={theme.colors.orange}
-              $fontcolor={theme.colors.white}
-              onClick={() => setEdit(true)}
-            >
-              수정
-            </BasicButton>
-          )}
-        </div>
+        {data && data.length > 0 && (
+          <div>
+            {edit ? (
+              <BasicButton
+                type="button"
+                onClick={saveChanges}
+                $bgcolor={theme.colors.orange}
+                $fontcolor={theme.colors.white}
+              >
+                저장
+              </BasicButton>
+            ) : (
+              <BasicButton
+                type="button"
+                $bgcolor={theme.colors.orange}
+                $fontcolor={theme.colors.white}
+                onClick={() => setEdit(true)}
+              >
+                수정
+              </BasicButton>
+            )}
+          </div>
+        )}
       </TitleWrapper>
       <GridContainer>
         {data?.map((item) => (

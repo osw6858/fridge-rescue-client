@@ -2,67 +2,60 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../../common/BasicButton';
 import { theme } from '../../../styles/theme';
 import { device } from '../../../styles/media';
-import type { AddIngredient } from '../../../types/ingredientType';
+import { Controller, type Control } from 'react-hook-form';
 
-interface Props {
-  handleIngredientDetails: (index: number, field: string, value: string) => void;
-  deleteAddedIngredient: (index: number) => void;
-  ingredientDetails: AddIngredient[];
+interface IngredientProps {
+  deleteAddedIngredient: (index: number, name: string) => void;
+  ingredientDetails: string[];
+  control: Control;
 }
 
 export const AddIngredientInfo = ({
-  handleIngredientDetails,
   deleteAddedIngredient,
   ingredientDetails,
-}: Props) => {
-  const handleExpiredAtChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-    memo: string
-  ) => {
-    handleIngredientDetails(index, e.target.value, memo);
-  };
-
-  const handleMemoChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-    index: number,
-    expiredAt: string
-  ) => {
-    handleIngredientDetails(index, expiredAt, e.target.value);
-  };
-
+  control,
+}: IngredientProps) => {
   return (
     <>
       {ingredientDetails.map((ingredient, index) => (
         <Container key={index}>
-          <IngredientTitle>{ingredient.name}</IngredientTitle>
+          <IngredientTitle>{ingredient}</IngredientTitle>
           <Info>
             <Section>
               <Title>
                 <p> 유통기한</p>
               </Title>
-              <Expiration
-                required
-                type="date"
-                value={ingredient.expiredAt}
-                onChange={(e) => handleExpiredAtChange(e, index, ingredient.memo)}
-              ></Expiration>
+              <Controller
+                name={`${ingredient}.expiredAt`}
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <Expiration
+                    min={new Date().toISOString().split('T')[0]}
+                    id={`${ingredient}.expiredAt`}
+                    required
+                    type="date"
+                    {...field}
+                  ></Expiration>
+                )}
+              />
             </Section>
             <Section>
               <Title>
                 <p>간단 메모</p>
               </Title>
-              <Memo
-                required
-                value={ingredient.memo}
-                onChange={(e) => handleMemoChange(e, index, ingredient.expiredAt)}
+              <Controller
+                name={`${ingredient}.memo`}
+                control={control}
+                defaultValue=""
+                render={({ field }) => <Memo id={`${ingredient}.memo`} required {...field} />}
               />
             </Section>
             <BasicButton
               type="button"
               $bgcolor={theme.colors.orange}
               $fontcolor={theme.colors.white}
-              onClick={() => deleteAddedIngredient(index)}
+              onClick={() => deleteAddedIngredient(index, ingredient)}
             >
               삭제
             </BasicButton>
