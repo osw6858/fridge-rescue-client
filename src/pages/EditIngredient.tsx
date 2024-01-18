@@ -20,12 +20,19 @@ export const EditIngredient = () => {
   const [cookingCompletion, setCookingCompletion] = useState(false);
   const [deleteIdList, setDeleteIdList] = useState<number[] | null>([]);
   const [editList, setEditList] = useState<IngredientEditList[] | null>([]);
+  const [cookId, setCookId] = useState();
 
   const onAgree = () => {
-    navigation('/review/post');
+    navigation('/review/post', {
+      state: {
+        cookId,
+        recipeId,
+      },
+    });
   };
+
   const onCancel = () => {
-    navigation('/recipe/1');
+    navigation(`/recipe/${recipeId}`);
   };
 
   const { data } = useQuery({
@@ -38,10 +45,11 @@ export const EditIngredient = () => {
 
   const mutation = useMutation({
     mutationFn: cookingComplete,
+    onSuccess: (data) => setCookId(data.data.id),
   });
   const handleIngredientEdit = () => {
     mutation.mutate({ recipeId, deleteIdList, editList });
-    // setCookingCompletion(true);
+    setCookingCompletion(true);
   };
 
   return (

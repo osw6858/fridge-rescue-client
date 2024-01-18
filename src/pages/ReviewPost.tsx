@@ -6,15 +6,26 @@ import { BasicTextArea } from '../components/common/BasicTextArea';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { reviewPost } from '../api/review';
 
 export const ReviewPost = () => {
   const navigation = useNavigate();
-  const [droppedImage, setDroppedImage] = useState<FormData | null>();
+  const location = useLocation();
+  const cookId: number = parseInt(location.state.cookId, 10);
+  const recipeId: number = parseInt(location.state.recipeId, 10);
+  const [droppedImage, setDroppedImage] = useState<File | null>(null);
 
-  const handleImageDrop = (imageFile: FormData | null) => {
+  const handleImageDrop = (imageFile: File | null) => {
     setDroppedImage(imageFile);
   };
+
+  const mutation = useMutation({
+    mutationFn: (data: { title: string; content: string }) =>
+      reviewPost(recipeId, cookId, data.title, droppedImage, data.content),
+    onSuccess: (data) => console.log(data),
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,13 +35,15 @@ export const ReviewPost = () => {
     };
     const title = target.title.value;
     const content = target.content.value;
+
+    mutation.mutate({ title, content });
   };
 
   return (
     <ReviewPostContainer>
-      <BasicTitle title="레시피 후기 등록" />
+      <BasicTitle title="레시피 리뷰 등록" />
       <form onSubmit={(e) => handleSubmit(e)}>
-        <DragAndDrop text="완성된 요리의" onImageDrop={handleImageDrop} formDataKey="image" />
+        <DragAndDrop text="완성된 요리의" onImageDrop={handleImageDrop} />
         <div className="description">
           <BasicInput type="text" placeholder="제목을 입력하세요" id="title" />
           <BasicTextArea placeholder="레시피 후기를 입력하세요" id="content" />

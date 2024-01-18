@@ -65,8 +65,6 @@ export const IngredientAccordion = ({
     });
   };
 
-  console.log(ingredient);
-
   return (
     <IngredientAccordionContainer>
       <Accordion>
