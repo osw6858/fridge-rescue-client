@@ -80,7 +80,8 @@ export const handleTokenError = async (error: AxiosError) => {
     }
   }
 
-  if (isRefreshing && error.response.status === 403) {
+  if ((isRefreshing && error.response.status === 403) || error.response.status === 401) {
+    // eslint-disable-next-line no-alert
     alert('인증에 문제가 발생했습니다.');
   }
 
