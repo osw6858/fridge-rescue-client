@@ -26,10 +26,12 @@ export const ReviewPost = () => {
   const mutation = useMutation({
     mutationFn: (data: { title: string; content: string }) =>
       reviewPost(recipeId, cookId, data.title, droppedImage, data.content),
-    onSuccess: () =>
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.GET_REVIEW],
-      }),
+      });
+      navigation(`/recipe/${recipeId}`);
+    },
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
