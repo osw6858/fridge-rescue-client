@@ -65,7 +65,7 @@ export const handleTokenError = async (error: AxiosError) => {
         return axiosAuth(originalRequest);
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
         sessionStorage.removeItem(ACCESS_TOKEN_KEY);
         sessionStorage.removeItem(USER_STATUS_KEY);
         sessionStorage.removeItem(USER_NICKNAME_KEY);
