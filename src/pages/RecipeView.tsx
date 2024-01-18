@@ -29,7 +29,11 @@ export const RecipeView = () => {
   };
 
   const onAgree = () => {
-    navigation('/review/ingredient');
+    navigation('/review/ingredient', {
+      state: {
+        recipeId,
+      },
+    });
   };
 
   const handleCookingCompletion = (isComplete: boolean) => {
