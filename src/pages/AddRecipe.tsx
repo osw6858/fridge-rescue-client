@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { theme } from '../styles/theme';
-import { useState, type ChangeEvent, useEffect } from 'react';
+import { useState, type ChangeEvent, useEffect, useRef } from 'react';
 import { useSelectItem } from '../hooks/useSelectItem';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import { FaPlus } from 'react-icons/fa6';
@@ -36,6 +36,7 @@ export const AddRecipe = () => {
   const [stepImage, setStepImage] = useState<StepImage[]>([{ image: null }]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [ingredient, setIngredient] = useState<Ingredient[]>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const uniqueAddItemList = Array.from(new Set(addItemList));
@@ -72,6 +73,13 @@ export const AddRecipe = () => {
     }
   };
 
+  const onThumbnailRemove = () => {
+    setThumbnail(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
     const newImage = [...stepImage];
     const file = event.target.files && event.target.files[0];
@@ -105,12 +113,6 @@ export const AddRecipe = () => {
       return;
     }
 
-    if (ingredient?.length === 0) {
-      // eslint-disable-next-line no-alert
-      alert('재료를 한개 이상 추가해 주세요.');
-      return;
-    }
-
     const steps = stepImage.map((_, index) => {
       const { content } = data[index];
       const { tip } = data[index];
@@ -119,25 +121,6 @@ export const AddRecipe = () => {
         description: content,
         tip,
       };
-    });
-
-    const formData = new FormData();
-
-    formData.append(`title`, data.title.title);
-    formData.append('summary', data.summary.summary);
-    formData.append(`recipeImage`, thumbnail);
-
-    formData.append('steps', new Blob([JSON.stringify(steps)], { type: 'application/json' }));
-
-    formData.append(
-      'ingredients',
-      new Blob([JSON.stringify(ingredient)], { type: 'application/json' })
-    );
-
-    stepImage.forEach((item, index) => {
-      if (item.image) {
-        formData.append(`stepImages[${index}]`, item.image);
-      }
     });
 
     const finalData = {
@@ -201,7 +184,7 @@ export const AddRecipe = () => {
                 type="button"
                 $bgcolor={theme.colors.grayishWhite}
                 $fontcolor={theme.colors.black}
-                onClick={() => setThumbnail(null)}
+                onClick={onThumbnailRemove}
               >
                 썸네일 삭제
               </BasicButton>
@@ -218,7 +201,13 @@ export const AddRecipe = () => {
             )}
           </ImageContainer>
           <InputContainer>
-            <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
+            <Input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              id="thumbnail"
+              onChange={onThumbnailChange}
+            />
           </InputContainer>
         </Thumbnail>
         {stepImage.map((e, index) => (
