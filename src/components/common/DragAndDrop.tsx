@@ -5,11 +5,10 @@ import { useState } from 'react';
 
 interface DragAndDropProps {
   text: string;
-  formDataKey: string;
-  onImageDrop: (imageFile: FormData | null) => void;
+  onImageDrop: (imageFile: File | null) => void;
 }
 
-export const DragAndDrop = ({ text, onImageDrop, formDataKey }: DragAndDropProps) => {
+export const DragAndDrop = ({ text, onImageDrop }: DragAndDropProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -17,10 +16,7 @@ export const DragAndDrop = ({ text, onImageDrop, formDataKey }: DragAndDropProps
     setIsDragging(true);
     const newImage = URL.createObjectURL(files[0]);
     setPreviewImage(newImage);
-
-    const formData = new FormData();
-    formData.append(formDataKey, newImage);
-    onImageDrop(formData);
+    onImageDrop(files[0]);
   };
 
   return (

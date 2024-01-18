@@ -1,23 +1,55 @@
 import styled from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
-import { IngredientList } from '../components/common/IngredientList';
-import { useSelectItem } from '../hooks/useSelectItem';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '../constants/queryKey';
+import { getIngredient } from '../api/fridge';
+import type { Ingredient, IngredientEditList } from '../types/ingredientType';
+import { IngredientAccordion } from '../components/pages/fridge/IngredientAccordion';
+import { cookingComplete } from '../api/cook';
 
 export const EditIngredient = () => {
   const navigation = useNavigate();
+  const location = useLocation();
+  const recipeId: number = parseInt(location.state.recipeId, 10);
+
   const [cookingCompletion, setCookingCompletion] = useState(false);
-  const { selectedItem, setSelectedItem } = useSelectItem();
+  const [deleteIdList, setDeleteIdList] = useState<number[] | null>([]);
+  const [editList, setEditList] = useState<IngredientEditList[] | null>([]);
+  const [cookId, setCookId] = useState();
 
   const onAgree = () => {
-    navigation('/review/post');
+    navigation('/review/post', {
+      state: {
+        cookId,
+        recipeId,
+      },
+    });
   };
+
   const onCancel = () => {
-    navigation('/recipe/1');
+    navigation(`/recipe/${recipeId}`);
+  };
+
+  const { data } = useQuery({
+    queryKey: [QUERY_KEY.GET_INGREDIENT],
+    queryFn: getIngredient,
+    select: (data) => {
+      return data.data.fridgeIngredientInfoList;
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: cookingComplete,
+    onSuccess: (data) => setCookId(data.data.id),
+  });
+  const handleIngredientEdit = () => {
+    mutation.mutate({ recipeId, deleteIdList, editList });
+    setCookingCompletion(true);
   };
 
   return (
@@ -25,50 +57,16 @@ export const EditIngredient = () => {
       <BasicTitle title="어떤 재료를 사용했나요?" />
       <EditIngredientContainer>
         <div className="ingredient-list">
-          <IngredientList
-            setSelectedIngredient={setSelectedItem}
-            usedIngredient={selectedItem}
-            titleList={[
-              '김치',
-              '오이',
-              '당근',
-              '부침가루',
-              '만두',
-              '동그랑땡',
-              '김치',
-              '오이',
-              '당근',
-              '부침가루',
-              '만두',
-              '동그랑땡',
-              '만두',
-              '동그랑땡',
-              '김치',
-              '오이',
-              '당근',
-              '부침가루',
-              '만두',
-              '동그랑땡',
-              '당근',
-              '부침가루',
-              '만두',
-              '동그랑땡',
-              '김치',
-              '오이',
-              '당근',
-              '부침가루',
-              '만두',
-              '동그랑땡',
-              '만두',
-              '동그랑땡',
-              '김치',
-              '오이',
-              '당근',
-              '부침가루',
-              '만두',
-              '동그랑땡',
-            ]}
-          />
+          {data?.map((ingredient: Ingredient) => {
+            return (
+              <IngredientAccordion
+                key={ingredient.name}
+                ingredient={ingredient}
+                setDeleteIdList={setDeleteIdList}
+                setEditList={setEditList}
+              />
+            );
+          })}
         </div>
 
         <div className="buttons">
@@ -86,14 +84,14 @@ export const EditIngredient = () => {
             type="button"
             $bgcolor={theme.colors.orange}
             $fontcolor={theme.colors.white}
-            onClick={() => setCookingCompletion(true)}
+            onClick={() => handleIngredientEdit()}
           >
-            재료 삭제
+            재료 수정
           </BasicButton>
         </div>
       </EditIngredientContainer>
       <ConfirmModal
-        title="재료를 삭제했어요!"
+        title="재료를 수정했어요!"
         description="레시피 후기를 남길까요? 취소 시 해당 레시피로 이동합니다."
         isOpen={cookingCompletion}
         handleOpen={setCookingCompletion}
@@ -106,11 +104,12 @@ export const EditIngredient = () => {
 
 const EditIngredientContainer = styled.div`
   width: 100%;
-  display: grid;
-  justify-content: center;
+  margin: 36px 0;
 
   .ingredient-list {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .buttons {
