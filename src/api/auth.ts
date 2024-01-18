@@ -1,5 +1,5 @@
 import { END_POINTS } from '../constants/api';
-import { axiosDefault } from './axiosInstance';
+import { axiosAuth, axiosDefault } from './axiosInstance';
 
 interface SignUpProps {
   email: string;
@@ -10,6 +10,10 @@ interface SignUpProps {
 interface SignInProps {
   email: string;
   password: string;
+}
+
+interface AuthCode {
+  code: string;
 }
 
 export const fetchSignUp = async (params: SignUpProps) => {
@@ -26,8 +30,8 @@ export const fetchSignIn = async (params: SignInProps) => {
   return { data, token, refreshToken };
 };
 
-export const emailAuth = async (code: string) => {
-  const { data } = await axiosDefault.post(END_POINTS.CONFIRM, code);
+export const emailAuth = async (code: AuthCode) => {
+  const { data } = await axiosAuth.post(END_POINTS.CONFIRM, code);
   return data;
 };
 

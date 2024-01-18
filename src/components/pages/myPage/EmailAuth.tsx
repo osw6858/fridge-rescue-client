@@ -1,14 +1,40 @@
 import styled from 'styled-components';
 import { BasicInput } from '../../common/BasicInput';
 import { BasicButton } from '../../common/BasicButton';
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { emailAuth } from '../../../api/auth';
 
 export const EmailAuth = () => {
+  const [authCode, setAuthCode] = useState<string | undefined>('');
+
+  const { mutate } = useMutation({ mutationFn: emailAuth });
+
+  const handleSendAuthCode = () => {
+    if (!authCode) {
+      // eslint-disable-next-line no-alert
+      alert('인증번호를 입력해 주세요!');
+      return;
+    }
+    const finalData = {
+      code: authCode,
+    };
+    mutate(finalData);
+    setAuthCode('');
+  };
+
   return (
     <NicknameEditContainer>
-      <BasicInput id="nickname" type="text" placeholder="이메일을 입력하세요" />
+      <BasicInput
+        value={authCode}
+        onChange={(e) => setAuthCode(e?.target.value)}
+        id="nickname"
+        type="text"
+        placeholder="이메일로 도착한 인증 코드를 입력해 주세요."
+      />
       <br />
-      <BasicButton $bgcolor="#ff8527" type="text" $fontcolor="#fff">
-        인증번호 발송
+      <BasicButton onClick={handleSendAuthCode} $bgcolor="#ff8527" type="text" $fontcolor="#fff">
+        인증 확인
       </BasicButton>
     </NicknameEditContainer>
   );

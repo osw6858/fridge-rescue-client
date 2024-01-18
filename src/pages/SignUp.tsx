@@ -59,13 +59,13 @@ export const SignUp = () => {
 
   const emailAuthMutation = useMutation({
     mutationFn: emailAuth,
-    onError: () => {
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.log(error);
       // eslint-disable-next-line no-alert
       alert('인증에 실패했습니다! 로그인 후 다시 시도해 주세요.');
-      navigate('/');
     },
     onSuccess: () => {
-      // NOTICE: 아직 서버 인증이 안풀려서 올바르게 인증해도 401에러가 뜸
       // eslint-disable-next-line no-alert
       alert('인증에 성공했습니다! 로그인 해 주세요.');
       navigate('/');
@@ -92,7 +92,12 @@ export const SignUp = () => {
       navigate('/');
       return;
     }
-    emailAuthMutation.mutate(authCode);
+
+    const finalData = {
+      code: authCode,
+    };
+
+    emailAuthMutation.mutate(finalData);
   };
 
   const handleAuthCancel = () => {
