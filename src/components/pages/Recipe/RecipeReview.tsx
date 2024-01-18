@@ -4,8 +4,15 @@ import { useState } from 'react';
 import { ImageModal } from '../../common/ImageModal';
 import type { Review } from '../../../types/reviewType';
 import { formatDate } from '../../../utils/formatDate';
+import { MdModeEdit } from 'react-icons/md';
+import { RiDeleteBin5Fill } from 'react-icons/ri';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { reviewDelete } from '../../../api/review';
+import { QUERY_KEY } from '../../../constants/queryKey';
+import { useNavigate } from 'react-router-dom';
 
 export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
+  const navigation = useNavigate();
   const [isImageModalOpened, setImageModalOpen] = useState(false);
   const [showAllContent, setShowAllContent] = useState(false);
 
@@ -17,9 +24,43 @@ export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
     setShowAllContent((prev) => !prev);
   };
 
+  const QueryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => reviewDelete(reviewData.id),
+    onSuccess: () =>
+      QueryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.GET_REVIEW],
+      }),
+  });
+
+  const handleDelete = () => {
+    /* eslint-disable no-alert */
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('정말 삭제할까요?')) {
+      mutation.mutate();
+    }
+  };
+
   return (
     <>
       <RecipeReviewContainer $showAllContent={showAllContent}>
+        <div className="buttons">
+          <button
+            type="button"
+            onClick={() =>
+              navigation('/review/edit', {
+                state: {
+                  reviewId: reviewData.id,
+                },
+              })
+            }
+          >
+            <MdModeEdit />
+          </button>
+          <button type="button" onClick={handleDelete}>
+            <RiDeleteBin5Fill />
+          </button>
+        </div>
         <div className="review-image" role="button" onClick={() => handleImageModal(true)}>
           <img src={reviewData.imageUrl} alt="리뷰 썸네일" />
         </div>
@@ -64,6 +105,7 @@ const RecipeReviewContainer = styled.div<{ $showAllContent: boolean }>`
   padding: 12px;
   background-color: ${(props) => props.theme.colors.grayishWhite};
   border-radius: 12px;
+  position: relative;
 
   .review-image {
     img {
@@ -116,6 +158,24 @@ const RecipeReviewContainer = styled.div<{ $showAllContent: boolean }>`
 
       &:hover {
         background-color: ${(props) => props.theme.colors.gray}50;
+      }
+    }
+  }
+
+  .buttons {
+    position: absolute;
+    display: flex;
+    right: 12px;
+    gap: 12px;
+
+    button {
+      height: 20px;
+      font-size: 18px;
+      color: ${(props) => props.theme.colors.gray};
+      transition: all 0.3s;
+
+      &:hover {
+        color: ${(props) => props.theme.colors.black};
       }
     }
   }

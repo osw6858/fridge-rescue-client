@@ -5,5 +5,6 @@ export const QUERY_KEY = {
   FRIGE_INGREDIENT: 'frigeIngredient',
   SOCIAL_SIGNIN: `socialSignIn`,
   GET_REVIEW: 'getReview',
+  GET_DETAIL_REVIEW: 'getDetailReview',
   GET_INGREDIENT: 'getIngredient',
 } as const;
