@@ -7,8 +7,9 @@ import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { reviewPost } from '../api/review';
+import { QUERY_KEY } from '../constants/queryKey';
 
 export const ReviewPost = () => {
   const navigation = useNavigate();
@@ -21,10 +22,14 @@ export const ReviewPost = () => {
     setDroppedImage(imageFile);
   };
 
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (data: { title: string; content: string }) =>
       reviewPost(recipeId, cookId, data.title, droppedImage, data.content),
-    onSuccess: (data) => console.log(data),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.GET_REVIEW],
+      }),
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
