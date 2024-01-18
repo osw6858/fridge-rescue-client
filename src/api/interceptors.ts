@@ -44,7 +44,7 @@ export const handleTokenError = async (error: AxiosError) => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${refreshToken}`,
+            Authorization: `Bearer ${refreshToken}d`,
           },
         }
       );
@@ -65,7 +65,7 @@ export const handleTokenError = async (error: AxiosError) => {
         return axiosAuth(originalRequest);
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 403) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
         sessionStorage.removeItem(ACCESS_TOKEN_KEY);
         sessionStorage.removeItem(USER_STATUS_KEY);
         sessionStorage.removeItem(USER_NICKNAME_KEY);
@@ -80,7 +80,7 @@ export const handleTokenError = async (error: AxiosError) => {
     }
   }
 
-  if (isRefreshing && error.response.status === 401) {
+  if (isRefreshing && error.response.status === 403) {
     alert('인증에 문제가 발생했습니다.');
   }
 
