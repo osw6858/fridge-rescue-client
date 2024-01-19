@@ -20,6 +20,7 @@ export const END_POINTS = {
   OAUTH: 'auth/oauth?provider=',
   REISSUE: 'auth/token/reissue',
   LEAVE: 'auth/leave',
+  LOGOUT: 'auth/logout',
   MEMBER_INFO: 'members/info',
   NICKNAME: 'members/info/nickname',
   PASSWORD: 'members/info/password',

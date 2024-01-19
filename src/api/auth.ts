@@ -45,3 +45,8 @@ export const fetchSocialSignIn = async (provider: string) => {
   const { data } = await axiosDefault.get(`${END_POINTS.OAUTH}${provider}`);
   return data;
 };
+
+export const fetchLogOut = async () => {
+  const { data } = await axiosAuth.get(END_POINTS.LOGOUT);
+  return data;
+};
