@@ -7,17 +7,26 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { emailAuthInMyPage } from '../../../api/auth';
 import { axiosAuth } from '../../../api/axiosInstance';
-import { END_POINTS, USER_STATUS_KEY } from '../../../constants/api';
+import {
+  ACCESS_TOKEN_KEY,
+  END_POINTS,
+  USER_NICKNAME_KEY,
+  USER_STATUS_KEY,
+} from '../../../constants/api';
 import type { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export const EmailAuth = () => {
   const [authCode, setAuthCode] = useState<string | undefined>('');
+  const navigation = useNavigate();
 
   const { mutate } = useMutation({
     mutationFn: emailAuthInMyPage,
     onSuccess: (data) => {
       alert('이메일 인증이 완료 되었습니다.');
+      console.log(data.data.token);
       sessionStorage.setItem(USER_STATUS_KEY, data.data.role);
+      sessionStorage.setItem(ACCESS_TOKEN_KEY, data.data.token);
     },
     onError: (error: AxiosError) => {
       console.error(error);
@@ -40,6 +49,13 @@ export const EmailAuth = () => {
   const leave = async () => {
     const { data } = await axiosAuth.delete(END_POINTS.LEAVE);
     console.log(data);
+
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(USER_STATUS_KEY);
+    sessionStorage.removeItem(USER_NICKNAME_KEY);
+
+    document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    navigation('/');
   };
 
   return (
