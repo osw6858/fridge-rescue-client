@@ -17,13 +17,13 @@ import { fetchLogOut } from '../../api/auth';
 
 export const Header = () => {
   const [sideBar, setSideBar] = useState(false);
-  const [isLogOut, setIsLogOut] = useState(false);
 
   const navigation = useNavigate();
 
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
   const [userNickName, setUserNickName] = useRecoilState(NickNameAtom);
   const [authState, setAuthState] = useRecoilState(AuthStateAtom);
+  const [isLogOut, setIsLogOut] = useState(false);
 
   const { data } = useQuery({
     queryKey: [QUERY_KEY.LOGOUT],
@@ -39,17 +39,20 @@ export const Header = () => {
 
   const handleLogOut = () => {
     setIsLogOut(true);
+    navigation('/');
+
     setAuthState(false);
     setUserNickName('');
-
     // eslint-disable-next-line no-alert
     alert('로그아웃 되었습니다.');
   };
 
-  if (data) {
+  if (data && isLogOut) {
+    setIsLogOut(false);
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     sessionStorage.removeItem(USER_STATUS_KEY);
     sessionStorage.removeItem(USER_NICKNAME_KEY);
+
     document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   }
 
