@@ -1,5 +1,5 @@
 import { END_POINTS } from '../constants/api';
-import { axiosDefault } from './axiosInstance';
+import { axiosAuth, axiosDefault } from './axiosInstance';
 
 interface SignUpProps {
   email: string;
@@ -10,6 +10,11 @@ interface SignUpProps {
 interface SignInProps {
   email: string;
   password: string;
+}
+
+interface AuthCode {
+  code: string;
+  email?: string;
 }
 
 export const fetchSignUp = async (params: SignUpProps) => {
@@ -26,12 +31,22 @@ export const fetchSignIn = async (params: SignInProps) => {
   return { data, token, refreshToken };
 };
 
-export const emailAuth = async (code: string) => {
+export const emailAuth = async (code: AuthCode) => {
   const { data } = await axiosDefault.post(END_POINTS.CONFIRM, code);
+  return data;
+};
+
+export const emailAuthInMyPage = async (code: AuthCode) => {
+  const { data } = await axiosAuth.post(END_POINTS.CONFIRM, code);
   return data;
 };
 
 export const fetchSocialSignIn = async (provider: string) => {
   const { data } = await axiosDefault.get(`${END_POINTS.OAUTH}${provider}`);
+  return data;
+};
+
+export const fetchLogOut = async () => {
+  const { data } = await axiosAuth.get(END_POINTS.LOGOUT);
   return data;
 };

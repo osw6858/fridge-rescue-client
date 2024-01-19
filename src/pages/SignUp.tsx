@@ -39,6 +39,7 @@ export const SignUp = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<ErrorMsg>();
   const [authCode, setAuthCode] = useState<string | undefined>('');
+  const [email, setEmail] = useState('');
 
   const handleError = (error: AxiosError) => {
     const errorData = error.response?.data as SignUpError;
@@ -59,13 +60,13 @@ export const SignUp = () => {
 
   const emailAuthMutation = useMutation({
     mutationFn: emailAuth,
-    onError: () => {
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.log(error);
       // eslint-disable-next-line no-alert
       alert('인증에 실패했습니다! 로그인 후 다시 시도해 주세요.');
-      navigate('/');
     },
     onSuccess: () => {
-      // NOTICE: 아직 서버 인증이 안풀려서 올바르게 인증해도 401에러가 뜸
       // eslint-disable-next-line no-alert
       alert('인증에 성공했습니다! 로그인 해 주세요.');
       navigate('/');
@@ -80,6 +81,7 @@ export const SignUp = () => {
       password: data.pw as string,
       nickname: data.nickname as string,
     };
+    setEmail(data.email as string);
 
     signUpMutation.mutate(params);
     // setIsOpen(true);
@@ -92,7 +94,15 @@ export const SignUp = () => {
       navigate('/');
       return;
     }
-    emailAuthMutation.mutate(authCode);
+
+    const finalData = {
+      email,
+      code: authCode,
+    };
+
+    console.log(finalData);
+
+    emailAuthMutation.mutate(finalData);
   };
 
   const handleAuthCancel = () => {
@@ -110,6 +120,8 @@ export const SignUp = () => {
   const onSubmit = handleSingUp;
 
   const password = watch('pw');
+
+  console.log(email);
 
   return (
     <SignUpContainer>

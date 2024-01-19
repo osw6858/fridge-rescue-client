@@ -11,6 +11,9 @@ import { TbBellFilled } from 'react-icons/tb';
 import { ACCESS_TOKEN_KEY, USER_NICKNAME_KEY, USER_STATUS_KEY } from '../../constants/api';
 import { AuthStateAtom, NickNameAtom } from '../../store/auth';
 import { device } from '../../styles/media';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '../../constants/queryKey';
+import { fetchLogOut } from '../../api/auth';
 
 export const Header = () => {
   const [sideBar, setSideBar] = useState(false);
@@ -20,6 +23,14 @@ export const Header = () => {
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
   const [userNickName, setUserNickName] = useRecoilState(NickNameAtom);
   const [authState, setAuthState] = useRecoilState(AuthStateAtom);
+  const [isLogOut, setIsLogOut] = useState(false);
+
+  const { data } = useQuery({
+    queryKey: [QUERY_KEY.LOGOUT],
+    queryFn: fetchLogOut,
+    enabled: isLogOut,
+    staleTime: 0,
+  });
 
   const handleLogin = () => {
     navigation('/signin');
@@ -27,18 +38,23 @@ export const Header = () => {
   };
 
   const handleLogOut = () => {
+    setIsLogOut(true);
     navigation('/');
 
-    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
-    sessionStorage.removeItem(USER_STATUS_KEY);
-    sessionStorage.removeItem(USER_NICKNAME_KEY);
-
-    document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     setAuthState(false);
     setUserNickName('');
     // eslint-disable-next-line no-alert
     alert('로그아웃 되었습니다.');
   };
+
+  if (data && isLogOut) {
+    setIsLogOut(false);
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(USER_STATUS_KEY);
+    sessionStorage.removeItem(USER_NICKNAME_KEY);
+
+    document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  }
 
   return (
     <Container>

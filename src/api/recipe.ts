@@ -29,23 +29,24 @@ export const getDetailRecipe = async (recipeId: string) => {
 export const addNewRecipe = async (recipeData: AddRecipeData) => {
   const formData = new FormData();
 
-  formData.append('title', recipeData.title);
-  formData.append('summary', recipeData.summary);
-  formData.append(`recipeImage`, recipeData.recipeImage);
+  const requestData = {
+    title: recipeData.title,
+    summary: recipeData.summary,
+    ingredients: recipeData.ingredient,
+    steps: recipeData.steps,
+  };
 
-  formData.append(
-    'steps',
-    new Blob([JSON.stringify(recipeData.steps)], { type: 'application/json' })
-  );
+  console.log(requestData);
 
-  formData.append(
-    'ingredients',
-    new Blob([JSON.stringify(recipeData.ingredient)], { type: 'application/json' })
-  );
+  const requestBlob = new Blob([JSON.stringify(requestData)], { type: 'application/json' });
+
+  formData.append('request', requestBlob);
 
   recipeData.stepImage.forEach((item) => {
     formData.append(`stepImages`, item.image || new Blob());
   });
+
+  formData.append('recipeImage', recipeData.recipeImage);
 
   const { data } = await axiosFormData.post(END_POINTS.RECIPES, formData);
 
