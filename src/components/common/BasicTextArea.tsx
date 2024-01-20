@@ -3,12 +3,17 @@ import styled from 'styled-components';
 interface BasicTextAreaProps {
   id: string;
   placeholder: string;
+  defaultValue?: string;
 }
 
-export const BasicTextArea = ({ id, placeholder }: BasicTextAreaProps) => {
+export const BasicTextArea = ({ id, placeholder, defaultValue }: BasicTextAreaProps) => {
   return (
     <>
-      <BasicTextAreaWrap id={id} placeholder={placeholder}></BasicTextAreaWrap>
+      <BasicTextAreaWrap
+        id={id}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+      ></BasicTextAreaWrap>
     </>
   );
 };

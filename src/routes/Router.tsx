@@ -11,6 +11,7 @@ import { RecipeView } from '../pages/RecipeView';
 import { Recipe } from '../pages/Recipe';
 import { PrivateRoute } from './PrivateRoute';
 import { EditIngredient } from '../pages/EditIngredient';
+import { ReviewEdit } from '../pages/ReviewEdit';
 
 export const Router = () => {
   return (
@@ -31,6 +32,7 @@ export const Router = () => {
         <Route path="/refrigerator" element={<MyRefrigerator />} />
         <Route path="/review/ingredient" element={<EditIngredient />} />
         <Route path="/review/post" element={<ReviewPost />} />
+        <Route path="/review/edit" element={<ReviewEdit />} />
       </Route>
     </Routes>
   );

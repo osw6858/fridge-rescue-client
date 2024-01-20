@@ -15,7 +15,7 @@ import { formatDate } from '../utils/formatDate';
 import { Chip } from '@mui/material';
 import type { Ingredient, RecipeSteps } from '../types/recipeType';
 import { ImageModal } from '../components/common/ImageModal';
-import { RecipeReviewList } from '../components/pages/recipe/RecipeReviewList';
+import { RecipeReviewList } from '../components/pages/Recipe/RecipeReviewList';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
@@ -45,8 +45,6 @@ export const RecipeView = () => {
     queryFn: () => getDetailRecipe(recipeId),
     select: (data) => data.data,
   });
-
-  console.log(data?.recipeImageUrl);
 
   return (
     <>

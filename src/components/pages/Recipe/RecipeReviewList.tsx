@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { BasicTitle } from '../../common/BasicTitle';
-import { RecipeReview } from './RecipeReview';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getReviews } from '../../../api/review';
 import { QUERY_KEY } from '../../../constants/queryKey';
 import { useLocation } from 'react-router-dom';
 import type { Review } from '../../../types/reviewType';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { RecipeReview } from './RecipeReview';
 
 export const RecipeReviewList = () => {
   const { pathname } = useLocation();
