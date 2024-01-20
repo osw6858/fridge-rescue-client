@@ -122,15 +122,14 @@ export const SearchedList = styled.ul`
   display: grid;
   position: absolute;
   width: 90%;
-  height: 300px;
+  max-height: 300px;
 `;
 
 export const SearchedItem = styled.li`
   z-index: 20;
   display: flex;
   align-items: center;
-  max-height: 50px;
-  padding: 10px;
+  height: 50px;
   background-color: ${(props) => props.theme.colors.grayishWhite};
   border: 1px solid ${(props) => props.theme.colors.lightGray};
 `;
