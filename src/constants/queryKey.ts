@@ -8,4 +8,5 @@ export const QUERY_KEY = {
   GET_INGREDIENT: 'getIngredient',
   LOGOUT: 'logOut',
   UPDATE_RECIPE: 'updateRecipe',
+  SEARCH_INGREIDENT: 'searchIngredient',
 } as const;

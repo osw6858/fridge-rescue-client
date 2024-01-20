@@ -4,6 +4,11 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../../common/BasicButton';
 import { theme } from '../../../styles/theme';
 import { device } from '../../../styles/media';
+import { useDebounce } from '../../../hooks/useDebounce';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '../../../constants/queryKey';
+import { getSearchIngredient } from '../../../api/search';
+import type { Suggest } from '../../../types/ingredientType';
 
 interface SearchFormPorps {
   addItemList: string[];
@@ -15,9 +20,18 @@ export const IngredientSearchForm = ({ addItemList, setAddItemList }: SearchForm
   const [visible, setVisible] = useState(false);
   const [selectedQuery, setSelectedQuery] = useState<string[]>([]);
 
+  const debounceQuery = useDebounce(query, 1000);
+
   useEffect(() => {
-    setVisible(query !== '');
-  }, [query]);
+    setVisible(debounceQuery !== '');
+  }, [debounceQuery]);
+
+  const { data, isRefetching } = useQuery({
+    queryKey: [QUERY_KEY.SEARCH_INGREIDENT],
+    queryFn: () => getSearchIngredient(debounceQuery),
+    enabled: !!debounceQuery,
+    staleTime: 0,
+  });
 
   const handleSelect = (event: React.MouseEvent<HTMLElement>) => {
     const target = event.target as HTMLElement;
@@ -75,10 +89,10 @@ export const IngredientSearchForm = ({ addItemList, setAddItemList }: SearchForm
             +
           </BasicButton>
         </SearchWrapper>
-        {visible && (
+        {visible && !isRefetching && (
           <SearchedList>
-            {['당근', '딸기', '로즈마리'].map((e, i) => (
-              <SearchedItem key={i} onClick={handleSelect}>
+            {data?.map((e: Suggest, index: number) => (
+              <SearchedItem key={index} onClick={handleSelect}>
                 <p>{e}</p>
               </SearchedItem>
             ))}
@@ -104,17 +118,18 @@ const SearchWrapper = styled.div`
   }
 `;
 
-const SearchedList = styled.ul`
+export const SearchedList = styled.ul`
   display: grid;
   position: absolute;
   width: 90%;
   height: 300px;
 `;
 
-const SearchedItem = styled.li`
+export const SearchedItem = styled.li`
   z-index: 20;
   display: flex;
   align-items: center;
+  max-height: 50px;
   padding: 10px;
   background-color: ${(props) => props.theme.colors.grayishWhite};
   border: 1px solid ${(props) => props.theme.colors.lightGray};
