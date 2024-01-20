@@ -2,22 +2,20 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { theme } from '../styles/theme';
-import { useState, type ChangeEvent, useEffect, useRef } from 'react';
-import { useSelectItem } from '../hooks/useSelectItem';
+import { useRef } from 'react';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import { FaPlus } from 'react-icons/fa6';
-import { useMutation } from '@tanstack/react-query';
-import { addNewRecipe } from '../api/recipe';
 import { BasicInput } from '../components/common/BasicInput';
 import { Controller, useForm } from 'react-hook-form';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
+import { useRecipe } from '../hooks/useRecipe';
 
 export interface StepImage {
   image: File | null;
 }
 
-interface InputData {
+export interface InputData {
   [index: number | string]: {
     content: string;
     tip: string;
@@ -27,84 +25,30 @@ interface InputData {
 }
 
 export interface Ingredient {
+  id?: number;
   name: string;
   amount: string;
 }
 
 export const AddRecipe = () => {
-  const { addItemList, setAddItemList } = useSelectItem();
-  const [stepImage, setStepImage] = useState<StepImage[]>([{ image: null }]);
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const [ingredient, setIngredient] = useState<Ingredient[]>();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const uniqueAddItemList = Array.from(new Set(addItemList));
-
-    const newIngredients = uniqueAddItemList
-      .filter((name) => !ingredient?.some((item) => item.name === name))
-      .map((name) => ({ name, amount: '' }));
-
-    setIngredient((prev) => [...(prev || []), ...newIngredients]);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addItemList]);
-
-  const setIngridentAmount = (name: string, amount: string) => {
-    const newIngrident = ingredient?.map((item) =>
-      item.name === name ? { ...item, amount } : item
-    );
-
-    setIngredient(newIngrident);
-  };
-
-  const deleteIngredientByName = (name: string) => {
-    const updatedIngredients = ingredient?.filter((item) => item.name !== name);
-    setIngredient(updatedIngredients);
-
-    const updatedAddItemList = addItemList?.filter((itemName) => itemName !== name);
-    setAddItemList(updatedAddItemList);
-  };
-
-  const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const thumbnail = event.target.files && event.target.files[0];
-      setThumbnail(thumbnail);
-    }
-  };
-
-  const onThumbnailRemove = () => {
-    setThumbnail(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
-    const newImage = [...stepImage];
-    const file = event.target.files && event.target.files[0];
-
-    if (file) {
-      newImage[index] = {
-        image: file,
-      };
-      setStepImage(newImage);
-    }
-  };
-
-  const deleteImageStep = (index: number) => {
-    const newStep = [...stepImage];
-    newStep[index] = {
-      ...newStep[index],
-      image: null,
-    };
-    setStepImage(newStep);
-  };
-
-  const addRecipeMutation = useMutation({
-    mutationFn: addNewRecipe,
-    onError: (error) => console.log(error),
-  });
+  const {
+    stepImage,
+    thumbnail,
+    ingredient,
+    addItemList,
+    setIngridentAmount,
+    deleteIngredientByName,
+    onThumbnailChange,
+    onThumbnailRemove,
+    handleImageStep,
+    deleteImageStep,
+    addRecipeMutation,
+    handleDeleteStep,
+    setAddItemList,
+    setStepImage,
+  } = useRecipe();
 
   const handleAddRecipe = async (data: InputData) => {
     if (thumbnail === null) {
@@ -133,10 +77,6 @@ export const AddRecipe = () => {
     };
 
     addRecipeMutation.mutate(finalData);
-  };
-
-  const handleDeleteStep = (index: number) => {
-    setStepImage(stepImage.filter((_, idx) => idx !== index));
   };
 
   const { control, handleSubmit } = useForm();
@@ -241,18 +181,18 @@ export const AddRecipe = () => {
   );
 };
 
-const TitleWrapper = styled.div`
+export const TitleWrapper = styled.div`
   display: grid;
   grid-template-columns: 90% 10%;
 `;
 
-const WriteContainer = styled.form`
+export const WriteContainer = styled.form`
   display: grid;
   grid-template-columns: 100%;
   margin-top: 50px;
 `;
 
-const RecipeTitle = styled.input`
+export const RecipeTitle = styled.input`
   height: 50px;
   border: none;
   font-size: 24px;
@@ -260,7 +200,7 @@ const RecipeTitle = styled.input`
   outline: none;
 `;
 
-const Summary = styled.div`
+export const Summary = styled.div`
   label {
   }
 
@@ -280,7 +220,7 @@ const ButtonWrapper = styled.div`
   }
 `;
 
-const Thumbnail = styled.div`
+export const Thumbnail = styled.div`
   margin: 10px 0 5px 0;
 
   button {
@@ -290,12 +230,12 @@ const Thumbnail = styled.div`
   }
 `;
 
-const DeleteWrapper = styled.div`
+export const DeleteWrapper = styled.div`
   display: flex;
   justify-content: end;
 `;
 
-const ImageContainer = styled.div`
+export const ImageContainer = styled.div`
   width: 100%;
   height: 400px;
   display: flex;
@@ -304,7 +244,7 @@ const ImageContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-const ImagePreview = styled.img`
+export const ImagePreview = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -327,16 +267,16 @@ export const Placeholder = styled.label`
   }
 `;
 
-const Input = styled.input`
+export const Input = styled.input`
   display: none;
 `;
 
-const InputContainer = styled.div`
+export const InputContainer = styled.div`
   position: relative;
   margin-bottom: 20px;
 `;
 
-const PlusIcon = styled(FaPlus)`
+export const PlusIcon = styled(FaPlus)`
   font-size: 24px;
   margin-bottom: 4px;
 `;

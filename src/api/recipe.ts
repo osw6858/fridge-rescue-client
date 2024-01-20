@@ -52,3 +52,8 @@ export const addNewRecipe = async (recipeData: AddRecipeData) => {
 
   return data;
 };
+
+export const updateRecipe = async (recipeId: string, recipeData: AddRecipeData) => {
+  const { data } = await axiosFormData.post(`${END_POINTS.RECIPES}/${recipeId}`, recipeData);
+  return data;
+};
