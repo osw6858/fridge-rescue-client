@@ -37,3 +37,13 @@ export const reviewPost = async (
   });
   return result.data;
 };
+
+export const reviewDelete = async (reviewId: number) => {
+  const result = await axiosAuth.delete(`/${END_POINTS.REVIEWS}/${reviewId}`);
+  return result.data;
+};
+
+export const getDetailReview = async (reviewId: number) => {
+  const result = await axiosAuth.get(`/${END_POINTS.REVIEWS}/${reviewId}`);
+  return result.data;
+};
