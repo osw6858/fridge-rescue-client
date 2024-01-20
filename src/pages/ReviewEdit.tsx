@@ -47,8 +47,7 @@ export const ReviewEdit = () => {
     };
     const title = target.title.value;
     const content = target.content.value;
-    const resultData = mutation.mutate({ title, content });
-    console.log(resultData);
+    mutation.mutate({ title, content });
   };
 
   return (

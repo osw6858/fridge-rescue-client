@@ -10,11 +10,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { reviewDelete } from '../../../api/review';
 import { QUERY_KEY } from '../../../constants/queryKey';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { NickNameAtom } from '../../../store/auth';
 
 export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
   const navigation = useNavigate();
   const [isImageModalOpened, setImageModalOpen] = useState(false);
   const [showAllContent, setShowAllContent] = useState(false);
+  const user = useRecoilValue(NickNameAtom);
 
   const handleImageModal = (isOpen: boolean) => {
     setImageModalOpen(isOpen);
@@ -44,23 +47,25 @@ export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
   return (
     <>
       <RecipeReviewContainer $showAllContent={showAllContent}>
-        <div className="buttons">
-          <button
-            type="button"
-            onClick={() =>
-              navigation('/review/edit', {
-                state: {
-                  reviewId: reviewData.id,
-                },
-              })
-            }
-          >
-            <MdModeEdit />
-          </button>
-          <button type="button" onClick={handleDelete}>
-            <RiDeleteBin5Fill />
-          </button>
-        </div>
+        {user === reviewData.author.nickname && (
+          <div className="buttons">
+            <button
+              type="button"
+              onClick={() =>
+                navigation('/review/edit', {
+                  state: {
+                    reviewId: reviewData.id,
+                  },
+                })
+              }
+            >
+              <MdModeEdit />
+            </button>
+            <button type="button" onClick={handleDelete}>
+              <RiDeleteBin5Fill />
+            </button>
+          </div>
+        )}
         <div className="review-image" role="button" onClick={() => handleImageModal(true)}>
           <img src={reviewData.imageUrl} alt="리뷰 썸네일" />
         </div>
@@ -70,12 +75,7 @@ export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
             <span>{formatDate(reviewData?.createdAt)}</span>
             <span>{reviewData?.author?.nickname}</span>
           </div>
-          <div className="content">
-            {reviewData.contents} 제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더
-            잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더
-            잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더
-            잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?제가 더 잘만들죠?
-          </div>
+          <div className="content">{reviewData.contents}</div>
           <div className="arrow" onClick={handleToggleContent} role="button">
             {showAllContent ? (
               <>
