@@ -1,12 +1,52 @@
 import { styled } from 'styled-components';
+import { RecipeCard } from './RecipeCard';
+import type { Recipe } from '../../types/recipeType';
 
 export const CardList = () => {
-  // const { data } = useSuspenseQuery({ queryKey: [QUERY_KEY.NEW_RECIPE], queryFn: getNewRecipe });
-  // console.log(data);
+  const data = [
+    {
+      id: 1,
+      title: '떡볶이',
+      summary: '요약',
+      recipeImageUrl:
+        'https://blog.kakaocdn.net/dn/bBeQzv/btq4dw1SNcQ/7b9ROACX8r0oWRUckQKib0/img.png',
+      reviewCount: 3,
+      createdAt: '2020-09-21',
+      member: {
+        id: 1,
+        nickName: '나에요',
+      },
+    },
+    {
+      id: 1,
+      title: '피자',
+      summary: '요약',
+      recipeImageUrl: 'https://img.hankyung.com/photo/202108/99.26501439.1-1200x.jpg',
+      reviewCount: 3,
+      createdAt: '2020-09-21',
+      member: {
+        id: 1,
+        nickName: '나에요',
+      },
+    },
+    {
+      id: 1,
+      title: '마라탕',
+      summary: '요약',
+      recipeImageUrl:
+        'https://d12zq4w4guyljn.cloudfront.net/750_750_20220702061143834_photo_4fceeae73135.jpg',
+      reviewCount: 3,
+      createdAt: '2020-09-21',
+      member: {
+        id: 1,
+        nickName: '나에요',
+      },
+    },
+  ];
 
   return (
     <Card>
-      {/* {data?.map((info: Recipe) => (
+      {data?.map((info: Recipe) => (
         <RecipeCard
           key={info.id}
           recipeTitle={info.title}
@@ -15,7 +55,7 @@ export const CardList = () => {
           matchedFoodList={['당근', '무']}
           size="small"
         />
-      ))} */}
+      ))}
     </Card>
   );
 };
