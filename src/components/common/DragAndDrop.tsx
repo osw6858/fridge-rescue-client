@@ -1,16 +1,23 @@
 import styled from 'styled-components';
 import { FaPlus } from 'react-icons/fa6';
 import Dropzone from 'react-dropzone';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface DragAndDropProps {
   text: string;
   onImageDrop: (imageFile: File | null) => void;
+  defaultValue?: string;
 }
 
-export const DragAndDrop = ({ text, onImageDrop }: DragAndDropProps) => {
+export const DragAndDrop = ({ text, onImageDrop, defaultValue }: DragAndDropProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(defaultValue || null);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setPreviewImage(defaultValue);
+    }
+  }, [defaultValue]);
 
   const handleImageDrop = (files: File[]) => {
     setIsDragging(true);

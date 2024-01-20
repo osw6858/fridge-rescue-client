@@ -8,7 +8,7 @@ import { theme } from '../styles/theme';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getDetailReview, reviewPost } from '../api/review';
+import { getDetailReview, reviewEdit } from '../api/review';
 import { QUERY_KEY } from '../constants/queryKey';
 
 export const ReviewEdit = () => {
@@ -24,22 +24,20 @@ export const ReviewEdit = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (data: { title: string; content: string }) =>
-      reviewPost(recipeId, cookId, data.title, droppedImage, data.content),
+      reviewEdit(reviewId, data.title, data.content, droppedImage),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.GET_REVIEW],
       });
-      navigation(`/recipe/${recipeId}`);
+      navigation(-1);
     },
   });
 
   const { data } = useQuery({
-    queryKey: [QUERY_KEY.GET_DETAIL_REVIEW],
+    queryKey: [QUERY_KEY.GET_REVIEW, reviewId],
     queryFn: () => getDetailReview(reviewId),
     select: (data) => data.data,
   });
-
-  console.log(data);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,18 +47,31 @@ export const ReviewEdit = () => {
     };
     const title = target.title.value;
     const content = target.content.value;
-
-    mutation.mutate({ title, content });
+    const resultData = mutation.mutate({ title, content });
+    console.log(resultData);
   };
 
   return (
     <ReviewPostContainer>
       <BasicTitle title="레시피 리뷰 수정" />
       <form onSubmit={(e) => handleSubmit(e)}>
-        <DragAndDrop text="완성된 요리의" onImageDrop={handleImageDrop} />
+        <DragAndDrop
+          text="완성된 요리의"
+          onImageDrop={handleImageDrop}
+          defaultValue={data?.imageUrl}
+        />
         <div className="description">
-          <BasicInput type="text" placeholder="제목을 입력하세요" id="title" />
-          <BasicTextArea placeholder="레시피 후기를 입력하세요" id="content" />
+          <BasicInput
+            type="text"
+            placeholder="제목을 입력하세요"
+            id="title"
+            defaultValue={data?.title}
+          />
+          <BasicTextArea
+            placeholder="레시피 후기를 입력하세요"
+            id="content"
+            defaultValue={data?.contents}
+          />
         </div>
         <div className="buttons">
           <BasicButton
