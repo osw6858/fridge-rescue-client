@@ -37,3 +37,44 @@ export const reviewPost = async (
   });
   return result.data;
 };
+
+export const reviewDelete = async (reviewId: number) => {
+  const result = await axiosAuth.delete(`/${END_POINTS.REVIEWS}/${reviewId}`);
+  return result.data;
+};
+
+export const reviewEdit = async (
+  reviewId: number,
+  title: string,
+  contents: string,
+  image: string | File | null
+) => {
+  const imageFormData = new FormData();
+  if (image) {
+    imageFormData.append('image', image);
+  }
+
+  const jsonDataBlob = new Blob([JSON.stringify({ title, contents })], {
+    type: 'application/json',
+  });
+
+  const jsonFormData = new FormData();
+  jsonFormData.append('request', jsonDataBlob);
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [key, value] of jsonFormData.entries()) {
+    imageFormData.append(key, value);
+  }
+
+  const result = await axiosAuth.patch(`/${END_POINTS.REVIEWS}/${reviewId}`, imageFormData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return result.data;
+};
+
+export const getDetailReview = async (reviewId: number) => {
+  const result = await axiosAuth.get(`/${END_POINTS.REVIEWS}/${reviewId}`);
+  return result.data;
+};

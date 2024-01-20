@@ -14,6 +14,7 @@ import { EditIngredient } from '../pages/EditIngredient';
 import { UpdateRecipe } from '../pages/UpdateRecipe';
 import { Suspense } from 'react';
 import { FallBack } from '../components/common/FallBack';
+import { ReviewEdit } from '../pages/ReviewEdit';
 
 export const Router = () => {
   return (
@@ -42,6 +43,7 @@ export const Router = () => {
         <Route path="/refrigerator" element={<MyRefrigerator />} />
         <Route path="/review/ingredient" element={<EditIngredient />} />
         <Route path="/review/post" element={<ReviewPost />} />
+        <Route path="/review/edit" element={<ReviewEdit />} />
       </Route>
     </Routes>
   );

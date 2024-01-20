@@ -7,16 +7,15 @@ import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { reviewPost } from '../api/review';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getDetailReview, reviewEdit } from '../api/review';
 import { QUERY_KEY } from '../constants/queryKey';
 
-export const ReviewPost = () => {
+export const ReviewEdit = () => {
   const navigation = useNavigate();
   const location = useLocation();
-  const cookId: number = parseInt(location.state.cookId, 10);
-  const recipeId: number = parseInt(location.state.recipeId, 10);
-  const [droppedImage, setDroppedImage] = useState<File | null>(null);
+  const reviewId: number = parseInt(location.state.reviewId, 10);
+  const [droppedImage, setDroppedImage] = useState<File | null | string>(null);
 
   const handleImageDrop = (imageFile: File | null) => {
     setDroppedImage(imageFile);
@@ -25,13 +24,19 @@ export const ReviewPost = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (data: { title: string; content: string }) =>
-      reviewPost(recipeId, cookId, data.title, droppedImage, data.content),
+      reviewEdit(reviewId, data.title, data.content, droppedImage),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.GET_REVIEW],
       });
-      navigation(`/recipe/${recipeId}`);
+      navigation(-1);
     },
+  });
+
+  const { data } = useQuery({
+    queryKey: [QUERY_KEY.GET_REVIEW, reviewId],
+    queryFn: () => getDetailReview(reviewId),
+    select: (data) => data.data,
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,18 +47,30 @@ export const ReviewPost = () => {
     };
     const title = target.title.value;
     const content = target.content.value;
-
     mutation.mutate({ title, content });
   };
 
   return (
     <ReviewPostContainer>
-      <BasicTitle title="레시피 리뷰 등록" />
+      <BasicTitle title="레시피 리뷰 수정" />
       <form onSubmit={(e) => handleSubmit(e)}>
-        <DragAndDrop text="완성된 요리의" onImageDrop={handleImageDrop} />
+        <DragAndDrop
+          text="완성된 요리의"
+          onImageDrop={handleImageDrop}
+          defaultValue={data?.imageUrl}
+        />
         <div className="description">
-          <BasicInput type="text" placeholder="제목을 입력하세요" id="title" />
-          <BasicTextArea placeholder="레시피 후기를 입력하세요" id="content" />
+          <BasicInput
+            type="text"
+            placeholder="제목을 입력하세요"
+            id="title"
+            defaultValue={data?.title}
+          />
+          <BasicTextArea
+            placeholder="레시피 후기를 입력하세요"
+            id="content"
+            defaultValue={data?.contents}
+          />
         </div>
         <div className="buttons">
           <BasicButton

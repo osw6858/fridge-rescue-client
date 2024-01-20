@@ -7,10 +7,11 @@ interface BasicInputProps {
   placeholder?: string;
   onChange?: (e?: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
+  defaultValue?: string;
 }
 
 export const BasicInput = forwardRef<HTMLInputElement, BasicInputProps>(
-  ({ id, type, placeholder, onChange, value }, ref) => {
+  ({ id, type, placeholder, onChange, value, defaultValue }, ref) => {
     return (
       <BasicInputWrap
         id={id}
@@ -18,6 +19,7 @@ export const BasicInput = forwardRef<HTMLInputElement, BasicInputProps>(
         placeholder={placeholder}
         onChange={onChange}
         value={value}
+        defaultValue={defaultValue}
         ref={ref}
       ></BasicInputWrap>
     );
