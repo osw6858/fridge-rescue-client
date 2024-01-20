@@ -129,6 +129,7 @@ export const SearchedItem = styled.li`
   z-index: 20;
   display: flex;
   align-items: center;
+  padding-left: 10px;
   height: 50px;
   background-color: ${(props) => props.theme.colors.grayishWhite};
   border: 1px solid ${(props) => props.theme.colors.lightGray};
