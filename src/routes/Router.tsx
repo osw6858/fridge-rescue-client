@@ -11,6 +11,9 @@ import { RecipeView } from '../pages/RecipeView';
 import { Recipe } from '../pages/Recipe';
 import { PrivateRoute } from './PrivateRoute';
 import { EditIngredient } from '../pages/EditIngredient';
+import { UpdateRecipe } from '../pages/UpdateRecipe';
+import { Suspense } from 'react';
+import { FallBack } from '../components/common/FallBack';
 import { ReviewEdit } from '../pages/ReviewEdit';
 
 export const Router = () => {
@@ -29,6 +32,14 @@ export const Router = () => {
       <Route element={<PrivateRoute authentication />}>
         <Route path="/scrap" element={<Scrap />} />
         <Route path="/add" element={<AddRecipe />} />
+        <Route
+          path="/recipe/update/:recipeId"
+          element={
+            <Suspense fallback={<FallBack length={3}></FallBack>}>
+              <UpdateRecipe />{' '}
+            </Suspense>
+          }
+        />
         <Route path="/refrigerator" element={<MyRefrigerator />} />
         <Route path="/review/ingredient" element={<EditIngredient />} />
         <Route path="/review/post" element={<ReviewPost />} />

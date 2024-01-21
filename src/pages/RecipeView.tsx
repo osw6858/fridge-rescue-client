@@ -97,6 +97,8 @@ export const RecipeView = () => {
     select: (data) => data.data,
   });
 
+  // console.log(data);
+
   return (
     <>
       <RecipeViewContainer>
