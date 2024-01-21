@@ -10,4 +10,5 @@ export const QUERY_KEY = {
   LOGOUT: 'logOut',
   UPDATE_RECIPE: 'updateRecipe',
   SEARCH_INGREIDENT: 'searchIngredient',
+  NOTIFICATION: 'notification',
 } as const;

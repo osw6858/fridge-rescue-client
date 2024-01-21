@@ -4,6 +4,9 @@ import styled, { keyframes } from 'styled-components';
 import { useEffect } from 'react';
 import { device } from '../../styles/media';
 import { StyledLink } from '../header/Header';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '../../constants/queryKey';
+import { notification } from '../../api/notification';
 
 interface Props {
   handleSidebar: () => void;
@@ -18,6 +21,14 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
     };
   }, []);
 
+  const { data } = useQuery({
+    queryKey: [QUERY_KEY.NOTIFICATION],
+    queryFn: notification,
+    select: (data) => data.data.content,
+  });
+
+  console.log(data);
+
   return (
     <Container onClick={handleSidebar}>
       <SideMenuWrapper
@@ -26,11 +37,11 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
       >
         <p>알림</p>
         <NotificationList>
-          {[1, 2, 3].map((_, index) => (
+          {data?.map((item, index) => (
             <Wrapper key={index}>
               <StyledLink to="/recipe">
                 <Notification>
-                  <Content>00님이 레시피를 추천했어요!</Content>
+                  <Content>{item.notificationProperty.contents}</Content>
                   <Time>1분전</Time>
                 </Notification>
               </StyledLink>
