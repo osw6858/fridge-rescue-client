@@ -3,7 +3,14 @@
 import styled, { keyframes } from 'styled-components';
 import { useEffect } from 'react';
 import { device } from '../../styles/media';
-import { StyledLink } from '../header/Header';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEY } from '../../constants/queryKey';
+import { notification } from '../../api/notification';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/ko';
+import type { NotificationData } from '../../types/notification';
+import { useNotification } from '../../hooks/useNotification';
 
 interface Props {
   handleSidebar: () => void;
@@ -11,12 +18,31 @@ interface Props {
 }
 
 export const SideBar = ({ handleSidebar, isOpen }: Props) => {
+  const queryClient = useQueryClient();
+
+  const { data } = useQuery({
+    queryKey: [QUERY_KEY.NOTIFICATION],
+    queryFn: notification,
+    select: (data) => data.data.content,
+  });
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, []);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY.NOTIFICATION] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  dayjs.extend(relativeTime);
+  dayjs.locale('ko');
+  const now = dayjs();
+
+  const { handleRead, handleAllRead } = useNotification({ handleSidebar, data });
 
   return (
     <Container onClick={handleSidebar}>
@@ -26,18 +52,34 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
       >
         <p>알림</p>
         <NotificationList>
-          {[1, 2, 3].map((_, index) => (
-            <Wrapper key={index}>
-              <StyledLink to="/recipe">
-                <Notification>
-                  <Content>00님이 레시피를 추천했어요!</Content>
-                  <Time>1분전</Time>
-                </Notification>
-              </StyledLink>
-              <DeleteButtonWrapper>
-                <p onClick={() => console.log('삭제')}>삭제</p>
-              </DeleteButtonWrapper>
-            </Wrapper>
+          <AllRead>
+            <button type="button" onClick={handleAllRead}>
+              모두 읽음
+            </button>
+          </AllRead>
+          {data?.map((item: NotificationData) => (
+            <div key={item.id}>
+              <Wrapper>
+                <Item
+                  onClick={() =>
+                    handleRead(
+                      item.id,
+                      item.notificationType,
+                      item.notificationProperty.originId,
+                      item.checkedAt
+                    )
+                  }
+                >
+                  <Notification>
+                    <Content>{item.notificationProperty.contents}</Content>
+                    <Time>{dayjs(item.createdAt).from(now)}</Time>
+                  </Notification>
+                </Item>
+                <DeleteButtonWrapper>
+                  {item.checkedAt && <span>{dayjs(item.checkedAt).from(now)}에 읽음</span>}
+                </DeleteButtonWrapper>
+              </Wrapper>
+            </div>
           ))}
         </NotificationList>
       </SideMenuWrapper>
@@ -54,6 +96,10 @@ const SlideIn = keyframes`
   }
 `;
 
+const Item = styled.div`
+  cursor: pointer;
+`;
+
 const Container = styled.div`
   width: 100%;
   min-width: 360px;
@@ -62,6 +108,12 @@ const Container = styled.div`
   position: absolute;
   z-index: 200;
   top: 0;
+`;
+
+const AllRead = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: end;
 `;
 
 const SideMenuWrapper = styled.div`
@@ -124,14 +176,14 @@ const DeleteButtonWrapper = styled.div`
   position: absolute;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 
   bottom: 15px;
   right: 2px;
 
-  & > p {
-    margin-right: 15px;
-    font-size: 13px;
+  & > span {
+    font-size: 12px;
     color: ${(props) => props.theme.colors.darkGray};
-    cursor: pointer;
+    margin-right: 10px;
   }
 `;
