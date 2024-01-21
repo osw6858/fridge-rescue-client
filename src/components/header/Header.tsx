@@ -28,6 +28,8 @@ export const Header = () => {
   const [isLogOut, setIsLogOut] = useState(false);
   const [leftNotic, setLeftNotic] = useState([]);
 
+  const isLogin = !!sessionStorage.getItem(ACCESS_TOKEN_KEY);
+
   const { data } = useQuery({
     queryKey: [QUERY_KEY.LOGOUT],
     queryFn: fetchLogOut,
@@ -39,6 +41,8 @@ export const Header = () => {
     queryKey: [QUERY_KEY.NOTIFICATION],
     queryFn: notification,
     select: (data) => data.data.content,
+    staleTime: 2000,
+    enabled: isLogin,
   });
 
   useEffect(() => {
