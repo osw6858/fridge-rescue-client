@@ -69,6 +69,8 @@ export const RecipeView = () => {
         queryKey: [QUERY_KEY.DETAIL_RECIPE],
       });
     },
+    // TODO: 이미 신고한 유저면 ERROR 반환하도록 백엔드 수정 -> 에러메시지 alert 띄우도록 수정
+    onError: (err) => console.log(err),
   });
 
   const reportOnAgree = () => {
