@@ -47,12 +47,18 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
 
   console.log(data);
 
-  const handleRead = async (id: number, notificationType: string, originId: number) => {
+  const handleRead = async (
+    id: number,
+    notificationType: string,
+    originId: number,
+    checkedAt: string
+  ) => {
     try {
-      const fetchRead = await axiosAuth.get(`${END_POINTS.NOTIFICATION}/${id}`);
-      // eslint-disable-next-line no-console
-      console.log(fetchRead.data.message);
-
+      if (!checkedAt) {
+        const fetchRead = await axiosAuth.get(`${END_POINTS.NOTIFICATION}/${id}`);
+        // eslint-disable-next-line no-console
+        console.log(fetchRead.data.message);
+      }
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY.NOTIFICATION] });
 
       if (notificationType === 'INGREDIENT_EXPIRED' || notificationType === 'RECIPE_RECOMMENDED') {
@@ -98,20 +104,26 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
           </AllRead>
           {data?.map((item: NotificationData) => (
             <>
-              {!item.checkedAt && (
-                <Wrapper key={item.id}>
-                  <Item
-                    onClick={() =>
-                      handleRead(item.id, item.notificationType, item.notificationProperty.originId)
-                    }
-                  >
-                    <Notification>
-                      <Content>{item.notificationProperty.contents}</Content>
-                      <Time>{dayjs(item.createdAt).from(now)}</Time>
-                    </Notification>
-                  </Item>
-                </Wrapper>
-              )}
+              <Wrapper key={item.id}>
+                <Item
+                  onClick={() =>
+                    handleRead(
+                      item.id,
+                      item.notificationType,
+                      item.notificationProperty.originId,
+                      item.checkedAt
+                    )
+                  }
+                >
+                  <Notification>
+                    <Content>{item.notificationProperty.contents}</Content>
+                    <Time>{dayjs(item.createdAt).from(now)}</Time>
+                  </Notification>
+                </Item>
+                <DeleteButtonWrapper>
+                  {item.checkedAt && <span>{dayjs(item.checkedAt).from(now)}에 읽음</span>}
+                </DeleteButtonWrapper>
+              </Wrapper>
             </>
           ))}
         </NotificationList>
@@ -203,4 +215,20 @@ const Time = styled.span`
   margin-top: 10px;
   font-size: 12px;
   color: ${(props) => props.theme.colors.darkGray};
+`;
+
+const DeleteButtonWrapper = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  bottom: 15px;
+  right: 2px;
+
+  & > span {
+    font-size: 12px;
+    color: ${(props) => props.theme.colors.darkGray};
+    margin-right: 10px;
+  }
 `;
