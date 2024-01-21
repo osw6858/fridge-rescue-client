@@ -3,10 +3,16 @@
 import styled, { keyframes } from 'styled-components';
 import { useEffect } from 'react';
 import { device } from '../../styles/media';
-import { StyledLink } from '../header/Header';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEY } from '../../constants/queryKey';
 import { notification } from '../../api/notification';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/ko';
+import type { NotificationData } from '../../types/notification';
+import { axiosAuth } from '../../api/axiosInstance';
+import { END_POINTS } from '../../constants/api';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   handleSidebar: () => void;
@@ -14,12 +20,8 @@ interface Props {
 }
 
 export const SideBar = ({ handleSidebar, isOpen }: Props) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data } = useQuery({
     queryKey: [QUERY_KEY.NOTIFICATION],
@@ -27,7 +29,59 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
     select: (data) => data.data.content,
   });
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY.NOTIFICATION] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  dayjs.extend(relativeTime);
+  dayjs.locale('ko');
+  const now = dayjs();
+
   console.log(data);
+
+  const handleRead = async (id: number, notificationType: string, originId: number) => {
+    try {
+      const fetchRead = await axiosAuth.get(`${END_POINTS.NOTIFICATION}/${id}`);
+      // eslint-disable-next-line no-console
+      console.log(fetchRead.data.message);
+
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.NOTIFICATION] });
+
+      if (notificationType === 'INGREDIENT_EXPIRED' || notificationType === 'RECIPE_RECOMMENDED') {
+        navigate(`recipe/${originId}`);
+      } else {
+        navigate(`refrigerator`);
+      }
+
+      handleSidebar();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+  };
+
+  const handleAllRead = async () => {
+    try {
+      const fetchAllRead = await axiosAuth.patch(
+        END_POINTS.NOTIFICATION,
+        data.map((item: NotificationData) => item.id)
+      );
+      // eslint-disable-next-line no-console
+      console.log(fetchAllRead.data.message);
+      handleSidebar();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+  };
 
   return (
     <Container onClick={handleSidebar}>
@@ -37,18 +91,28 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
       >
         <p>알림</p>
         <NotificationList>
-          {data?.map((item, index) => (
-            <Wrapper key={index}>
-              <StyledLink to="/recipe">
-                <Notification>
-                  <Content>{item.notificationProperty.contents}</Content>
-                  <Time>1분전</Time>
-                </Notification>
-              </StyledLink>
-              <DeleteButtonWrapper>
-                <p onClick={() => console.log('삭제')}>삭제</p>
-              </DeleteButtonWrapper>
-            </Wrapper>
+          <AllRead>
+            <button type="button" onClick={handleAllRead}>
+              모두 읽음
+            </button>
+          </AllRead>
+          {data?.map((item: NotificationData) => (
+            <>
+              {!item.checkedAt && (
+                <Wrapper key={item.id}>
+                  <Item
+                    onClick={() =>
+                      handleRead(item.id, item.notificationType, item.notificationProperty.originId)
+                    }
+                  >
+                    <Notification>
+                      <Content>{item.notificationProperty.contents}</Content>
+                      <Time>{dayjs(item.createdAt).from(now)}</Time>
+                    </Notification>
+                  </Item>
+                </Wrapper>
+              )}
+            </>
           ))}
         </NotificationList>
       </SideMenuWrapper>
@@ -65,6 +129,10 @@ const SlideIn = keyframes`
   }
 `;
 
+const Item = styled.div`
+  cursor: pointer;
+`;
+
 const Container = styled.div`
   width: 100%;
   min-width: 360px;
@@ -73,6 +141,12 @@ const Container = styled.div`
   position: absolute;
   z-index: 200;
   top: 0;
+`;
+
+const AllRead = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: end;
 `;
 
 const SideMenuWrapper = styled.div`
@@ -129,20 +203,4 @@ const Time = styled.span`
   margin-top: 10px;
   font-size: 12px;
   color: ${(props) => props.theme.colors.darkGray};
-`;
-
-const DeleteButtonWrapper = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: flex-end;
-
-  bottom: 15px;
-  right: 2px;
-
-  & > p {
-    margin-right: 15px;
-    font-size: 13px;
-    color: ${(props) => props.theme.colors.darkGray};
-    cursor: pointer;
-  }
 `;

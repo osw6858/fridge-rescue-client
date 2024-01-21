@@ -11,4 +11,5 @@ export const QUERY_KEY = {
   UPDATE_RECIPE: 'updateRecipe',
   SEARCH_INGREIDENT: 'searchIngredient',
   NOTIFICATION: 'notification',
+  READ_NOTIC: 'readNotic',
 } as const;
