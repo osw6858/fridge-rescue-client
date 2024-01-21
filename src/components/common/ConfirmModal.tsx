@@ -49,7 +49,7 @@ export const ConfirmModal = ({
         <DialogContent>
           <DialogContentText id="alert-dialog-description">{description}</DialogContentText>
         </DialogContent>
-        {children}
+        <div className="children">{children}</div>
         <StyledDialogActions>
           <Button onClick={handleAgree} autoFocus>
             확인
@@ -78,6 +78,10 @@ const StyledDialog = styled(Dialog)`
     font-family: Pretendard-Regular;
     font-size: 14px;
     margin-top: 12px;
+  }
+
+  .children {
+    margin: 0 auto 12px auto;
   }
 `;
 

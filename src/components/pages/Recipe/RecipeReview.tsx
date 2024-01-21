@@ -27,11 +27,11 @@ export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
     setShowAllContent((prev) => !prev);
   };
 
-  const QueryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: () => reviewDelete(reviewData.id),
     onSuccess: () =>
-      QueryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.GET_REVIEW],
       }),
   });
