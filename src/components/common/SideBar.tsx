@@ -76,10 +76,11 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
 
   const handleAllRead = async () => {
     try {
-      const fetchAllRead = await axiosAuth.patch(
-        END_POINTS.NOTIFICATION,
-        data.map((item: NotificationData) => item.id)
-      );
+      const fetchAllRead = await axiosAuth.patch(END_POINTS.NOTIFICATION, {
+        notificationIds: data
+          .filter((item: NotificationData) => item.checkedAt! == null)
+          .map((item: NotificationData) => item.id),
+      });
       // eslint-disable-next-line no-console
       console.log(fetchAllRead.data.message);
       handleSidebar();

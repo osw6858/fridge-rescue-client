@@ -3,7 +3,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { SideBar } from '../common/SideBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BasicInput } from '../common/BasicInput';
 import { BasicButton } from '../common/BasicButton';
 import { currentCategoryAtom } from '../../store/menu';
@@ -14,6 +14,8 @@ import { device } from '../../styles/media';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '../../constants/queryKey';
 import { fetchLogOut } from '../../api/auth';
+import { notification } from '../../api/notification';
+import type { NotificationData } from '../../types/notification';
 
 export const Header = () => {
   const [sideBar, setSideBar] = useState(false);
@@ -24,6 +26,7 @@ export const Header = () => {
   const [userNickName, setUserNickName] = useRecoilState(NickNameAtom);
   const [authState, setAuthState] = useRecoilState(AuthStateAtom);
   const [isLogOut, setIsLogOut] = useState(false);
+  const [leftNotic, setLeftNotic] = useState([]);
 
   const { data } = useQuery({
     queryKey: [QUERY_KEY.LOGOUT],
@@ -31,6 +34,20 @@ export const Header = () => {
     enabled: isLogOut,
     staleTime: 0,
   });
+
+  const notic = useQuery({
+    queryKey: [QUERY_KEY.NOTIFICATION],
+    queryFn: notification,
+    select: (data) => data.data.content,
+  });
+
+  useEffect(() => {
+    const leftNoticCount = () => {
+      return notic.data?.filter((item: NotificationData) => item.checkedAt === null);
+    };
+
+    setLeftNotic(leftNoticCount());
+  }, [notic.data]);
 
   const handleLogin = () => {
     navigation('/signin');
@@ -78,7 +95,14 @@ export const Header = () => {
             >
               로그아웃
             </BasicButton>
-            <TbBellFilled onClick={() => setSideBar(true)} />
+            <NoticWrapper>
+              {leftNotic?.length !== 0 && (
+                <NoticNumber>
+                  <p>{leftNotic?.length}</p>
+                </NoticNumber>
+              )}
+              <TbBellFilled onClick={() => setSideBar(true)} />
+            </NoticWrapper>
           </>
         ) : (
           <BasicButton
@@ -136,6 +160,27 @@ const Wrapper = styled.div`
     button {
       width: 70px;
     }
+  }
+`;
+
+const NoticWrapper = styled.div`
+  position: relative;
+`;
+
+const NoticNumber = styled.div`
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background-color: red;
+  font-size: 13px;
+  text-align: center;
+  color: ${(props) => props.theme.colors.white};
+
+  right: -3px;
+
+  p {
+    margin-top: 1px;
   }
 `;
 
