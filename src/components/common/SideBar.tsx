@@ -10,9 +10,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
 import type { NotificationData } from '../../types/notification';
-import { axiosAuth } from '../../api/axiosInstance';
-import { END_POINTS } from '../../constants/api';
-import { useNavigate } from 'react-router-dom';
+import { useNotification } from '../../hooks/useNotification';
 
 interface Props {
   handleSidebar: () => void;
@@ -21,7 +19,6 @@ interface Props {
 
 export const SideBar = ({ handleSidebar, isOpen }: Props) => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   const { data } = useQuery({
     queryKey: [QUERY_KEY.NOTIFICATION],
@@ -45,50 +42,7 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
   dayjs.locale('ko');
   const now = dayjs();
 
-  console.log(data);
-
-  const handleRead = async (
-    id: number,
-    notificationType: string,
-    originId: number,
-    checkedAt: string
-  ) => {
-    try {
-      if (!checkedAt) {
-        const fetchRead = await axiosAuth.get(`${END_POINTS.NOTIFICATION}/${id}`);
-        // eslint-disable-next-line no-console
-        console.log(fetchRead.data.message);
-      }
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.NOTIFICATION] });
-
-      if (notificationType === 'INGREDIENT_EXPIRED' || notificationType === 'RECIPE_RECOMMENDED') {
-        navigate(`recipe/${originId}`);
-      } else {
-        navigate(`refrigerator`);
-      }
-
-      handleSidebar();
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
-  };
-
-  const handleAllRead = async () => {
-    try {
-      const fetchAllRead = await axiosAuth.patch(END_POINTS.NOTIFICATION, {
-        notificationIds: data
-          .filter((item: NotificationData) => item.checkedAt! == null)
-          .map((item: NotificationData) => item.id),
-      });
-      // eslint-disable-next-line no-console
-      console.log(fetchAllRead.data.message);
-      handleSidebar();
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
-  };
+  const { handleRead, handleAllRead } = useNotification({ handleSidebar, data });
 
   return (
     <Container onClick={handleSidebar}>
@@ -104,8 +58,8 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
             </button>
           </AllRead>
           {data?.map((item: NotificationData) => (
-            <>
-              <Wrapper key={item.id}>
+            <div key={item.id}>
+              <Wrapper>
                 <Item
                   onClick={() =>
                     handleRead(
@@ -125,7 +79,7 @@ export const SideBar = ({ handleSidebar, isOpen }: Props) => {
                   {item.checkedAt && <span>{dayjs(item.checkedAt).from(now)}에 읽음</span>}
                 </DeleteButtonWrapper>
               </Wrapper>
-            </>
+            </div>
           ))}
         </NotificationList>
       </SideMenuWrapper>
