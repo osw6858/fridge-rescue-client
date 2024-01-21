@@ -2,6 +2,7 @@ import { styled } from 'styled-components';
 import { MdClose } from 'react-icons/md';
 
 interface Ingredient {
+  id?: number;
   name: string;
   amount: string;
 }
@@ -22,6 +23,7 @@ export const UsedIngrident = ({ addItemList, setAddItemList, deleteItem }: Added
             <MdClose onClick={() => deleteItem(e.name)} />
           </div>
           <input
+            defaultValue={e.id && e.amount}
             type="text"
             placeholder="재료 양"
             onChange={(event) => setAddItemList(e.name, event.target.value)}

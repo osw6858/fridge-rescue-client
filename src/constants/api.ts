@@ -27,13 +27,13 @@ export const END_POINTS = {
   MEMBER_COOK: 'members/cooks',
   MEMBER_RECIPE: 'members/recipes',
   BOOKMARK: 'members/bookmarks',
-  NOTIFICATION: 'notification',
+  NOTIFICATION: 'notifications',
   FRIDGE: 'fridge',
   INGREDIENT: 'fridge/ingredients',
   REVIEWS: 'reviews',
   REPORTS: 'reports',
   COOKS: 'cooks',
-  SUGGEST: 'suggest',
+  SUGGEST: '/search/ingredient?keyword=',
 } as const;
 
 export const HTTP_STATUS_CODE = {} as const;
