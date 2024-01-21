@@ -88,7 +88,7 @@ export const ReviewEdit = () => {
             $fontcolor={theme.colors.white}
             $hoverbgcolor="#ff750c"
           >
-            등록하기
+            수정하기
           </BasicButton>
         </div>
       </form>

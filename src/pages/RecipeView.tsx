@@ -8,8 +8,8 @@ import { GiCook } from 'react-icons/gi';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getDetailRecipe } from '../api/recipe';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getDetailRecipe, toggleBookmark } from '../api/recipe';
 import { QUERY_KEY } from '../constants/queryKey';
 import { formatDate } from '../utils/formatDate';
 import { Chip } from '@mui/material';
@@ -38,6 +38,13 @@ export const RecipeView = () => {
 
   const handleCookingCompletion = (isComplete: boolean) => {
     setCookingCompletion(isComplete);
+  };
+
+  const mutation = useMutation({
+    mutationFn: toggleBookmark,
+  });
+  const handleBookmark = () => {
+    mutation.mutate(recipeId);
   };
 
   const { data } = useQuery({
@@ -69,7 +76,7 @@ export const RecipeView = () => {
             </div>
             <div>
               <div className="icons">
-                <span>
+                <span role="button" onClick={handleBookmark}>
                   <RiBookmarkLine />
                 </span>
                 <span>{data?.bookmarkCount}</span>
