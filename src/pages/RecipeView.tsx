@@ -8,7 +8,7 @@ import { PiSirenFill, PiCookingPotDuotone, PiEyeDuotone } from 'react-icons/pi';
 import { GiCook } from 'react-icons/gi';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
-import { type ErrorResponse, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { type ErrorResponse, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getDetailRecipe, toggleBookmark } from '../api/recipe';
 import { QUERY_KEY } from '../constants/queryKey';
@@ -23,7 +23,8 @@ import { type AxiosError } from 'axios';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
-  const { recipeId } = useParams();
+  const { pathname } = useLocation();
+  const recipeId = pathname.split('/').pop() || '';
   const [cookingCompletion, setCookingCompletion] = useState(false);
   const [isImageModalOpened, setImageModalOpen] = useState(false);
   const [reportModalIsOpened, setReportModalOpen] = useState(false);
