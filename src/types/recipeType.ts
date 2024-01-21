@@ -28,7 +28,7 @@ export interface DetailRecipe {
     amount: string;
   };
   recipeSteps: {
-    stepContents: string;
+    stepDescription: string;
     stepImageUrl: string;
     stepNo: number;
     stepTip: string;

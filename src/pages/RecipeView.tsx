@@ -1,14 +1,15 @@
+/* eslint-disable no-alert */
 import styled from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
-import { RiBookmarkLine } from 'react-icons/ri';
+import { RiBookmarkLine, RiBookmarkFill } from 'react-icons/ri';
 import { BsExclamationSquare } from 'react-icons/bs';
-import { PiSiren, PiCookingPotDuotone, PiEyeDuotone } from 'react-icons/pi';
+import { PiSirenFill, PiCookingPotDuotone, PiEyeDuotone } from 'react-icons/pi';
 import { GiCook } from 'react-icons/gi';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { type ErrorResponse, useLocation, useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getDetailRecipe, toggleBookmark } from '../api/recipe';
 import { QUERY_KEY } from '../constants/queryKey';
 import { formatDate } from '../utils/formatDate';
@@ -16,6 +17,9 @@ import { Chip } from '@mui/material';
 import type { Ingredient, RecipeSteps } from '../types/recipeType';
 import { ImageModal } from '../components/common/ImageModal';
 import { RecipeReviewList } from '../components/pages/Recipe/RecipeReviewList';
+import { makeReport } from '../api/report';
+import { BasicInput } from '../components/common/BasicInput';
+import { type AxiosError } from 'axios';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
@@ -23,12 +27,14 @@ export const RecipeView = () => {
   const recipeId = pathname.split('/').pop() || '';
   const [cookingCompletion, setCookingCompletion] = useState(false);
   const [isImageModalOpened, setImageModalOpen] = useState(false);
+  const [reportModalIsOpened, setReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState('');
 
   const handleImageModal = (isOpen: boolean) => {
     setImageModalOpen(isOpen);
   };
 
-  const onAgree = () => {
+  const cookingCompletionOnAgree = () => {
     navigation('/review/ingredient', {
       state: {
         recipeId,
@@ -40,11 +46,49 @@ export const RecipeView = () => {
     setCookingCompletion(isComplete);
   };
 
-  const mutation = useMutation({
+  // ------------------------- 북마크 -------------------------
+  const bookmarkMutation = useMutation({
     mutationFn: toggleBookmark,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.DETAIL_RECIPE],
+      });
+    },
   });
+
   const handleBookmark = () => {
-    mutation.mutate(recipeId);
+    bookmarkMutation.mutate(recipeId);
+  };
+
+  // ------------------------- 신고 -------------------------
+
+  const queryClient = useQueryClient();
+  const handleReportModal = (isOpen: boolean) => {
+    setReportModalOpen(isOpen);
+  };
+
+  const reportMutation = useMutation({
+    mutationFn: () => makeReport(recipeId, reportReason),
+    onSuccess: () => {
+      alert('신고 처리 되었습니다.');
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.DETAIL_RECIPE],
+      });
+    },
+    onError: (err) => {
+      const axiosError = err as AxiosError<ErrorResponse>;
+      if (axiosError.response?.status === 409) {
+        alert('이미 신고한 레시피입니다.');
+      }
+    },
+  });
+
+  const reportOnAgree = () => {
+    if (reportReason === '') {
+      alert('신고 내용을 입력하세요!');
+      return;
+    }
+    reportMutation.mutate();
   };
 
   const { data } = useQuery({
@@ -77,13 +121,13 @@ export const RecipeView = () => {
             <div>
               <div className="icons">
                 <span role="button" onClick={handleBookmark}>
-                  <RiBookmarkLine />
+                  {data?.isBookmarked ? <RiBookmarkFill /> : <RiBookmarkLine />}
                 </span>
                 <span>{data?.bookmarkCount}</span>
               </div>
-              <div className="icons">
-                <span>
-                  <PiSiren />
+              <div className="icons siren">
+                <span role="button" onClick={() => handleReportModal(true)}>
+                  <PiSirenFill />
                 </span>
                 <span>{data?.reportCount}</span>
               </div>
@@ -115,7 +159,9 @@ export const RecipeView = () => {
                   <div role="button" onClick={() => handleImageModal(true)}>
                     <img src={step?.stepImageUrl} alt="단계별 레시피" />
                   </div>
-                  <div>{step.stepContents}</div>
+                  <div>
+                    {step.stepNo}. {step.stepDescription}
+                  </div>
                   {step.stepTip && (
                     <div className="tip">
                       <BsExclamationSquare />
@@ -149,8 +195,23 @@ export const RecipeView = () => {
             description="냉장고 재료 수정 페이지로 이동합니다"
             isOpen={cookingCompletion}
             handleOpen={handleCookingCompletion}
-            onAgree={onAgree}
+            onAgree={cookingCompletionOnAgree}
           />
+        )}
+        {reportModalIsOpened && (
+          <ConfirmModal
+            title="해당 레시피를 신고할까요?"
+            description="신고 내용을 아래에 기재해 주세요!"
+            handleOpen={handleReportModal}
+            isOpen={reportModalIsOpened}
+            onAgree={reportOnAgree}
+          >
+            <BasicInput
+              type="text"
+              placeholder="신고 내용"
+              onChange={(e) => setReportReason(e!.target.value)}
+            />
+          </ConfirmModal>
         )}
       </RecipeViewContainer>
     </>
@@ -189,6 +250,10 @@ const RecipeViewContainer = styled.div`
     .icons {
       display: flex;
       gap: 2px;
+    }
+
+    .siren {
+      color: #e30000;
     }
 
     .name {
