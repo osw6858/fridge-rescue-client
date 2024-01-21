@@ -8,6 +8,7 @@ export const QUERY_KEY = {
   GET_DETAIL_REVIEW: 'getDetailReview',
   GET_INGREDIENT: 'getIngredient',
   LOGOUT: 'logOut',
+  GET_BOOKMARKED_RECIPE: 'getBookmarkedRecipe',
   UPDATE_RECIPE: 'updateRecipe',
   SEARCH_INGREIDENT: 'searchIngredient',
   NOTIFICATION: 'notification',

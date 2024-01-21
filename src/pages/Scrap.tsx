@@ -1,41 +1,46 @@
 import styled from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
-import { RecipeCard } from '../components/common/RecipeCard';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '../constants/queryKey';
+import { getBookmarkedRecipe } from '../api/member';
+import { Avatar, Card, CardContent, CardHeader, CardMedia, Chip, Typography } from '@mui/material';
 
 export const Scrap = () => {
-  // TODO : 데이터 연동 후 map 돌리기
+  const { data } = useQuery({
+    queryKey: [QUERY_KEY.GET_BOOKMARKED_RECIPE],
+    queryFn: getBookmarkedRecipe,
+    select: (data) => data.data.content,
+  });
+
+  console.log(data);
+
   return (
     <ScrapContainer>
       <BasicTitle title="레시피 스크랩" />
       <CardList>
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
+        {data?.map((recipe) => {
+          return (
+            <Card sx={{ maxWidth: '100%' }}>
+              <CardHeader
+                avatar={<Avatar aria-label="recipe">?</Avatar>}
+                title={recipe.title}
+                subheader="띠띠"
+              />
+              <CardMedia component="img" height="194" image={recipe.recipeImageUrl} alt="음식" />
+              <CardContent>
+                <Typography variant="body2" color="text.secondary">
+                  {recipe.summary}
+                </Typography>
+                <h5>필요한 재료</h5>
+                <div className="chips">
+                  <Chip label="양파" />
+                  <Chip label="마늘" />
+                  <Chip label="후추" />
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </CardList>
     </ScrapContainer>
   );
@@ -45,4 +50,9 @@ const ScrapContainer = styled.div``;
 const CardList = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  h5 {
+    margin: 12px 0 8px 0;
+  }
 `;

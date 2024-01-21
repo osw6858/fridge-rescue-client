@@ -1,6 +1,6 @@
 import { END_POINTS } from '../constants/api';
 import type { Ingredient, StepImage } from '../pages/AddRecipe';
-import { axiosDefault, axiosFormData } from './axiosInstance';
+import { axiosAuth, axiosDefault, axiosFormData } from './axiosInstance';
 
 interface AddRecipeData {
   title: string;
@@ -53,6 +53,12 @@ export const addNewRecipe = async (recipeData: AddRecipeData) => {
   return data;
 };
 
+
+export const toggleBookmark = async (recipeId: string) => {
+  const result = await axiosAuth.post(`${END_POINTS.RECIPES}/${recipeId}/bookmark`);
+  return result.data;
+
+  
 export const updateRecipe = async (recipeId: string, recipeData: AddRecipeData) => {
   const { data } = await axiosFormData.post(`${END_POINTS.RECIPES}/${recipeId}`, recipeData);
   return data;

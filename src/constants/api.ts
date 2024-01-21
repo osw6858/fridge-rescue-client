@@ -31,7 +31,7 @@ export const END_POINTS = {
   FRIDGE: 'fridge',
   INGREDIENT: 'fridge/ingredients',
   REVIEWS: 'reviews',
-  REPORT: 'report',
+  REPORTS: 'reports',
   COOKS: 'cooks',
   SUGGEST: '/search/ingredient?keyword=',
 } as const;
