@@ -96,7 +96,7 @@ export const SearchResult = () => {
         </>
       ) : (
         <ResultMsg>
-          <p>검색하시면 결과를 보여드릴게요!</p>
+          <p>검색하시면 결과를 보여줄게요!</p>
         </ResultMsg>
       )}
       <Divider />
