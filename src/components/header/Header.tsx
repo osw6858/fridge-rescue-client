@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { SideBar } from '../common/SideBar';
 import { useEffect, useState } from 'react';
-import { BasicInput } from '../common/BasicInput';
 import { BasicButton } from '../common/BasicButton';
 import { currentCategoryAtom } from '../../store/menu';
 import { TbBellFilled } from 'react-icons/tb';
@@ -16,9 +15,11 @@ import { QUERY_KEY } from '../../constants/queryKey';
 import { fetchLogOut } from '../../api/auth';
 import { notification } from '../../api/notification';
 import type { NotificationData } from '../../types/notification';
+import { SearchAtom } from '../../store/search';
 
 export const Header = () => {
   const [sideBar, setSideBar] = useState(false);
+  const [searchQuery, setSearchQuery] = useRecoilState(SearchAtom);
 
   const navigation = useNavigate();
 
@@ -80,7 +81,13 @@ export const Header = () => {
   return (
     <Container>
       <Wrapper>
-        <BasicInput id="text" type="email" placeholder="레시피를 검색해 주세요." />
+        <SearchInput
+          onClick={() => navigation('/search')}
+          type="text"
+          placeholder="레시피를 검색해 보세요!"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        ></SearchInput>
         {userNickName && (
           <Nickname>
             <StyledLink to="/mypage">
@@ -134,6 +141,15 @@ const Container = styled.header`
   position: fixed;
   background-color: ${(props) => props.theme.colors.white};
   border-bottom: 1px solid ${(props) => props.theme.colors.lightGray};
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  border: 1px solid ${(props) => props.theme.colors.gray};
+  outline: none;
+  padding-left: 10px;
 `;
 
 const Wrapper = styled.div`

@@ -34,6 +34,8 @@ export const END_POINTS = {
   REPORTS: 'reports',
   COOKS: 'cooks',
   SUGGEST: '/search/ingredient?keyword=',
+  KEYWORD_SEARCH: '/search/recipe/keyword?keyword=',
+  FRIGE_SEARCH: '/search/recipe/fridge',
 } as const;
 
 export const HTTP_STATUS_CODE = {} as const;
