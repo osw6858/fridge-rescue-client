@@ -33,7 +33,6 @@ export const AddIngredientInfo = ({
                   <Expiration
                     min={new Date().toISOString().split('T')[0]}
                     id={`${ingredient}.expiredAt`}
-                    required
                     type="date"
                     {...field}
                   ></Expiration>
@@ -48,7 +47,7 @@ export const AddIngredientInfo = ({
                 name={`${ingredient}.memo`}
                 control={control}
                 defaultValue=""
-                render={({ field }) => <Memo id={`${ingredient}.memo`} required {...field} />}
+                render={({ field }) => <Memo id={`${ingredient}.memo`} {...field} />}
               />
             </Section>
             <BasicButton

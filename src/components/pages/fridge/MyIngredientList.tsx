@@ -133,6 +133,7 @@ export const MyIngredientList = () => {
                 <InputWrapper>
                   <p>유통기한</p>
                   <DateInput
+                    min={new Date().toISOString().split('T')[0]}
                     type="date"
                     defaultValue={item.expiredAt}
                     onChange={(e) => handleUpdate(item.id, 'expiredAt', e.target.value)}
