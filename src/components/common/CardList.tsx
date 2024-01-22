@@ -52,7 +52,10 @@ export const CardList = () => {
           recipeTitle={info.title}
           briefExplanation={info.summary}
           imageURL={info.recipeImageUrl}
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
       ))}
