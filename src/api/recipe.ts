@@ -62,3 +62,13 @@ export const updateRecipe = async (recipeId: string, recipeData: AddRecipeData) 
   const { data } = await axiosFormData.post(`${END_POINTS.RECIPES}/${recipeId}`, recipeData);
   return data;
 };
+
+export const getLatestRecipes = async (size: number, page = 0) => {
+  const result = await axiosDefault.get(`${END_POINTS.RECIPES}/recent?page=${page}&size=${size}`);
+  return result.data;
+};
+
+export const getPopularRecipes = async (size: number, page = 0) => {
+  const result = await axiosDefault.get(`${END_POINTS.RECIPES}/popular?page=${page}&size=${size}`);
+  return result.data;
+};

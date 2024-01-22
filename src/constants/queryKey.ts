@@ -13,4 +13,6 @@ export const QUERY_KEY = {
   SEARCH_INGREIDENT: 'searchIngredient',
   NOTIFICATION: 'notification',
   READ_NOTIC: 'readNotic',
+  GET_LATEST_RECIPE: 'getLatestRecipes',
+  GET_POPULAR_RECIPE: 'getPopularRecipes',
 } as const;
