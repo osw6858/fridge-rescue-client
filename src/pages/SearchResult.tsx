@@ -15,10 +15,6 @@ import { BasicTitle } from '../components/common/BasicTitle';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { device } from '../styles/media';
 
-interface IsLogInProps {
-  $isLogIn: boolean;
-}
-
 export const SearchResult = () => {
   const [visible, setVisible] = useState(false);
 
