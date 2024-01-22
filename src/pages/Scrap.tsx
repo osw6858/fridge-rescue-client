@@ -12,6 +12,8 @@ export const Scrap = () => {
     select: (data) => data.data.content,
   });
 
+  // TODO : 카드 수정 후 재작업 필요
+
   console.log(data);
 
   return (

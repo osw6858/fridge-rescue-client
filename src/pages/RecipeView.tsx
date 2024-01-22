@@ -2,13 +2,13 @@
 import styled from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
-import { RiBookmarkLine } from 'react-icons/ri';
+import { RiBookmarkLine, RiBookmarkFill } from 'react-icons/ri';
 import { BsExclamationSquare } from 'react-icons/bs';
 import { PiSirenFill, PiCookingPotDuotone, PiEyeDuotone } from 'react-icons/pi';
 import { GiCook } from 'react-icons/gi';
 import { useState } from 'react';
 import { ConfirmModal } from '../components/common/ConfirmModal';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { type ErrorResponse, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getDetailRecipe, toggleBookmark } from '../api/recipe';
 import { QUERY_KEY } from '../constants/queryKey';
@@ -19,6 +19,7 @@ import { ImageModal } from '../components/common/ImageModal';
 import { RecipeReviewList } from '../components/pages/Recipe/RecipeReviewList';
 import { makeReport } from '../api/report';
 import { BasicInput } from '../components/common/BasicInput';
+import { type AxiosError } from 'axios';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
@@ -48,6 +49,11 @@ export const RecipeView = () => {
   // ------------------------- 북마크 -------------------------
   const bookmarkMutation = useMutation({
     mutationFn: toggleBookmark,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.DETAIL_RECIPE],
+      });
+    },
   });
 
   const handleBookmark = () => {
@@ -69,8 +75,12 @@ export const RecipeView = () => {
         queryKey: [QUERY_KEY.DETAIL_RECIPE],
       });
     },
-    // TODO: 이미 신고한 유저면 ERROR 반환하도록 백엔드 수정 -> 에러메시지 alert 띄우도록 수정
-    onError: (err) => console.log(err),
+    onError: (err) => {
+      const axiosError = err as AxiosError<ErrorResponse>;
+      if (axiosError.response?.status === 409) {
+        alert('이미 신고한 레시피입니다.');
+      }
+    },
   });
 
   const reportOnAgree = () => {
@@ -86,8 +96,6 @@ export const RecipeView = () => {
     queryFn: () => getDetailRecipe(recipeId),
     select: (data) => data.data,
   });
-
-  // console.log(data);
 
   return (
     <>
@@ -113,7 +121,7 @@ export const RecipeView = () => {
             <div>
               <div className="icons">
                 <span role="button" onClick={handleBookmark}>
-                  <RiBookmarkLine />
+                  {data?.isBookmarked ? <RiBookmarkFill /> : <RiBookmarkLine />}
                 </span>
                 <span>{data?.bookmarkCount}</span>
               </div>
@@ -151,7 +159,9 @@ export const RecipeView = () => {
                   <div role="button" onClick={() => handleImageModal(true)}>
                     <img src={step?.stepImageUrl} alt="단계별 레시피" />
                   </div>
-                  <div>{step.stepContents}</div>
+                  <div>
+                    {step.stepNo}. {step.stepDescription}
+                  </div>
                   {step.stepTip && (
                     <div className="tip">
                       <BsExclamationSquare />

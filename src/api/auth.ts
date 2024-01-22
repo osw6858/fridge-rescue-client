@@ -42,7 +42,9 @@ export const emailAuthInMyPage = async (code: AuthCode) => {
 };
 
 export const fetchSocialSignIn = async (provider: string) => {
-  const { data } = await axiosDefault.get(`${END_POINTS.OAUTH}${provider}`);
+  const { data } = await axiosDefault.get(`${END_POINTS.OAUTH}${provider}`, {
+    withCredentials: true,
+  });
   return data;
 };
 
