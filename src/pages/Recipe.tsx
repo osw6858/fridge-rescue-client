@@ -32,28 +32,40 @@ export const Recipe = () => {
           recipeTitle="레시피 제목"
           briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
           imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
         <RecipeCard
           recipeTitle="레시피 제목"
           briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
           imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
         <RecipeCard
           recipeTitle="레시피 제목"
           briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
           imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
         <RecipeCard
           recipeTitle="레시피 제목"
           briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
           imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
       </CardList>
@@ -63,28 +75,40 @@ export const Recipe = () => {
           recipeTitle="레시피 제목"
           briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
           imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
         <RecipeCard
           recipeTitle="레시피 제목"
           briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
           imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
         <RecipeCard
           recipeTitle="레시피 제목"
           briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
           imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
         <RecipeCard
           recipeTitle="레시피 제목"
           briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
           imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
+          date="2020-04-14"
+          reviewCount={10}
+          auther="나에요"
+          viewCount={117}
           size="small"
         />
       </CardList>
