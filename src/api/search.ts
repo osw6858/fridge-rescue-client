@@ -6,14 +6,18 @@ export const getSearchIngredient = async (quert: string) => {
   return data;
 };
 
-export const getIngredientKeyWordSearch = async (keyword: string, sortType: string) => {
+export const getIngredientKeyWordSearch = async (
+  keyword: string,
+  sortType: string,
+  page: number
+) => {
   const { data } = await axiosDefault.get(
-    `${END_POINTS.KEYWORD_SEARCH}${keyword}&sortType=${sortType}`
+    `${END_POINTS.KEYWORD_SEARCH}${keyword}&sortType=${sortType}&page=${page}`
   );
   return data;
 };
 
-export const getFrigeKeyWordSearch = async () => {
-  const { data } = await axiosAuth.get(END_POINTS.FRIGE_SEARCH);
+export const getFrigeKeyWordSearch = async (page: number) => {
+  const { data } = await axiosAuth.get(`${END_POINTS.FRIGE_SEARCH}?page=${page}`);
   return data;
 };
