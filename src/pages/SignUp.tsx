@@ -9,6 +9,7 @@ import { ConfirmModal } from '../components/common/ConfirmModal';
 import { useState } from 'react';
 import type { AxiosError } from 'axios';
 import { Controller, useForm } from 'react-hook-form';
+import { ErrorMessage } from '@hookform/error-message';
 
 interface Data {
   email?: string;
@@ -121,8 +122,6 @@ export const SignUp = () => {
 
   const password = watch('pw');
 
-  console.log(email);
-
   return (
     <SignUpContainer>
       {isOpen && (
@@ -148,28 +147,56 @@ export const SignUp = () => {
         <div className="inputs">
           <div>
             <label htmlFor="mail">이메일</label>
-            {errorMsg && <ErrorMessage>{errorMsg.emailError}</ErrorMessage>}
-            {errors.email && <ErrorMessage>이메일 입력은 필수 입니다.</ErrorMessage>}
+            {errorMsg && <ErrorMsg>{errorMsg.emailError}</ErrorMsg>}
+            {errors.email && (
+              <ErrorMessage
+                errors={errors}
+                name="email"
+                render={({ message }) => <ErrorMsg>{message}</ErrorMsg>}
+              ></ErrorMessage>
+            )}
           </div>
           <Controller
             name="email"
             control={control}
             defaultValue=""
-            rules={{ required: '이메일을 입력해 주세요.' }}
+            rules={{
+              required: '이메일을 입력해 주세요.',
+              maxLength: {
+                value: 30,
+                message: '이메일은 최대 30자리까지 입력 가능합니다.',
+              },
+            }}
             render={({ field }) => (
               <BasicInput id="mail" type="email" placeholder="이메일을 입력해 주세요" {...field} />
             )}
           />
           <div>
             <label htmlFor="pw">비밀번호</label>
-            {errorMsg && <ErrorMessage>{errorMsg.passwordError}</ErrorMessage>}
-            {errors.pw && <ErrorMessage>비밀번호 입력은 필수 입니다.</ErrorMessage>}
+            {errorMsg && <ErrorMsg>{errorMsg.passwordError}</ErrorMsg>}
+            {errors.pw && (
+              <ErrorMessage
+                errors={errors}
+                name="pw"
+                render={({ message }) => <ErrorMsg>{message}</ErrorMsg>}
+              ></ErrorMessage>
+            )}
           </div>
           <Controller
             name="pw"
             control={control}
             defaultValue=""
-            rules={{ required: '비밀번호를 입력해 주세요.' }}
+            rules={{
+              required: '비밀번호를 입력해 주세요.',
+              minLength: {
+                value: 8,
+                message: '비밀번호는 최소 8자리 이상이어야 합니다.',
+              },
+              maxLength: {
+                value: 20,
+                message: '비밀번호는 최대 20자리까지 입력 가능합니다.',
+              },
+            }}
             render={({ field }) => (
               <BasicInput
                 id="pw"
@@ -181,7 +208,7 @@ export const SignUp = () => {
           />
           <div>
             <label htmlFor="pwconfirm">비밀번호 확인</label>
-            {errors.pwconfirm && <ErrorMessage>두개의 비밀번호가 일치 하지 않습니다.</ErrorMessage>}
+            {errors.pwconfirm && <ErrorMsg>두개의 비밀번호가 일치 하지 않습니다.</ErrorMsg>}
           </div>
           <Controller
             name="pwconfirm"
@@ -202,14 +229,24 @@ export const SignUp = () => {
           />
           <div>
             <label htmlFor="nickname">닉네임</label>
-            {errorMsg && <ErrorMessage>{errorMsg.nicknameError}</ErrorMessage>}
-            {errors.nickname && <ErrorMessage>닉네임 입력은 필수 입니다.</ErrorMessage>}
+            {errorMsg && <ErrorMsg>{errorMsg.nicknameError}</ErrorMsg>}
+            <ErrorMessage
+              errors={errors}
+              name="nickname"
+              render={({ message }) => <ErrorMsg>{message}</ErrorMsg>}
+            />
           </div>
           <Controller
             name="nickname"
             control={control}
             defaultValue=""
-            rules={{ required: '사용할 닉네임을 입력하세요' }}
+            rules={{
+              required: '사용할 닉네임을 입력하세요',
+              maxLength: {
+                value: 15,
+                message: '닉네임은 최대 15자리까지 입력 가능합니다.',
+              },
+            }}
             render={({ field }) => (
               <BasicInput
                 id="nickname"
@@ -281,7 +318,7 @@ const AuthInput = styled.div`
   }
 `;
 
-const ErrorMessage = styled.span`
+const ErrorMsg = styled.span`
   font-size: 12px;
   font-weight: 600;
   color: red;
