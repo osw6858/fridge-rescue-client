@@ -15,9 +15,15 @@ interface CarouselProps {
   carouselDataInfo: Recipe[];
   dotsState: boolean;
   viewCount: number;
+  handleClick?: (recipeId: number) => void;
 }
 
-export const Carousel = ({ carouselDataInfo, dotsState, viewCount }: CarouselProps) => {
+export const Carousel = ({
+  carouselDataInfo,
+  dotsState,
+  viewCount,
+  handleClick,
+}: CarouselProps) => {
   const settings = {
     dots: dotsState,
     infinite: true,
@@ -34,7 +40,11 @@ export const Carousel = ({ carouselDataInfo, dotsState, viewCount }: CarouselPro
   return (
     <StyledSlider {...settings}>
       {carouselDataInfo?.map((item: Recipe, idx: number) => (
-        <Card sx={{ maxWidth: '100%', height: '450px' }} key={idx}>
+        <Card
+          sx={{ maxWidth: '100%', height: '450px', cursor: 'pointer', userSelect: 'none' }}
+          key={idx}
+          onClick={() => handleClick && handleClick(item.id)}
+        >
           <CardHeader
             avatar={
               <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">

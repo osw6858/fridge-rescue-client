@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '../constants/queryKey';
 import { getIngredient } from '../api/fridge';
-import type { Ingredient, IngredientEditList } from '../types/ingredientType';
+import type { FridgeIngredient, IngredientEditList } from '../types/ingredientType';
 import { IngredientAccordion } from '../components/pages/fridge/IngredientAccordion';
 import { cookingComplete } from '../api/cook';
 
@@ -54,10 +54,10 @@ export const EditIngredient = () => {
 
   return (
     <>
-      <BasicTitle title="어떤 재료를 사용했나요?" />
+      <BasicTitle title="삭제할 재료를 선택하세요!" />
       <EditIngredientContainer>
         <div className="ingredient-list">
-          {data?.map((ingredient: Ingredient) => {
+          {data?.map((ingredient: FridgeIngredient) => {
             return (
               <IngredientAccordion
                 key={ingredient.name}
@@ -86,7 +86,7 @@ export const EditIngredient = () => {
             $fontcolor={theme.colors.white}
             onClick={() => handleIngredientEdit()}
           >
-            재료 수정
+            냉장고 업데이트
           </BasicButton>
         </div>
       </EditIngredientContainer>

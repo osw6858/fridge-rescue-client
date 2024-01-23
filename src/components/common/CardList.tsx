@@ -16,6 +16,7 @@ export const CardList = () => {
     <Card>
       {latestRecipeData?.map((info: Recipe) => (
         <RecipeCard
+          recipeId={info.id}
           key={info.id}
           recipeTitle={info.title}
           briefExplanation={info.summary}
