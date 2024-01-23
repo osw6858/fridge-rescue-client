@@ -27,10 +27,9 @@ export const IngredientSearchForm = ({ addItemList, setAddItemList }: SearchForm
   }, [debounceQuery]);
 
   const { data, isRefetching } = useQuery({
-    queryKey: [QUERY_KEY.SEARCH_INGREIDENT],
+    queryKey: [QUERY_KEY.SEARCH_INGREIDENT, debounceQuery],
     queryFn: () => getSearchIngredient(debounceQuery),
     enabled: !!debounceQuery,
-    staleTime: 0,
   });
 
   const handleSelect = (event: React.MouseEvent<HTMLElement>) => {
