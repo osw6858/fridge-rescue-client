@@ -36,7 +36,10 @@ export const MyRefrigerator = () => {
 
   const addIngridentMutation = useMutation({
     mutationFn: addIngredient,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_INGREDIENT] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_SEARCH] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_INGREDIENT] });
+    },
     onError: (error: AxiosError) => {
       const { data } = error.response?.data as ErrorType;
       // eslint-disable-next-line no-alert

@@ -5,10 +5,8 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { SearchAtom } from '../store/search';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '../constants/queryKey';
-import { getIngredientKeyWordSearch, getFrigeKeyWordSearch } from '../api/search';
-import { ACCESS_TOKEN_KEY } from '../constants/api';
+import { getIngredientKeyWordSearch } from '../api/search';
 import { RecipeCard } from '../components/common/RecipeCard';
-import type { SearchKeyWord } from '../types/searchResultType';
 import { useDebounce } from '../hooks/useDebounce';
 import { useEffect, useState } from 'react';
 import { BasicTitle } from '../components/common/BasicTitle';
@@ -21,7 +19,6 @@ export const SearchResult = () => {
   const navigation = useNavigate();
   const searchQuery = useRecoilValue(SearchAtom);
   const setSearchQuery = useSetRecoilState(SearchAtom);
-  const isLogIn = !!sessionStorage.getItem(ACCESS_TOKEN_KEY);
   const debounceQuery = useDebounce(searchQuery, 500);
 
   const ingridentKeyWord = useInfiniteQuery({
@@ -30,14 +27,7 @@ export const SearchResult = () => {
     getNextPageParam: (_, allPages) => allPages.length,
     initialPageParam: 0,
     enabled: !!debounceQuery,
-  });
-
-  const frigeKeyWord = useInfiniteQuery({
-    queryKey: [QUERY_KEY.FRIGE_SEARCH],
-    queryFn: ({ pageParam = 1 }) => getFrigeKeyWordSearch(pageParam),
-    getNextPageParam: (_, allPages) => allPages.length,
-    initialPageParam: 0,
-    enabled: isLogIn,
+    staleTime: 1000 * 10,
   });
 
   useEffect(() => {
@@ -53,7 +43,7 @@ export const SearchResult = () => {
     ? ingridentKeyWord.data.pages.flatMap((page) => page.data.content)
     : [];
 
-  const dataLength = ingredientContent.length;
+  const ingredientDataLength = ingredientContent.length;
 
   return (
     <Container>
@@ -61,31 +51,28 @@ export const SearchResult = () => {
       <BasicTitle title="키워드로 검색된 레시피" />
       {visible && !ingridentKeyWord.isRefetching ? (
         <>
-          {ingridentKeyWord.data?.pages.flatMap((page) => page.data.content).length !== 0 ? (
-            <ScrollableDiv id="scrollableDiv" style={{ overflow: 'auto', maxHeight: '600px' }}>
+          {ingredientDataLength !== 0 ? (
+            <ScrollableDiv>
               <InfiniteScroll
-                dataLength={dataLength}
+                dataLength={ingredientDataLength}
                 next={ingridentKeyWord.fetchNextPage}
                 hasMore={ingridentKeyWord.hasNextPage || false}
                 loader={null}
-                scrollableTarget="scrollableDiv"
               >
                 <IngredientKeyWord>
-                  {ingridentKeyWord.data?.pages
-                    .flatMap((page) => page.data.content)
-                    .map((item) => (
-                      <RecipeCard
-                        recipeId={item.id}
-                        recipeTitle={item.title}
-                        briefExplanation={item.summary}
-                        imageURL={item.imageUrl}
-                        date={item.createdAt}
-                        reviewCount={item.reviewCount}
-                        auther={item.author.nickname}
-                        viewCount={item.viewCount}
-                        size="small"
-                      ></RecipeCard>
-                    ))}
+                  {ingredientContent.map((item) => (
+                    <RecipeCard
+                      recipeId={item.id}
+                      recipeTitle={item.title}
+                      briefExplanation={item.summary}
+                      imageURL={item.imageUrl}
+                      date={item.createdAt}
+                      reviewCount={item.reviewCount}
+                      auther={item.author.nickname}
+                      viewCount={item.viewCount}
+                      size="small"
+                    ></RecipeCard>
+                  ))}
                 </IngredientKeyWord>
               </InfiniteScroll>
             </ScrollableDiv>
@@ -100,43 +87,6 @@ export const SearchResult = () => {
           <p>검색하시면 결과를 보여줄게요!</p>
         </ResultMsg>
       )}
-      <Divider />
-      {isLogIn ? (
-        <Wrapper>
-          <BasicTitle title="나의 재료로 만들 수 있는 레시피" />
-          <InfiniteScroll
-            dataLength={dataLength}
-            next={frigeKeyWord.fetchNextPage}
-            hasMore={frigeKeyWord.hasNextPage || false}
-            loader={null}
-          >
-            <FrigeSearch>
-              {frigeKeyWord.data?.pages
-                .flatMap((page) => page.data.content)
-                .map((item: SearchKeyWord) => (
-                  <RecipeCard
-                    recipeId={item.id}
-                    recipeTitle={item.title}
-                    briefExplanation={item.summary}
-                    imageURL={item.imageUrl}
-                    date={item.createdAt}
-                    reviewCount={item.reviewCount}
-                    auther={item.author.nickname}
-                    viewCount={item.viewCount}
-                    size="small"
-                  ></RecipeCard>
-                ))}
-            </FrigeSearch>
-          </InfiniteScroll>
-        </Wrapper>
-      ) : (
-        <Wrapper>
-          <BasicTitle title="나의 재료로 만들 수 있는 레시피" />
-          <Info>
-            <p>로그인 하면 나만의 재료로 만들 수 있는 레시피를 알 수 있어요!</p>
-          </Info>
-        </Wrapper>
-      )}
     </Container>
   );
 };
@@ -146,16 +96,6 @@ const Container = styled.div`
     cursor: pointer;
     margin-bottom: 15px;
   }
-`;
-
-const Wrapper = styled.div`
-  margin-top: 45px;
-`;
-
-const Divider = styled.div`
-  margin: 70px 0 40px 0;
-  width: 100%;
-  border-top: 1px solid ${(props) => props.theme.colors.gray};
 `;
 
 const ScrollableDiv = styled.div`
@@ -172,9 +112,6 @@ const IngredientKeyWord = styled.div`
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  max-height: 600px;
-  min-height: 600px;
-  overflow: auto;
   margin-top: 20px;
 
   &::-webkit-scrollbar {
@@ -196,27 +133,10 @@ const IngredientKeyWord = styled.div`
   }
 `;
 
-const FrigeSearch = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-
-  @media ${device.mobile} {
-    grid-template-columns: 1fr;
-  }
-`;
-
 const ResultMsg = styled.div`
   min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props) => props.theme.colors.darkGray};
-`;
-
-const Info = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
   color: ${(props) => props.theme.colors.darkGray};
 `;
