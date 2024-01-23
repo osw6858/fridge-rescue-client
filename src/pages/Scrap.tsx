@@ -1,49 +1,51 @@
 import styled from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '../constants/queryKey';
 import { getBookmarkedRecipe } from '../api/member';
-import { Avatar, Card, CardContent, CardHeader, CardMedia, Chip, Typography } from '@mui/material';
+import { RecipeCard } from '../components/common/RecipeCard';
+import { type Recipe } from '../types/recipeType';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 export const Scrap = () => {
-  const { data } = useQuery({
+  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: [QUERY_KEY.GET_BOOKMARKED_RECIPE],
-    queryFn: getBookmarkedRecipe,
-    select: (data) => data.data.content,
+    queryFn: ({ pageParam }) => getBookmarkedRecipe(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (_, allPages) => {
+      return allPages.length;
+    },
   });
-
-  // TODO : 카드 수정 후 재작업 필요
-
-  console.log(data);
 
   return (
     <ScrapContainer>
       <BasicTitle title="레시피 스크랩" />
-      <CardList>
-        {data?.map((recipe) => {
-          return (
-            <Card sx={{ maxWidth: '100%' }}>
-              <CardHeader
-                avatar={<Avatar aria-label="recipe">?</Avatar>}
-                title={recipe.title}
-                subheader="띠띠"
+
+      <InfiniteScroll
+        next={fetchNextPage}
+        hasMore={!!hasNextPage}
+        loader={null}
+        dataLength={data ? data.pages.flatMap((page) => page.data.content).length : 0}
+      >
+        <CardList>
+          {data?.pages
+            .flatMap((page) => page.data.content)
+            .map((info: Recipe) => (
+              <RecipeCard
+                recipeId={info.id}
+                key={info.id}
+                recipeTitle={info.title}
+                briefExplanation={info.summary}
+                imageURL={info.imageUrl}
+                date={info.createdAt}
+                reviewCount={info.reviewCount}
+                auther={info.author.nickname}
+                viewCount={info.viewCount}
+                size="small"
               />
-              <CardMedia component="img" height="194" image={recipe.recipeImageUrl} alt="음식" />
-              <CardContent>
-                <Typography variant="body2" color="text.secondary">
-                  {recipe.summary}
-                </Typography>
-                <h5>필요한 재료</h5>
-                <div className="chips">
-                  <Chip label="양파" />
-                  <Chip label="마늘" />
-                  <Chip label="후추" />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </CardList>
+            ))}
+        </CardList>
+      </InfiniteScroll>
     </ScrapContainer>
   );
 };
