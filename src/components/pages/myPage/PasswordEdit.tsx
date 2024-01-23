@@ -23,6 +23,7 @@ export const PasswordEdit = () => {
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm<PasswordFormData>();
 
   const mutation = useMutation({
@@ -31,7 +32,14 @@ export const PasswordEdit = () => {
       const axiosError = err as AxiosError<ErrorResponse>;
       if (axiosError.response) {
         setError(axiosError.response.data.message);
+        reset();
       }
+    },
+    onSuccess: (data) => {
+      // eslint-disable-next-line no-alert
+      alert(data.message);
+      setError(null);
+      reset();
     },
   });
 

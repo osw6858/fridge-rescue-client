@@ -47,11 +47,15 @@ export const RecipeView = () => {
   };
 
   // ------------------------- 북마크 -------------------------
+
   const bookmarkMutation = useMutation({
     mutationFn: toggleBookmark,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.DETAIL_RECIPE],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.GET_BOOKMARKED_RECIPE],
       });
     },
   });

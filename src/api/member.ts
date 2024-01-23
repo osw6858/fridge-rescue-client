@@ -17,7 +17,7 @@ export const editPassword = async (passwordInfo: PasswordFormData) => {
   return result.data;
 };
 
-export const getBookmarkedRecipe = async () => {
-  const result = await axiosAuth.get(`${END_POINTS.BOOKMARK}`);
+export const getBookmarkedRecipe = async (page: number) => {
+  const result = await axiosAuth.get(`${END_POINTS.BOOKMARK}?page=${page}`);
   return result.data;
 };
