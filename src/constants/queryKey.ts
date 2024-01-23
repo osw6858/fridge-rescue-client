@@ -13,4 +13,6 @@ export const QUERY_KEY = {
   SEARCH_INGREIDENT: 'searchIngredient',
   NOTIFICATION: 'notification',
   READ_NOTIC: 'readNotic',
+  INGREDIENT_SEARCH: 'ingredientSearch',
+  FRIGE_SEARCH: 'firgeSearch',
 } as const;

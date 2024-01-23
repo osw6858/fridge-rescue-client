@@ -15,6 +15,7 @@ import { UpdateRecipe } from '../pages/UpdateRecipe';
 import { Suspense } from 'react';
 import { FallBack } from '../components/common/FallBack';
 import { ReviewEdit } from '../pages/ReviewEdit';
+import { SearchResult } from '../pages/SearchResult';
 
 export const Router = () => {
   return (
@@ -22,6 +23,7 @@ export const Router = () => {
       <Route index element={<Index />} />
       <Route path="/recipe/:recipeId" element={<RecipeView />} />
       <Route path="/recipe" element={<Recipe />} />
+      <Route path="/search" element={<SearchResult />} />
       <Route element={<PrivateRoute authentication={false} />}>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
