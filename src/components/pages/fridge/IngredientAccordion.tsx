@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import type { Ingredient, IngredientEditList } from '../../../types/ingredientType';
+import type { FridgeIngredient, IngredientEditList } from '../../../types/ingredientType';
 import {
   Accordion,
   AccordionDetails,
@@ -14,7 +14,7 @@ import { BasicButton } from '../../common/BasicButton';
 import { theme } from '../../../styles/theme';
 
 interface IngredientAccordionProps {
-  ingredient: Ingredient;
+  ingredient: FridgeIngredient;
   setDeleteIdList?: React.Dispatch<React.SetStateAction<number[] | null>>;
   setEditList?: React.Dispatch<React.SetStateAction<IngredientEditList[] | null>>;
 }

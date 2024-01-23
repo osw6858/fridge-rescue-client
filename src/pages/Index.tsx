@@ -4,13 +4,22 @@ import { Suspense } from 'react';
 import { CardList } from '../components/common/CardList';
 import { FallBack } from '../components/common/FallBack';
 import { Carousel } from '../components/common/Carousel';
+import { QUERY_KEY } from '../constants/queryKey';
+import { useQuery } from '@tanstack/react-query';
+import { getPopularRecipes } from '../api/recipe';
+import { useNavigate } from 'react-router-dom';
 
 export const Index = () => {
-  const testImage = [
-    'https://blog.kakaocdn.net/dn/bBeQzv/btq4dw1SNcQ/7b9ROACX8r0oWRUckQKib0/img.png',
-    'https://img.hankyung.com/photo/202108/99.26501439.1-1200x.jpg',
-    'https://d12zq4w4guyljn.cloudfront.net/750_750_20220702061143834_photo_4fceeae73135.jpg',
-  ];
+  const navigation = useNavigate();
+  const { data: popularRecipeData } = useQuery({
+    queryKey: [QUERY_KEY.GET_LATEST_RECIPE],
+    queryFn: () => getPopularRecipes(5),
+    select: (data) => data.data.content,
+  });
+
+  const handleClick = (recipeId: number) => {
+    navigation(`/recipe/${recipeId}`);
+  };
 
   return (
     <>
@@ -26,7 +35,12 @@ export const Index = () => {
           <BasicTitle title="인기 레시피" />
           <MoreButton>더보기</MoreButton>
         </Title>
-        <Carousel carouselImageInfo={testImage} dotsState viewCount={1} />
+        <Carousel
+          carouselDataInfo={popularRecipeData}
+          dotsState
+          viewCount={1}
+          handleClick={handleClick}
+        />
       </IndexContainer>
     </>
   );

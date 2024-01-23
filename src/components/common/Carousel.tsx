@@ -7,15 +7,23 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import styled from 'styled-components';
-import { Chip } from '@mui/material';
+import { type Recipe } from '../../types/recipeType';
+import { formatDate } from '../../utils/formatDate';
+import { PiCookingPotDuotone, PiEyeDuotone } from 'react-icons/pi';
 
 interface CarouselProps {
-  carouselImageInfo: string[];
+  carouselDataInfo: Recipe[];
   dotsState: boolean;
   viewCount: number;
+  handleClick?: (recipeId: number) => void;
 }
 
-export const Carousel = ({ carouselImageInfo, dotsState, viewCount }: CarouselProps) => {
+export const Carousel = ({
+  carouselDataInfo,
+  dotsState,
+  viewCount,
+  handleClick,
+}: CarouselProps) => {
   const settings = {
     dots: dotsState,
     infinite: true,
@@ -31,37 +39,40 @@ export const Carousel = ({ carouselImageInfo, dotsState, viewCount }: CarouselPr
 
   return (
     <StyledSlider {...settings}>
-      {carouselImageInfo?.map((item: string) => (
-        <Card sx={{ maxWidth: '100%' }}>
+      {carouselDataInfo?.map((item: Recipe, idx: number) => (
+        <Card
+          sx={{ maxWidth: '100%', height: '450px', cursor: 'pointer', userSelect: 'none' }}
+          key={idx}
+          onClick={() => handleClick && handleClick(item.id)}
+        >
           <CardHeader
             avatar={
               <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                1위
+                <span className="ranking">{idx + 1}위</span>
               </Avatar>
             }
-            title="존맛탱 음식"
-            subheader="띠띠"
+            title={<div className="nickname">{item.author.nickname}</div>}
+            subheader={<div className="date">{formatDate(item.createdAt)}</div>}
           />
-          <CardMedia component="img" height="194" image={item} alt="음식" />
+          <CardMedia component="img" height="194" image={item.imageUrl} alt="음식" />
           <CardContent>
             <Typography variant="body2" color="text.secondary">
-              너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트
-              실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요!
-              너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트
-              실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요!
-              너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트
-              실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요!
-              너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트
-              실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요!
-              너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트
-              실패하는 레시피를 가져왔어요! 너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요!
-              너무너무 맛있어서 다이어트 실패하는 레시피를 가져왔어요!
+              <h5 className="title">{item.title}</h5>
             </Typography>
-            <h5>일치하는 재료</h5>
-            <div className="chips">
-              <Chip label="양파" />
-              <Chip label="마늘" />
-              <Chip label="후추" />
+            <div className="summary">{item.summary}</div>
+            <div className="counts">
+              <span>
+                <span>
+                  <PiEyeDuotone />
+                </span>
+                <span>{item.viewCount}</span>
+              </span>
+              <span>
+                <span>
+                  <PiCookingPotDuotone />
+                </span>
+                <span>{item.reviewCount}</span>
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -81,8 +92,9 @@ const StyledSlider = styled(Slider)`
   }
 
   .slick-slide {
-    display: flex;
-    justify-content: center;
+    display: block;
+    padding: 12px;
+    position: relative;
   }
 
   img {
@@ -101,14 +113,22 @@ const StyledSlider = styled(Slider)`
     font-family: Pretendard-Regular;
   }
 
-  h5 {
+  .title {
     padding: 12px 0;
+    font-size: 16px;
+    color: ${(props) => props.theme.colors.black};
   }
 
-  .chips {
-    display: flex;
-    gap: 6px;
-    margin-bottom: -6px;
+  .summary {
+    font-size: 14px;
+    color: ${(props) => props.theme.colors.darkGray};
+    word-wrap: break-word;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
   }
 
   .slick-prev,
@@ -134,5 +154,37 @@ const StyledSlider = styled(Slider)`
   }
   .slick-dots li.slick-active button {
     background-color: ${(props) => props.theme.colors.gray};
+  }
+
+  .nickname {
+    font-size: 16px;
+    font-family: Pretendard-Bold;
+  }
+
+  .date {
+    font-family: Pretendard-SemiBold;
+  }
+
+  .ranking {
+    font-size: 18px;
+    font-family: Pretendard-SemiBold;
+  }
+
+  .counts {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    gap: 12px;
+
+    & > span {
+      display: flex;
+      gap: 4px;
+
+      & > span {
+        display: flex;
+        align-items: center;
+      }
+    }
   }
 `;

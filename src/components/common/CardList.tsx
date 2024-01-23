@@ -1,61 +1,30 @@
 import { styled } from 'styled-components';
 import { RecipeCard } from './RecipeCard';
 import type { Recipe } from '../../types/recipeType';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '../../constants/queryKey';
+import { getLatestRecipes } from '../../api/recipe';
 
 export const CardList = () => {
-  const data = [
-    {
-      id: 1,
-      title: '떡볶이',
-      summary: '요약',
-      recipeImageUrl:
-        'https://blog.kakaocdn.net/dn/bBeQzv/btq4dw1SNcQ/7b9ROACX8r0oWRUckQKib0/img.png',
-      reviewCount: 3,
-      createdAt: '2020-09-21',
-      member: {
-        id: 1,
-        nickName: '나에요',
-      },
-    },
-    {
-      id: 1,
-      title: '피자',
-      summary: '요약',
-      recipeImageUrl: 'https://img.hankyung.com/photo/202108/99.26501439.1-1200x.jpg',
-      reviewCount: 3,
-      createdAt: '2020-09-21',
-      member: {
-        id: 1,
-        nickName: '나에요',
-      },
-    },
-    {
-      id: 1,
-      title: '마라탕',
-      summary: '요약',
-      recipeImageUrl:
-        'https://d12zq4w4guyljn.cloudfront.net/750_750_20220702061143834_photo_4fceeae73135.jpg',
-      reviewCount: 3,
-      createdAt: '2020-09-21',
-      member: {
-        id: 1,
-        nickName: '나에요',
-      },
-    },
-  ];
+  const { data: latestRecipeData } = useQuery({
+    queryKey: [QUERY_KEY.GET_LATEST_RECIPE],
+    queryFn: () => getLatestRecipes(6),
+    select: (data) => data.data.content,
+  });
 
   return (
     <Card>
-      {data?.map((info: Recipe) => (
+      {latestRecipeData?.map((info: Recipe) => (
         <RecipeCard
+          recipeId={info.id}
           key={info.id}
           recipeTitle={info.title}
           briefExplanation={info.summary}
-          imageURL={info.recipeImageUrl}
-          date="2020-04-14"
-          reviewCount={10}
-          auther="나에요"
-          viewCount={117}
+          imageURL={info.imageUrl}
+          date={info.createdAt}
+          reviewCount={info.reviewCount}
+          auther={info.author.nickname}
+          viewCount={info.viewCount}
           size="small"
         />
       ))}

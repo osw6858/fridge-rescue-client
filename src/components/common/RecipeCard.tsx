@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 
 interface CardProps {
+  recipeId: number;
   recipeTitle: string;
   briefExplanation: string;
   imageURL: string;
@@ -27,6 +28,7 @@ interface State {
 }
 
 export const RecipeCard = ({
+  recipeId,
   recipeTitle,
   briefExplanation,
   imageURL,
@@ -44,7 +46,7 @@ export const RecipeCard = ({
 
   return (
     <StyledCard sx={cardSize}>
-      <Link to="/recipe/1">
+      <Link to={`/recipe/${recipeId}`}>
         <Container $display={display}>
           <CardMedia sx={imgSize} image={imageURL} title="레시피 사진" />
           <div>

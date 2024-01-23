@@ -4,13 +4,14 @@ export interface Member {
 }
 
 export interface Recipe {
-  id: number;
-  title: string;
-  summary: string;
-  recipeImageUrl: string;
-  reviewCount: number;
+  author: DetailRecipe['author'];
   createdAt: string;
-  member: Member;
+  id: number;
+  imageUrl: string;
+  reviewCount: number;
+  summary: string;
+  title: string;
+  viewCount: number;
 }
 
 export interface DetailRecipe {

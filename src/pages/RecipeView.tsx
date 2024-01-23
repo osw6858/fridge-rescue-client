@@ -16,10 +16,10 @@ import { formatDate } from '../utils/formatDate';
 import { Chip } from '@mui/material';
 import type { Ingredient, RecipeSteps } from '../types/recipeType';
 import { ImageModal } from '../components/common/ImageModal';
-import { RecipeReviewList } from '../components/pages/Recipe/RecipeReviewList';
 import { makeReport } from '../api/report';
 import { BasicInput } from '../components/common/BasicInput';
 import { type AxiosError } from 'axios';
+import { RecipeReviewList } from '../components/pages/recipe/RecipeReviewList';
 
 export const RecipeView = () => {
   const navigation = useNavigate();
@@ -92,7 +92,7 @@ export const RecipeView = () => {
   };
 
   const { data } = useQuery({
-    queryKey: [QUERY_KEY.DETAIL_RECIPE],
+    queryKey: [QUERY_KEY.DETAIL_RECIPE, recipeId],
     queryFn: () => getDetailRecipe(recipeId),
     select: (data) => data.data,
   });
