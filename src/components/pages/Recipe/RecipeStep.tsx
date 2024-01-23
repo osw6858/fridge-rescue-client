@@ -85,6 +85,7 @@ export const RecipeStep = ({
           defaultValue=""
           render={({ field }) => (
             <Content
+              maxLength={200}
               id={`${index}.content`}
               placeholder="레시피의 내용을 입력해 주세요."
               {...field}
