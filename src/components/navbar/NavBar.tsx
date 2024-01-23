@@ -13,8 +13,6 @@ export const NavBar = () => {
   const navigation = useNavigate();
   const [currentCategory, setCurrentCategory] = useRecoilState(currentCategoryAtom);
 
-  console.log(currentCategory);
-
   return (
     <NavBarContainer>
       <BottomNavigation
