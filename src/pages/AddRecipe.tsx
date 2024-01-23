@@ -10,6 +10,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
 import { useRecipe } from '../hooks/useRecipe';
+import { useNavigate } from 'react-router-dom';
 
 export interface StepImage {
   image: File | null;
@@ -31,6 +32,7 @@ export interface Ingredient {
 }
 
 export const AddRecipe = () => {
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -152,6 +154,7 @@ export const AddRecipe = () => {
         </Thumbnail>
         {stepImage.map((e, index) => (
           <RecipeStep
+            key={index}
             image={e.image}
             index={index}
             control={control}
@@ -169,7 +172,12 @@ export const AddRecipe = () => {
           +
         </BasicButton>
         <ButtonWrapper>
-          <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
+          <BasicButton
+            type="button"
+            $bgcolor={theme.colors.orange}
+            $fontcolor={theme.colors.white}
+            onClick={() => navigate('/recipe')}
+          >
             돌아가기
           </BasicButton>
           <BasicButton type="submit" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>

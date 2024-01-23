@@ -26,7 +26,10 @@ export const MyIngredientList = () => {
     onError: () => {
       alert('유효기간을 다시 확인해 주세요!.');
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_INGREDIENT] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_SEARCH] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_INGREDIENT] });
+    },
   });
 
   const [edit, setEdit] = useState<boolean>(false);
@@ -83,8 +86,6 @@ export const MyIngredientList = () => {
     setDeletedItems([]);
     setUpdatedItems({});
   };
-
-  console.log(updatedItems);
 
   return (
     <Container>
@@ -244,6 +245,7 @@ const MemoInput = styled.input`
 `;
 
 const InfoWrapper = styled.div`
+  min-height: 152px;
   & > span {
     display: block;
     margin-bottom: 2px;

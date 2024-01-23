@@ -4,12 +4,14 @@ import { addNewRecipe } from '../api/recipe'; // addNewRecipe API 호출 함수�
 import type { Ingredient } from '../pages/AddRecipe';
 import { useMutation } from '@tanstack/react-query';
 import { useSelectItem } from './useSelectItem';
+import { useNavigate } from 'react-router-dom';
 
 interface StepImg {
   image: File | null;
 }
 
 export function useRecipe() {
+  const navigate = useNavigate();
   const [stepImage, setStepImage] = useState<StepImg[]>([]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [ingredient, setIngredient] = useState<Ingredient[]>();
@@ -22,6 +24,7 @@ export function useRecipe() {
       .map((name) => ({ name, amount: '' }));
 
     setIngredient((prev) => [...(prev || []), ...newIngredients]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addItemList]);
 
   const setIngridentAmount = (name: string, amount: string) => {
@@ -75,9 +78,15 @@ export function useRecipe() {
   const addRecipeMutation = useMutation({
     mutationFn: addNewRecipe,
     onError: (error) => console.log(error),
+    onSuccess: (data) => {
+      // eslint-disable-next-line no-alert
+      alert('레시피를 성공적으로 저장했습니다.');
+      navigate(`/recipe/${data.data.id}`);
+    },
   });
 
   const handleDeleteStep = (index: number) => {
+    deleteImageStep(index);
     setStepImage(stepImage.filter((_, idx) => idx !== index));
   };
 

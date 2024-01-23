@@ -88,6 +88,7 @@ const Container = styled.div<State>`
 `;
 
 const StyledCard = styled(Card)`
+  position: relative;
   min-height: 300px;
   margin: 5px;
 
@@ -100,10 +101,15 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const RecipeTitle = styled.h5`
+const RecipeTitle = styled.p`
   font-size: 20px;
   line-height: 30px;
   font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const BriefExplanation = styled.p`
@@ -111,10 +117,20 @@ const BriefExplanation = styled.p`
   width: 100%;
   margin-top: 20px;
   line-height: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const RecipeInfo = styled.div`
+  position: absolute;
+  width: 100%;
   padding: 10px;
+  max-height: 73px;
+
+  bottom: 0;
 `;
 
 const DateInfo = styled.div`

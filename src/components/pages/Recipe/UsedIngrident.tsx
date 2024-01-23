@@ -24,6 +24,7 @@ export const UsedIngrident = ({ addItemList, setAddItemList, deleteItem }: Added
           </div>
           <input
             defaultValue={e.id && e.amount}
+            value={e.amount}
             type="text"
             placeholder="재료 양"
             onChange={(event) => setAddItemList(e.name, event.target.value)}
