@@ -87,8 +87,6 @@ export const MyIngredientList = () => {
     setUpdatedItems({});
   };
 
-  console.log(updatedItems);
-
   return (
     <Container>
       <TitleWrapper>
@@ -247,6 +245,7 @@ const MemoInput = styled.input`
 `;
 
 const InfoWrapper = styled.div`
+  min-height: 152px;
   & > span {
     display: block;
     margin-bottom: 2px;
