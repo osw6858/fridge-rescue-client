@@ -50,6 +50,8 @@ export const AddRecipe = () => {
     setStepImage,
   } = useRecipe();
 
+  console.log(ingredient);
+
   const handleAddRecipe = async (data: InputData) => {
     if (thumbnail === null) {
       // eslint-disable-next-line no-alert

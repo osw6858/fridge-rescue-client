@@ -22,6 +22,7 @@ export function useRecipe() {
       .map((name) => ({ name, amount: '' }));
 
     setIngredient((prev) => [...(prev || []), ...newIngredients]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addItemList]);
 
   const setIngridentAmount = (name: string, amount: string) => {
