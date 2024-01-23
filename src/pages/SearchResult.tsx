@@ -75,6 +75,7 @@ export const SearchResult = () => {
                     .flatMap((page) => page.data.content)
                     .map((item) => (
                       <RecipeCard
+                        recipeId={item.id}
                         recipeTitle={item.title}
                         briefExplanation={item.summary}
                         imageURL={item.imageUrl}
@@ -114,6 +115,7 @@ export const SearchResult = () => {
                 .flatMap((page) => page.data.content)
                 .map((item: SearchKeyWord) => (
                   <RecipeCard
+                    recipeId={item.id}
                     recipeTitle={item.title}
                     briefExplanation={item.summary}
                     imageURL={item.imageUrl}
