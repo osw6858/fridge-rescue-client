@@ -35,7 +35,7 @@ export const Header = () => {
     queryKey: [QUERY_KEY.LOGOUT],
     queryFn: fetchLogOut,
     enabled: isLogOut,
-    staleTime: 0,
+    staleTime: 1000 * 10,
   });
 
   const notic = useQuery({

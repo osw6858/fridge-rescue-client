@@ -12,12 +12,66 @@ import { Recipe } from '../pages/Recipe';
 import { PrivateRoute } from './PrivateRoute';
 import { EditIngredient } from '../pages/EditIngredient';
 import { UpdateRecipe } from '../pages/UpdateRecipe';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { FallBack } from '../components/common/FallBack';
 import { ReviewEdit } from '../pages/ReviewEdit';
 import { SearchResult } from '../pages/SearchResult';
+import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
+import { ACCESS_TOKEN_KEY, END_POINTS } from '../constants/api';
+import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEY } from '../constants/queryKey';
+import { useRecoilValue } from 'recoil';
+import { AuthStateAtom } from '../store/auth';
 
 export const Router = () => {
+  const EventSource = EventSourcePolyfill || NativeEventSource;
+  const isLogin = useRecoilValue(AuthStateAtom);
+  const accessToken = sessionStorage.getItem(ACCESS_TOKEN_KEY);
+  const queryClient = useQueryClient();
+
+  // const { data } = useQuery({
+  //   queryKey: [QUERY_KEY.NOTIFICATION],
+  //   queryFn: notification,
+  //   select: (data) => data.data.content,
+  //   staleTime: 1000,
+  //   enabled: isLogin,
+  // });
+
+  // const lastNoticId = data && data[data.length - 1].id;
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (isLogin) {
+      // console.log('SSE작동 시작!');
+      let eventSource: EventSourcePolyfill;
+      const fetchSse = async () => {
+        try {
+          eventSource = new EventSource(`api/${END_POINTS.SUBSCRIBE}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              // 'Last-Event-ID': lastNoticId,
+            },
+            withCredentials: true,
+          });
+
+          /* EVENTSOURCE ONMESSAGE ---------------------------------------------------- */
+          eventSource.onmessage = async (event) => {
+            const res = await event.data;
+            console.log(res);
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEY.NOTIFICATION] });
+          };
+
+          /* EVENTSOURCE ONERROR ------------------------------------------------------ */
+          eventSource.onerror = async () => {};
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchSse();
+      return () => eventSource.close();
+    }
+  }, [isLogin]);
+
   return (
     <Routes>
       <Route index element={<Index />} />
