@@ -13,7 +13,7 @@ export const RecipeReviewList = () => {
   const recipeId = pathname.split('/').pop() || '';
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: [QUERY_KEY.GET_REVIEW],
+    queryKey: [QUERY_KEY.GET_REVIEW, recipeId],
     queryFn: ({ pageParam }) => getReviews(recipeId, pageParam as number),
     initialPageParam: 0,
     getNextPageParam: (_, allPages) => {
