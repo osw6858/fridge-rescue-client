@@ -45,6 +45,8 @@ export const MyRecipe = () => {
             })}
         </CardList>
       </InfiniteScroll>
+
+      {!data && <NoRecipe>내가 등록한 레시피가 없어요!</NoRecipe>}
     </>
   );
 };
@@ -53,4 +55,10 @@ const CardList = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   margin-bottom: 48px;
+`;
+
+const NoRecipe = styled.div`
+  margin: -48px auto;
+  font-size: 18px;
+  text-align: center;
 `;

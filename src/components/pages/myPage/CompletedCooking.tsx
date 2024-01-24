@@ -43,6 +43,8 @@ export const CompletedCooking = () => {
             ))}
         </CardList>
       </InfiniteScroll>
+
+      {!data && <NoRecipe>완료한 요리가 없어요!</NoRecipe>}
     </>
   );
 };
@@ -51,4 +53,10 @@ const CardList = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   margin-bottom: 48px;
+`;
+
+const NoRecipe = styled.div`
+  margin: -48px auto;
+  font-size: 18px;
+  text-align: center;
 `;
