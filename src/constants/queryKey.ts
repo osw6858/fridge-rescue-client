@@ -1,5 +1,6 @@
 // 이곳에 쿼리키 정의
 export const QUERY_KEY = {
+  RECIPES_COUNT: 'recipesCount',
   NEW_RECIPE: 'newRecipe',
   DETAIL_RECIPE: 'detailRecipe',
   FRIGE_INGREDIENT: 'frigeIngredient',
