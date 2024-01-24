@@ -30,6 +30,9 @@ export const ReviewPost = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.GET_REVIEW],
       });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.DETAIL_RECIPE],
+      });
       navigation(`/recipe/${recipeId}`);
     },
   });

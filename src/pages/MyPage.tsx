@@ -6,16 +6,32 @@ import { PasswordEdit } from '../components/pages/myPage/PasswordEdit';
 import { PushList } from '../components/pages/myPage/PushList';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { EmailAuth } from '../components/pages/myPage/EmailAuth';
+import { MyCooking } from '../components/pages/myPage/MyCooking';
+import { useNavigate } from 'react-router';
+import { END_POINTS } from '../constants/api';
+import { axiosAuth } from '../api/axiosInstance';
+import { useSetRecoilState } from 'recoil';
+import { NickNameAtom } from '../store/auth';
 
 export const MyPage = () => {
+  const navigation = useNavigate();
   const [logoutModal, setLogoutModal] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState<(typeof MYPAGE_MENU)[number]>(MYPAGE_MENU[0]);
+  const setUser = useSetRecoilState(NickNameAtom);
 
   const handleMenu = (menu: (typeof MYPAGE_MENU)[number]) => {
     setSelectedMenu(menu);
-    if (menu === '로그아웃') {
+    if (menu === '회원 탈퇴') {
       setLogoutModal(true);
     }
+  };
+
+  const leave = async () => {
+    await axiosAuth.delete(END_POINTS.LEAVE);
+    setUser('');
+    sessionStorage.clear();
+    document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    navigation('/');
   };
 
   const renderSelectedComponent = () => {
@@ -28,6 +44,8 @@ export const MyPage = () => {
         return <PasswordEdit />;
       case '이메일 인증':
         return <EmailAuth />;
+      case '나의 요리':
+        return <MyCooking />;
       default:
         return null;
     }
@@ -50,14 +68,15 @@ export const MyPage = () => {
             );
           })}
         </MyPageMenu>
-        <h2>{selectedMenu !== '로그아웃' && selectedMenu}</h2>
+        <h2>{selectedMenu !== '회원 탈퇴' && selectedMenu}</h2>
         {renderSelectedComponent()}
         {logoutModal && (
           <ConfirmModal
             handleOpen={setLogoutModal}
             isOpen={logoutModal}
-            title="로그아웃 할까요?"
-            description="메인페이지로 돌아갑니다."
+            title="정말 탈퇴할까요?"
+            description="동일 계정으로 재가입이 불가합니다."
+            onAgree={leave}
           />
         )}
       </MyPageContainer>

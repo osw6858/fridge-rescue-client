@@ -6,19 +6,11 @@ import { BasicButton } from '../../common/BasicButton';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { emailAuthInMyPage } from '../../../api/auth';
-import { axiosAuth } from '../../../api/axiosInstance';
-import {
-  ACCESS_TOKEN_KEY,
-  END_POINTS,
-  USER_NICKNAME_KEY,
-  USER_STATUS_KEY,
-} from '../../../constants/api';
+import { ACCESS_TOKEN_KEY, USER_STATUS_KEY } from '../../../constants/api';
 import type { AxiosError } from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 export const EmailAuth = () => {
   const [authCode, setAuthCode] = useState<string | undefined>('');
-  const navigation = useNavigate();
 
   const { mutate } = useMutation({
     mutationFn: emailAuthInMyPage,
@@ -46,18 +38,6 @@ export const EmailAuth = () => {
     setAuthCode('');
   };
 
-  const leave = async () => {
-    const { data } = await axiosAuth.delete(END_POINTS.LEAVE);
-    console.log(data);
-
-    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
-    sessionStorage.removeItem(USER_STATUS_KEY);
-    sessionStorage.removeItem(USER_NICKNAME_KEY);
-
-    document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    navigation('/');
-  };
-
   return (
     <NicknameEditContainer>
       <BasicInput
@@ -71,9 +51,6 @@ export const EmailAuth = () => {
       <BasicButton onClick={handleSendAuthCode} $bgcolor="#ff8527" type="text" $fontcolor="#fff">
         인증 확인
       </BasicButton>
-      <button type="button" onClick={leave}>
-        탈퇴
-      </button>
     </NicknameEditContainer>
   );
 };

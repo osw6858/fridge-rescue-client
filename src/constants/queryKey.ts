@@ -1,5 +1,6 @@
 // 이곳에 쿼리키 정의
 export const QUERY_KEY = {
+  RECIPES_COUNT: 'recipesCount',
   NEW_RECIPE: 'newRecipe',
   DETAIL_RECIPE: 'detailRecipe',
   FRIGE_INGREDIENT: 'frigeIngredient',
@@ -14,7 +15,11 @@ export const QUERY_KEY = {
   NOTIFICATION: 'notification',
   READ_NOTIC: 'readNotic',
   GET_LATEST_RECIPE: 'getLatestRecipes',
+  GET_LATEST_RECIPE_INFINITE: 'getLatestRecipes_infinite',
   GET_POPULAR_RECIPE: 'getPopularRecipes',
+  GET_POPULAR_RECIPE_INFINITE: 'getPopularRecipes_infinite',
   INGREDIENT_SEARCH: 'ingredientSearch',
   FRIGE_SEARCH: 'firgeSearch',
+  GET_MY_RECIPE: 'getMyRecipes',
+  GET_COMPLETED_COOKING: 'getCompletedCooking',
 } as const;

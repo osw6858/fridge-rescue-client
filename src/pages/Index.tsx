@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 export const Index = () => {
   const navigation = useNavigate();
   const { data: popularRecipeData } = useQuery({
-    queryKey: [QUERY_KEY.GET_LATEST_RECIPE],
+    queryKey: [QUERY_KEY.GET_POPULAR_RECIPE],
     queryFn: () => getPopularRecipes(5),
     select: (data) => data.data.content,
   });

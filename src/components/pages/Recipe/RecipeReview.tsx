@@ -30,10 +30,14 @@ export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: () => reviewDelete(reviewData.id),
-    onSuccess: () =>
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.GET_REVIEW],
-      }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.DETAIL_RECIPE],
+      });
+    },
   });
 
   const handleDelete = () => {

@@ -14,6 +14,11 @@ export interface Recipe {
   viewCount: number;
 }
 
+export interface CompletedDish {
+  id: number;
+  recipeInfoDto: Recipe;
+}
+
 export interface DetailRecipe {
   author: {
     id: number;

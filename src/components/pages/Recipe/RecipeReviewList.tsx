@@ -12,14 +12,16 @@ export const RecipeReviewList = () => {
   const { pathname } = useLocation();
   const recipeId = pathname.split('/').pop() || '';
 
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: [QUERY_KEY.GET_REVIEW],
+  const { data, isSuccess, refetch, fetchNextPage, hasNextPage } = useInfiniteQuery({
+    queryKey: [QUERY_KEY.GET_REVIEW, recipeId],
     queryFn: ({ pageParam }) => getReviews(recipeId, pageParam as number),
     initialPageParam: 0,
     getNextPageParam: (_, allPages) => {
       return allPages.length;
     },
   });
+
+  if (isSuccess) refetch();
 
   return (
     <RecipeReviewListContainer>

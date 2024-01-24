@@ -25,7 +25,7 @@ export const Header = () => {
 
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
   const [userNickName, setUserNickName] = useRecoilState(NickNameAtom);
-  const [authState, setAuthState] = useRecoilState(AuthStateAtom);
+  const setAuthState = useSetRecoilState(AuthStateAtom);
   const [isLogOut, setIsLogOut] = useState(false);
   const [leftNotic, setLeftNotic] = useState([]);
 
@@ -88,14 +88,14 @@ export const Header = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         ></SearchInput>
-        {userNickName && (
+        {userNickName !== '' && (
           <Nickname>
             <StyledLink to="/mypage">
               <span>{`${userNickName}님`}</span>
             </StyledLink>
           </Nickname>
         )}
-        {authState ? (
+        {userNickName !== '' ? (
           <>
             <BasicButton
               onClick={handleLogOut}

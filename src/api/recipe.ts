@@ -72,3 +72,8 @@ export const getPopularRecipes = async (size: number, page = 0) => {
   const result = await axiosDefault.get(`${END_POINTS.RECIPES}/popular?page=${page}&size=${size}`);
   return result.data;
 };
+
+export const getRecipesCount = async () => {
+  const result = await axiosDefault.get(`${END_POINTS.RECIPES}`);
+  return result.data;
+};
