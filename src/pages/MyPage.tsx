@@ -10,11 +10,14 @@ import { MyCooking } from '../components/pages/myPage/MyCooking';
 import { useNavigate } from 'react-router';
 import { END_POINTS } from '../constants/api';
 import { axiosAuth } from '../api/axiosInstance';
+import { useSetRecoilState } from 'recoil';
+import { NickNameAtom } from '../store/auth';
 
 export const MyPage = () => {
   const navigation = useNavigate();
   const [logoutModal, setLogoutModal] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState<(typeof MYPAGE_MENU)[number]>(MYPAGE_MENU[0]);
+  const setUser = useSetRecoilState(NickNameAtom);
 
   const handleMenu = (menu: (typeof MYPAGE_MENU)[number]) => {
     setSelectedMenu(menu);
@@ -25,6 +28,7 @@ export const MyPage = () => {
 
   const leave = async () => {
     await axiosAuth.delete(END_POINTS.LEAVE);
+    setUser('');
     sessionStorage.clear();
     document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     navigation('/');

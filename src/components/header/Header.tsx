@@ -88,14 +88,14 @@ export const Header = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         ></SearchInput>
-        {userNickName && (
+        {userNickName !== '' && (
           <Nickname>
             <StyledLink to="/mypage">
               <span>{`${userNickName}님`}</span>
             </StyledLink>
           </Nickname>
         )}
-        {authState ? (
+        {userNickName !== '' ? (
           <>
             <BasicButton
               onClick={handleLogOut}
