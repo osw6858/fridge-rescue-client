@@ -5,8 +5,7 @@ import { theme } from '../styles/theme';
 import { useRef } from 'react';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import { FaPlus } from 'react-icons/fa6';
-import { BasicInput } from '../components/common/BasicInput';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
 import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
 import { useRecipe } from '../hooks/useRecipe';
@@ -43,8 +42,7 @@ export const AddRecipe = () => {
     }
 
     const steps = stepImage.map((_, index) => {
-      const { content } = data[index];
-      const { tip } = data[index];
+      const { content, tip } = data[index];
 
       return {
         description: content,
@@ -61,11 +59,13 @@ export const AddRecipe = () => {
       stepImage,
     };
 
+    console.log(finalData);
+
     addRecipeMutation.mutate(finalData);
   };
 
-  const { control, handleSubmit, unregister } = useForm();
-  const onSubmit = handleAddRecipe;
+  const { register, handleSubmit, getValues, setValue, unregister } = useForm();
+  const onSubmit = handleSubmit(handleAddRecipe);
 
   const {
     stepImage,
@@ -82,7 +82,7 @@ export const AddRecipe = () => {
     handleDeleteStep,
     setAddItemList,
     setStepImage,
-  } = useRecipe(unregister);
+  } = useRecipe(getValues, setValue, unregister);
 
   return (
     <>
@@ -95,29 +95,10 @@ export const AddRecipe = () => {
         setAddItemList={setIngridentAmount}
         deleteItem={deleteIngredientByName}
       />
-      <WriteContainer onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="title.title"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <RecipeTitle id="title.title" placeholder="레시피 제목 입력" {...field} />
-          )}
-        />
+      <WriteContainer onSubmit={onSubmit}>
+        <RecipeTitle {...register('title')} id="title" placeholder="레시피 제목 입력" />
         <Summary>
-          <Controller
-            name="summary.summary"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <BasicInput
-                type="text"
-                id="summary.summary"
-                placeholder="레시피 요약 입력"
-                {...field}
-              ></BasicInput>
-            )}
-          />
+          <input {...register('summary')} type="text" id="summary" placeholder="레시피 요약 입력" />
         </Summary>
         <Thumbnail>
           {thumbnail && (
@@ -162,7 +143,7 @@ export const AddRecipe = () => {
             key={index}
             image={e.image}
             index={index}
-            control={control}
+            register={register}
             deleteImageStep={deleteImageStep}
             handleDeleteStep={handleDeleteStep}
             handleImageStep={handleImageStep}

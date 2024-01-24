@@ -4,8 +4,7 @@ import { theme } from '../../../styles/theme';
 import { useState, type ChangeEvent, useEffect } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 import { FaTrash } from 'react-icons/fa';
-import type { Control } from 'react-hook-form';
-import { Controller } from 'react-hook-form';
+import type { FieldValues, UseFormRegister } from 'react-hook-form';
 
 export interface StepData {
   stepDescription: string;
@@ -21,7 +20,7 @@ interface stepProps {
   }[];
   recipeSteps?: StepData[];
   index: number;
-  control: Control;
+  register: UseFormRegister<FieldValues>;
   handleDeleteStep: (index: number) => void;
   deleteImageStep: (index: number) => void;
   handleImageStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
@@ -29,9 +28,8 @@ interface stepProps {
 
 export const RecipeStep = ({
   image,
-  stepImage,
   index,
-  control,
+  register,
   recipeSteps,
   deleteImageStep,
   handleDeleteStep,
@@ -45,7 +43,7 @@ export const RecipeStep = ({
     } else if (typeof image === 'string') {
       setImageUrl(image);
     }
-  }, [image, stepImage]);
+  }, [image]);
 
   const handleDeleteImage = () => {
     if (typeof image === 'string') {
@@ -93,32 +91,20 @@ export const RecipeStep = ({
               />
             </>
           )}
-          <Controller
-            name={`${index}.tip`}
-            control={control}
+          <input
+            {...register(`${index}.tip`)}
             defaultValue={recipeSteps && recipeSteps[index]?.stepTip}
-            render={({ field }) => (
-              <input
-                id={`${index}.tip`}
-                type="text"
-                placeholder="당신만의 팁은?"
-                {...field}
-              ></input>
-            )}
+            id={`${index}.tip`}
+            type="text"
+            placeholder="당신만의 팁은?"
           />
         </div>
-        <Controller
-          name={`${index}.content`}
-          control={control}
+        <Content
+          {...register(`${index}.content`)}
           defaultValue={recipeSteps && recipeSteps[index]?.stepDescription}
-          render={({ field }) => (
-            <Content
-              maxLength={200}
-              id={`${index}.content`}
-              placeholder="레시피의 내용을 입력해 주세요."
-              {...field}
-            ></Content>
-          )}
+          maxLength={200}
+          id={`${index}.content`}
+          placeholder="레시피의 내용을 입력해 주세요."
         />
       </RecipeContainer>
     </>

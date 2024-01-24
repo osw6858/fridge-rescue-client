@@ -45,6 +45,26 @@ export const UpdateRecipe = () => {
     select: (data) => data.data,
   });
 
+  const { register, control, handleSubmit, getValues, setValue, unregister } = useForm();
+
+  const {
+    deleteStep,
+    stepImage,
+    thumbnail,
+    ingredient,
+    addItemList,
+    setIngridentAmount,
+    deleteIngredientByName,
+    onThumbnailChange,
+    setIngredient,
+    onThumbnailRemove,
+    handleImageStep,
+    deleteImageStep,
+    handleDeleteStep,
+    setAddItemList,
+    setStepImage,
+  } = useRecipe(getValues, setValue, unregister);
+
   useEffect(() => {
     setAddItemList(data?.recipeIngredients.map((item: Ingredient) => item.name));
     setIngredient(data?.recipeIngredients);
@@ -107,26 +127,7 @@ export const UpdateRecipe = () => {
     updateRecipeMutation.mutate({ recipeId: id, recipeData: finalData });
   };
 
-  const { control, handleSubmit, unregister } = useForm();
   const onSubmit = handleUpdateRecipe;
-
-  const {
-    stepImage,
-    thumbnail,
-    ingredient,
-    addItemList,
-    setIngridentAmount,
-    deleteIngredientByName,
-    onThumbnailChange,
-    onThumbnailRemove,
-    handleImageStep,
-    deleteImageStep,
-    deleteStep,
-    handleDeleteStep,
-    setAddItemList,
-    setStepImage,
-    setIngredient,
-  } = useRecipe(unregister);
 
   return (
     <>
@@ -206,14 +207,12 @@ export const UpdateRecipe = () => {
             </>
           )}
         </Thumbnail>
-        {stepImage.map((item, index: number) => (
+        {stepImage.map((e, index) => (
           <RecipeStep
             key={index}
-            stepImage={stepImage}
-            recipeSteps={data.recipeSteps}
-            image={item.image}
+            image={e.image}
             index={index}
-            control={control}
+            register={register}
             deleteImageStep={deleteImageStep}
             handleDeleteStep={handleDeleteStep}
             handleImageStep={handleImageStep}
