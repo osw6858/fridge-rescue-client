@@ -195,13 +195,11 @@ export const RecipeTitle = styled.input`
 `;
 
 export const Summary = styled.div`
-  label {
-  }
-
   & > input {
     border: none;
     width: 100%;
     outline: none;
+    padding-left: 10px;
   }
 `;
 
