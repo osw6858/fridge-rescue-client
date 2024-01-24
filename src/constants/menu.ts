@@ -8,3 +8,4 @@ export const MYPAGE_MENU = [
 ] as const;
 
 export const RECIPE_CATEGORIES = ['최신 레시피', '인기 레시피', '추천 레시피'] as const;
+export const MYCOOKING_CATEGORIES = ['내가 등록한 레시피', '완료한 요리'] as const;

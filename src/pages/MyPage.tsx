@@ -6,6 +6,7 @@ import { PasswordEdit } from '../components/pages/myPage/PasswordEdit';
 import { PushList } from '../components/pages/myPage/PushList';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { EmailAuth } from '../components/pages/myPage/EmailAuth';
+import { MyCooking } from '../components/pages/myPage/MyCooking';
 
 export const MyPage = () => {
   const [logoutModal, setLogoutModal] = useState(false);
@@ -28,6 +29,8 @@ export const MyPage = () => {
         return <PasswordEdit />;
       case '이메일 인증':
         return <EmailAuth />;
+      case '나의 요리':
+        return <MyCooking />;
       default:
         return null;
     }
