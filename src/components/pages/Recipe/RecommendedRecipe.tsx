@@ -79,7 +79,7 @@ export const RecommendedRecipe = () => {
       ) : (
         <Wrapper>
           <Info>
-            <p>로그인 하면 나만의 재료로 만들 수 있는 레시피를 알 수 있어요!</p>
+            <p>로그인 후 나만의 재료로 만들 수 있는 레시피를 볼 수 있어요!</p>
           </Info>
         </Wrapper>
       )}
