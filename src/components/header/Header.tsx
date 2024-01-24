@@ -25,7 +25,7 @@ export const Header = () => {
 
   const setCurrentCategory = useSetRecoilState(currentCategoryAtom);
   const [userNickName, setUserNickName] = useRecoilState(NickNameAtom);
-  const [authState, setAuthState] = useRecoilState(AuthStateAtom);
+  const setAuthState = useSetRecoilState(AuthStateAtom);
   const [isLogOut, setIsLogOut] = useState(false);
   const [leftNotic, setLeftNotic] = useState([]);
 
