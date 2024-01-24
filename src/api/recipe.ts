@@ -2,23 +2,16 @@ import { END_POINTS } from '../constants/api';
 import type { Ingredient, StepImage } from '../pages/AddRecipe';
 import { axiosAuth, axiosDefault, axiosFormData } from './axiosInstance';
 
+interface Requset {
+  content: string;
+  tip: string;
+  title: string;
+  summary: string;
+}
+
 interface AddRecipeData {
-  title:
-    | string
-    | {
-        content: string;
-        tip: string;
-        title: string;
-        summary: string;
-      };
-  summary:
-    | string
-    | {
-        content: string;
-        tip: string;
-        title: string;
-        summary: string;
-      };
+  title: string | Requset;
+  summary: string | Requset;
   recipeImage: File;
   steps: {
     description: string;
