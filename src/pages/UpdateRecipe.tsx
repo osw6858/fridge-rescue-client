@@ -112,11 +112,21 @@ export const UpdateRecipe = () => {
       );
     });
 
+    const changedImg = stepImage.map((e) => {
+      if (e.image === null) {
+        return {
+          ...e,
+          image: 'string',
+        };
+      }
+      return e;
+    });
+
     const finalData = {
       updateSteps: ChangedStep,
       deleteSteps: deleteStep,
       recipeImage: thumbnail ?? 'string',
-      stepImages: stepImage,
+      stepImages: changedImg,
       title: Updatedata.title.title,
       summary: Updatedata.summary.summary,
       ingredient,
