@@ -3,8 +3,22 @@ import type { Ingredient, StepImage } from '../pages/AddRecipe';
 import { axiosAuth, axiosDefault, axiosFormData } from './axiosInstance';
 
 interface AddRecipeData {
-  title: string;
-  summary: string;
+  title:
+    | string
+    | {
+        content: string;
+        tip: string;
+        title: string;
+        summary: string;
+      };
+  summary:
+    | string
+    | {
+        content: string;
+        tip: string;
+        title: string;
+        summary: string;
+      };
   recipeImage: File;
   steps: {
     description: string;
@@ -115,5 +129,10 @@ export const getPopularRecipes = async (size: number, page = 0) => {
 
 export const getRecipesCount = async () => {
   const result = await axiosDefault.get(`${END_POINTS.RECIPES}`);
+  return result.data;
+};
+
+export const deleteRecipe = async (recipeId: string) => {
+  const result = await axiosDefault.delete(`${END_POINTS.RECIPES}/${recipeId}`);
   return result.data;
 };

@@ -51,8 +51,8 @@ export const AddRecipe = () => {
     });
 
     const finalData = {
-      title: data.title.title,
-      summary: data.summary.summary,
+      title: data.title,
+      summary: data.summary,
       recipeImage: thumbnail,
       steps,
       ingredient,
