@@ -9,7 +9,7 @@ import { type Recipe } from '../../../types/recipeType';
 
 export const LatestRecipe = () => {
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: [QUERY_KEY.GET_LATEST_RECIPE],
+    queryKey: [QUERY_KEY.GET_LATEST_RECIPE_INFINITE],
     queryFn: ({ pageParam }) => getLatestRecipes(6, pageParam),
     initialPageParam: 0,
     getNextPageParam: (_, allPages) => {
@@ -24,7 +24,7 @@ export const LatestRecipe = () => {
         next={fetchNextPage}
         hasMore={!!hasNextPage}
         loader={null}
-        dataLength={data ? data.pages.flatMap((page) => page.data.content).length : 0}
+        dataLength={data ? data.pages?.flatMap((page) => page.data.content).length : 0}
       >
         <CardList>
           {data?.pages
