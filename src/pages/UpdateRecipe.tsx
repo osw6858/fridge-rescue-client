@@ -98,7 +98,7 @@ export const UpdateRecipe = () => {
 
       return {
         id: data.recipeSteps[index] ? data.recipeSteps[index].id : null,
-        stepNo: data.recipeSteps[index] ? data.recipeSteps[index].setpNo : index,
+        stepNo: data.recipeSteps[index] ? data.recipeSteps[index].stepNo : index,
         description: content,
         tip,
       };
