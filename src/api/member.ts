@@ -21,3 +21,13 @@ export const getBookmarkedRecipe = async (page: number) => {
   const result = await axiosAuth.get(`${END_POINTS.BOOKMARK}?page=${page}`);
   return result.data;
 };
+
+export const getMyRecipes = async (size: number, page = 0) => {
+  const result = await axiosAuth.get(`${END_POINTS.MEMBER_RECIPE}?page=${page}&size=${size}`);
+  return result.data;
+};
+
+export const getCompletedCooking = async (size: number, page = 0) => {
+  const result = await axiosAuth.get(`${END_POINTS.MEMBER_COOK}?page=${page}&size=${size}`);
+  return result.data;
+};

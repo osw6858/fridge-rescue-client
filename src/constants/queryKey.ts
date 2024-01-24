@@ -20,4 +20,6 @@ export const QUERY_KEY = {
   GET_POPULAR_RECIPE_INFINITE: 'getPopularRecipes_infinite',
   INGREDIENT_SEARCH: 'ingredientSearch',
   FRIGE_SEARCH: 'firgeSearch',
+  GET_MY_RECIPE: 'getMyRecipes',
+  GET_COMPLETED_COOKING: 'getCompletedCooking',
 } as const;
