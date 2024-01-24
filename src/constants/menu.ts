@@ -6,3 +6,5 @@ export const MYPAGE_MENU = [
   '나의 요리',
   '로그아웃',
 ] as const;
+
+export const RECIPE_CATEGORIES = ['최신 레시피', '인기 레시피', '추천 레시피'] as const;
