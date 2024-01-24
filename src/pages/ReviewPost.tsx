@@ -6,15 +6,36 @@ import { BasicTextArea } from '../components/common/BasicTextArea';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { reviewPost } from '../api/review';
+import { QUERY_KEY } from '../constants/queryKey';
 
 export const ReviewPost = () => {
   const navigation = useNavigate();
-  const [droppedImage, setDroppedImage] = useState<FormData | null>();
+  const location = useLocation();
+  const cookId: number = parseInt(location.state.cookId, 10);
+  const recipeId: number = parseInt(location.state.recipeId, 10);
+  const [droppedImage, setDroppedImage] = useState<File | null>(null);
 
-  const handleImageDrop = (imageFile: FormData | null) => {
+  const handleImageDrop = (imageFile: File | null) => {
     setDroppedImage(imageFile);
   };
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (data: { title: string; content: string }) =>
+      reviewPost(recipeId, cookId, data.title, droppedImage, data.content),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.GET_REVIEW],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.DETAIL_RECIPE],
+      });
+      navigation(`/recipe/${recipeId}`);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,16 +45,18 @@ export const ReviewPost = () => {
     };
     const title = target.title.value;
     const content = target.content.value;
+
+    mutation.mutate({ title, content });
   };
 
   return (
     <ReviewPostContainer>
-      <BasicTitle title="요리 후기 등록" />
+      <BasicTitle title="레시피 리뷰 등록" />
       <form onSubmit={(e) => handleSubmit(e)}>
-        <DragAndDrop text="완성된 요리의" onImageDrop={handleImageDrop} formDataKey="image" />
+        <DragAndDrop text="완성된 요리의" onImageDrop={handleImageDrop} />
         <div className="description">
           <BasicInput type="text" placeholder="제목을 입력하세요" id="title" />
-          <BasicTextArea placeholder="요리 후기를 입력하세요" id="content" />
+          <BasicTextArea placeholder="레시피 후기를 입력하세요" id="content" />
         </div>
         <div className="buttons">
           <BasicButton

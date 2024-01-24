@@ -11,7 +11,7 @@ export const useCardStyle = (size: string) => {
       setImgSize({ minWidth: 400, height: 350 });
       setDisplay({ display: 'flex' });
     } else {
-      setCardSize({ maxWidth: 345, minHeight: 300, minWidth: 290 });
+      setCardSize({ maxWidth: 345, minHeight: 415, minWidth: 290 });
       setImgSize({ height: 190 });
     }
   }, [size]);

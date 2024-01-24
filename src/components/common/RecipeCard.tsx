@@ -1,14 +1,23 @@
-import { Chip, Card, CardActions, CardContent, CardMedia } from '@mui/material';
+import { Card, CardContent, CardMedia } from '@mui/material';
 import { styled } from 'styled-components';
 import { useCardStyle } from '../../hooks/useCardStyle';
 import { device } from '../../styles/media';
 import { Link } from 'react-router-dom';
+import { GrView } from 'react-icons/gr';
+import { GoDotFill } from 'react-icons/go';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 interface CardProps {
+  recipeId: number;
   recipeTitle: string;
   briefExplanation: string;
   imageURL: string;
-  matchedFoodList: string[];
+  date: string;
+  reviewCount: number;
+  auther: string;
+  viewCount: number;
   size: 'large' | 'small';
 }
 
@@ -19,17 +28,25 @@ interface State {
 }
 
 export const RecipeCard = ({
+  recipeId,
   recipeTitle,
   briefExplanation,
   imageURL,
-  matchedFoodList,
   size,
+  date,
+  reviewCount,
+  auther,
+  viewCount,
 }: CardProps) => {
   const { cardSize, imgSize, display } = useCardStyle(size);
 
+  dayjs.extend(relativeTime);
+  dayjs.locale('ko');
+  const now = dayjs();
+
   return (
     <StyledCard sx={cardSize}>
-      <Link to="/recipe/1">
+      <Link to={`/recipe/${recipeId}`}>
         <Container $display={display}>
           <CardMedia sx={imgSize} image={imageURL} title="레시피 사진" />
           <div>
@@ -37,17 +54,24 @@ export const RecipeCard = ({
               <RecipeTitle> {recipeTitle}</RecipeTitle>
               <BriefExplanation>{briefExplanation}</BriefExplanation>
             </CardContent>
-            <MatchedFoodList>
-              <MatchedFood>일치하는 재료</MatchedFood>
-              <CardActions>
-                {matchedFoodList.length !== 0 ? (
-                  // TODO: key수정하기
-                  matchedFoodList.map((food, index) => <Chip key={index} label={food} />)
-                ) : (
-                  <p>일치하는 재료가 없습니다.</p>
+            <RecipeInfo>
+              <DateInfo>
+                <span>{dayjs(date).from(now)}</span>
+                {reviewCount > 0 && (
+                  <>
+                    <GoDotFill />
+                    <span>{reviewCount}개의 리뷰</span>
+                  </>
                 )}
-              </CardActions>
-            </MatchedFoodList>
+              </DateInfo>
+              <User>
+                <p>by. {auther}</p>
+                <div>
+                  <p>{viewCount}</p>
+                  <GrView />
+                </div>
+              </User>
+            </RecipeInfo>
           </div>
         </Container>
       </Link>
@@ -64,6 +88,7 @@ const Container = styled.div<State>`
 `;
 
 const StyledCard = styled(Card)`
+  position: relative;
   min-height: 300px;
   margin: 5px;
 
@@ -76,10 +101,15 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const RecipeTitle = styled.h5`
+const RecipeTitle = styled.p`
   font-size: 20px;
   line-height: 30px;
   font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const BriefExplanation = styled.p`
@@ -87,15 +117,51 @@ const BriefExplanation = styled.p`
   width: 100%;
   margin-top: 20px;
   line-height: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-const MatchedFood = styled.p`
-  color: ${(props) => props.theme.colors.black};
-  font-weight: 600;
-  font-size: 14px;
-  margin: 10px 0 5px 10px;
-`;
-
-const MatchedFoodList = styled.div`
+const RecipeInfo = styled.div`
+  position: absolute;
+  width: 100%;
   padding: 10px;
+  max-height: 73px;
+
+  bottom: 0;
+`;
+
+const DateInfo = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: ${(props) => props.theme.colors.darkGray};
+  span:nth-child(2) {
+    margin-left: 10px;
+  }
+
+  svg {
+    width: 5px;
+    height: 5px;
+    margin: 0 5px 0 5px;
+  }
+`;
+
+const User = styled.div`
+  border-top: 1px solid ${(props) => props.theme.colors.lightGray};
+  margin-top: 10px;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+
+  div {
+    display: flex;
+    align-items: center;
+    svg {
+      margin-left: 6px;
+    }
+  }
 `;

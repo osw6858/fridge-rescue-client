@@ -1,22 +1,30 @@
-import { RecipeCard } from './common/RecipeCard';
-import { QUERY_KEY } from '../constants/queryKey';
 import { styled } from 'styled-components';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import type { Recipe } from '../types/recipeType';
-import { getNewRecipe } from '../api/recipe/getNewRecipe';
+import { RecipeCard } from './RecipeCard';
+import type { Recipe } from '../../types/recipeType';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '../../constants/queryKey';
+import { getLatestRecipes } from '../../api/recipe';
 
 export const CardList = () => {
-  const { data } = useSuspenseQuery({ queryKey: [QUERY_KEY.NEW_RECIPE], queryFn: getNewRecipe });
+  const { data: latestRecipeData } = useQuery({
+    queryKey: [QUERY_KEY.GET_LATEST_RECIPE],
+    queryFn: () => getLatestRecipes(6),
+    select: (data) => data.data.content,
+  });
 
   return (
     <Card>
-      {data?.map((info: Recipe) => (
+      {latestRecipeData?.map((info: Recipe) => (
         <RecipeCard
+          recipeId={info.id}
           key={info.id}
           recipeTitle={info.title}
           briefExplanation={info.summary}
-          imageURL={info.recipeImageUrl}
-          matchedFoodList={['당근', '무']}
+          imageURL={info.imageUrl}
+          date={info.createdAt}
+          reviewCount={info.reviewCount}
+          auther={info.author.nickname}
+          viewCount={info.viewCount}
           size="small"
         />
       ))}

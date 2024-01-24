@@ -9,21 +9,44 @@ import { MyRefrigerator } from '../pages/MyRefrigerator';
 import { ReviewPost } from '../pages/ReviewPost';
 import { RecipeView } from '../pages/RecipeView';
 import { Recipe } from '../pages/Recipe';
+import { PrivateRoute } from './PrivateRoute';
+import { EditIngredient } from '../pages/EditIngredient';
+import { UpdateRecipe } from '../pages/UpdateRecipe';
+import { Suspense } from 'react';
+import { FallBack } from '../components/common/FallBack';
+import { ReviewEdit } from '../pages/ReviewEdit';
+import { SearchResult } from '../pages/SearchResult';
 
 export const Router = () => {
   return (
     <Routes>
       <Route index element={<Index />} />
-      {/** add/ => 화면 테스트용 임시 라우팅 */}
-      <Route path="/add" element={<AddRecipe />} />
-      <Route path="/refrigerator" element={<MyRefrigerator />} />
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/mypage" element={<MyPage />} />
-      <Route path="/scrap" element={<Scrap />} />
-      <Route path="/recipe" element={<Recipe />} />
       <Route path="/recipe/:recipeId" element={<RecipeView />} />
-      <Route path="/review-post" element={<ReviewPost />} />
+      <Route path="/recipe" element={<Recipe />} />
+      <Route path="/search" element={<SearchResult />} />
+      <Route element={<PrivateRoute authentication={false} />}>
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+      </Route>
+      <Route element={<PrivateRoute authentication allowGuest />}>
+        <Route path="/mypage" element={<MyPage />} />
+      </Route>
+      <Route element={<PrivateRoute authentication />}>
+        <Route path="/scrap" element={<Scrap />} />
+        <Route path="/add" element={<AddRecipe />} />
+        <Route
+          path="/recipe/update/:recipeId"
+          element={
+            <Suspense fallback={<FallBack length={3}></FallBack>}>
+              <UpdateRecipe />{' '}
+            </Suspense>
+          }
+        />
+        <Route path="/refrigerator" element={<MyRefrigerator />} />
+        <Route path="/review/ingredient" element={<EditIngredient />} />
+        <Route path="/review/post" element={<ReviewPost />} />
+        <Route path="/review/edit" element={<ReviewEdit />} />
+      </Route>
     </Routes>
   );
 };

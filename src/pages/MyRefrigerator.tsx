@@ -1,84 +1,101 @@
 import { styled } from 'styled-components';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { useSelectItem } from '../hooks/useSelectItem';
-import { IngredientSearchForm } from '../components/IngredientSearchForm';
-import { IngredientInfo } from '../components/IngredientInfo';
+import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
+import { AddIngredientInfo } from '../components/pages/fridge/AddIngredientInfo';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
-import { useEffect, useState } from 'react';
+import { MyIngredientList } from '../components/pages/fridge/MyIngredientList';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addIngredient } from '../api/fridge';
+import { QUERY_KEY } from '../constants/queryKey';
+import type { AxiosError } from 'axios';
+import { Suspense } from 'react';
+import { FallBack } from '../components/common/FallBack';
 
-interface Ingredient {
-  name: string;
-  expiredAt: string;
-  memo: string;
+interface IngredientInputData {
+  [index: string]: {
+    expiredAt: string;
+    memo: string;
+  };
+}
+
+interface ErrorType {
+  data: {
+    expiredAt: string;
+  };
+  message: string;
 }
 
 export const MyRefrigerator = () => {
   const { addItemList, setAddItemList } = useSelectItem();
-  const [ingredientDetails, setIngredientDetails] = useState<Ingredient[]>(
-    addItemList.map((name) => ({ name, expiredAt: '', memo: '' }))
-  );
-  const [isSave, setIsSave] = useState(false);
+  const { control, handleSubmit, unregister } = useForm();
 
-  useEffect(() => {
-    setIsSave(false);
-    const newItems = addItemList.filter(
-      (item) => !ingredientDetails.some((detail) => detail.name === item)
-    );
+  const queryClient = useQueryClient();
 
-    const newDetails = newItems.map((name) => ({ name, expiredAt: '', memo: '' }));
+  const addIngridentMutation = useMutation({
+    mutationFn: addIngredient,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_SEARCH] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FRIGE_INGREDIENT] });
+    },
+    onError: (error: AxiosError) => {
+      const { data } = error.response?.data as ErrorType;
+      // eslint-disable-next-line no-alert
+      alert(data.expiredAt);
+    },
+  });
 
-    setIngredientDetails((prevDetails) => [...prevDetails, ...newDetails]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addItemList]);
-
-  const updateIngredientDetails = (index: number, expiredAt: string, memo: string) => {
-    const newDetails = [...ingredientDetails];
-    newDetails[index] = { ...newDetails[index], expiredAt, memo };
-    setIngredientDetails(newDetails);
+  const deleteAddedIngredient = (index: number, name: string) => {
+    unregister(name);
+    const newDetailList = addItemList.filter((_, idx) => index !== idx);
+    setAddItemList(newDetailList);
   };
 
-  const handleSave = async () => {
-    setIsSave(!isSave);
+  const handleSave = (inputData: IngredientInputData) => {
+    const finalData = Object.entries(inputData).map(([name, details]) => ({
+      name,
+      ...details,
+    }));
+
+    addItemList.map((item) => unregister(item));
+    setAddItemList([]);
+    addIngridentMutation.mutate(finalData);
   };
+
+  const onSubmit = handleSave;
 
   return (
     <>
       <BasicTitle title="나의 냉장고" />
       <Container>
         <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
-        <Wrapper>
-          {ingredientDetails.map((ingredient, index) => (
-            <IngredientInfo
-              key={index}
-              name={ingredient.name}
-              expiredAt={ingredient.expiredAt}
-              memo={ingredient.memo}
-              updateIngredientDetails={updateIngredientDetails}
-              index={index}
-              isSave={isSave}
-            />
-          ))}
-        </Wrapper>
-        {isSave ? (
-          <BasicButton
-            type="button"
-            $bgcolor={theme.colors.orange}
-            $fontcolor={theme.colors.white}
-            onClick={handleSave}
-          >
-            수정
-          </BasicButton>
-        ) : (
-          <BasicButton
-            type="button"
-            $bgcolor={theme.colors.orange}
-            $fontcolor={theme.colors.white}
-            onClick={handleSave}
-          >
-            저장
-          </BasicButton>
-        )}
+        <AddForm onSubmit={handleSubmit(onSubmit)}>
+          <AddIngredientInfo
+            control={control}
+            ingredientDetails={addItemList}
+            deleteAddedIngredient={deleteAddedIngredient}
+          />
+          {addItemList.length > 0 && (
+            <BasicButton
+              type="submit"
+              $bgcolor={theme.colors.orange}
+              $fontcolor={theme.colors.white}
+            >
+              재료 추가
+            </BasicButton>
+          )}
+        </AddForm>
+        <Suspense
+          fallback={
+            <FallbackWrapper>
+              <FallBack length={3} />
+            </FallbackWrapper>
+          }
+        >
+          <MyIngredientList />
+        </Suspense>
       </Container>
     </>
   );
@@ -94,9 +111,17 @@ const Container = styled.div`
   }
 `;
 
-const Wrapper = styled.div`
+const AddForm = styled.form`
   display: grid;
   grid-template-columns: 1fr;
   place-items: center;
   gap: 5px;
+
+  & > button {
+    margin-top: 20px;
+  }
+`;
+
+const FallbackWrapper = styled.div`
+  margin-top: 40px;
 `;

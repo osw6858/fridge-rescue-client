@@ -1,11 +1,18 @@
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { ACCESS_TOKEN_KEY, END_POINTS, ROOT_URL } from '../constants/api';
-import { axiosAuth } from './axiosInstance';
-import type { Token } from '../types/tokenType';
+import {
+  ACCESS_TOKEN_KEY,
+  END_POINTS,
+  ROOT_URL,
+  USER_NICKNAME_KEY,
+  USER_STATUS_KEY,
+} from '../constants/api';
+import { axiosAuth, axiosFormData, axiosReissue } from './axiosInstance';
+import { getRefreshToken } from '../utils/getRefreshToken';
+import axios from 'axios';
+
+let isRefreshing = false;
 
 export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
-  if (!config.headers || config.headers.Authorization) return config;
-
   const accessToken = sessionStorage.getItem(ACCESS_TOKEN_KEY);
   if (!accessToken) {
     window.location.href = ROOT_URL;
@@ -21,25 +28,64 @@ export const checkAndSetToken = (config: InternalAxiosRequestConfig) => {
 export const handleTokenError = async (error: AxiosError) => {
   const originalRequest = error.config;
 
-  if (!error.response || !originalRequest) throw new Error('에러가 발생했습니다.');
+  if (!error.response || !originalRequest) {
+    return Promise.reject(error);
+  }
 
-  if (error.response && error.response.status === 401) {
+  const contentType = originalRequest.headers['Content-Type'];
+
+  if (error.response && error.response.status === 401 && !isRefreshing) {
+    isRefreshing = true;
+
     try {
-      const response = await axiosAuth.post<Token>(END_POINTS.TOKEN);
+      const refreshToken = getRefreshToken('refreshToken');
+      const response = await axiosReissue.post(
+        END_POINTS.REISSUE,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
-        const { accessToken } = response.data;
+        const { data } = response.data;
 
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${data}`;
 
-        sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+        sessionStorage.setItem(ACCESS_TOKEN_KEY, data);
+
+        document.cookie = `refreshToken=${refreshToken}; path=/; max-age=2592000; samesite=strict`;
+
+        if (!contentType) {
+          return axiosFormData(originalRequest);
+        }
 
         return axiosAuth(originalRequest);
       }
     } catch (error) {
-      throw new Error(`${error}`);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+        sessionStorage.removeItem(USER_STATUS_KEY);
+        sessionStorage.removeItem(USER_NICKNAME_KEY);
+
+        document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        // eslint-disable-next-line no-alert
+        alert('토큰이 만료되었습니다. 다시 로그인해 주세요.');
+        window.location.href = `${ROOT_URL}signin`;
+      }
+
+      return Promise.reject(error);
     }
   }
 
-  throw new Error(`${error}`);
+  if ((isRefreshing && error.response.status === 403) || error.response.status === 401) {
+    // eslint-disable-next-line no-alert
+    alert('인증에 문제가 발생했습니다.');
+  }
+
+  isRefreshing = false;
+
+  return Promise.reject(error);
 };

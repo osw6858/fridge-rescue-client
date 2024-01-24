@@ -1,49 +1,121 @@
 import styled from 'styled-components';
-import { IoMdArrowRoundDown } from 'react-icons/io';
+import { IoMdArrowRoundDown, IoMdArrowRoundUp } from 'react-icons/io';
+import { useState } from 'react';
+import { ImageModal } from '../../common/ImageModal';
+import type { Review } from '../../../types/reviewType';
+import { formatDate } from '../../../utils/formatDate';
+import { MdModeEdit } from 'react-icons/md';
+import { RiDeleteBin5Fill } from 'react-icons/ri';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { reviewDelete } from '../../../api/review';
+import { QUERY_KEY } from '../../../constants/queryKey';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { NickNameAtom } from '../../../store/auth';
 
-export const RecipeReview = () => {
-  // TODO : ID 받아서 해당 게시글 더보기 toggle 구현
+export const RecipeReview = ({ reviewData }: { reviewData: Review }) => {
+  const navigation = useNavigate();
+  const [isImageModalOpened, setImageModalOpen] = useState(false);
+  const [showAllContent, setShowAllContent] = useState(false);
+  const user = useRecoilValue(NickNameAtom);
+
+  const handleImageModal = (isOpen: boolean) => {
+    setImageModalOpen(isOpen);
+  };
+
+  const handleToggleContent = () => {
+    setShowAllContent((prev) => !prev);
+  };
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => reviewDelete(reviewData.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.GET_REVIEW],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.DETAIL_RECIPE],
+      });
+    },
+  });
+
+  const handleDelete = () => {
+    /* eslint-disable no-alert */
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('정말 삭제할까요?')) {
+      mutation.mutate();
+    }
+  };
+
   return (
-    <RecipeReviewContainer>
-      <div className="review-image">
-        <img
-          src="https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/bskh/image/cXN5XKBUKfmpGaxWVTIMnLlSH6E"
-          alt="리뷰 썸네일"
-        />
-      </div>
-      <div className="description">
-        <div className="title">저두요!</div>
-        <div className="review-info">
-          <span>2023-01-02</span>
-          <span>띠띠</span>
+    <>
+      <RecipeReviewContainer $showAllContent={showAllContent}>
+        {user === reviewData.author.nickname && (
+          <div className="buttons">
+            <button
+              type="button"
+              onClick={() =>
+                navigation('/review/edit', {
+                  state: {
+                    reviewId: reviewData.id,
+                  },
+                })
+              }
+            >
+              <MdModeEdit />
+            </button>
+            <button type="button" onClick={handleDelete}>
+              <RiDeleteBin5Fill />
+            </button>
+          </div>
+        )}
+        <div className="review-image" role="button" onClick={() => handleImageModal(true)}>
+          <img src={reviewData.imageUrl} alt="리뷰 썸네일" />
         </div>
-        <div className="content">
-          저도 한번 만들어 봤는데요! 저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번
-          만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어
-          봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어 봤는데요!저도 한번 만들어
-          봤는데요!저도 한번 만들어 봤는데요!
+        <div className="description">
+          <div className="title">{reviewData?.title}</div>
+          <div className="review-info">
+            <span>{formatDate(reviewData?.createdAt)}</span>
+            <span>{reviewData?.author?.nickname}</span>
+          </div>
+          <div className="content">{reviewData.contents}</div>
+          <div className="arrow" onClick={handleToggleContent} role="button">
+            {showAllContent ? (
+              <>
+                <span>접기</span>
+                <IoMdArrowRoundUp />
+              </>
+            ) : (
+              <>
+                <span>더보기</span>
+                <IoMdArrowRoundDown />
+              </>
+            )}
+          </div>
         </div>
-        <div className="arrow">
-          <span>더보기</span>
-          <IoMdArrowRoundDown />
-        </div>
-      </div>
-    </RecipeReviewContainer>
+      </RecipeReviewContainer>
+      {isImageModalOpened && (
+        <ImageModal imageUrl={reviewData.imageUrl} alt="음식" handleImageModal={handleImageModal} />
+      )}
+    </>
   );
 };
 
-const RecipeReviewContainer = styled.div`
+const RecipeReviewContainer = styled.div<{ $showAllContent: boolean }>`
   display: grid;
   grid-template-columns: 100px 1fr;
   gap: 24px;
   padding: 12px;
   background-color: ${(props) => props.theme.colors.grayishWhite};
   border-radius: 12px;
+  position: relative;
 
   .review-image {
     img {
-      width: 100%;
-      height: auto;
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
       border-radius: 50%;
       display: block;
     }
@@ -71,7 +143,7 @@ const RecipeReviewContainer = styled.div`
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: ${(props) => (props.$showAllContent ? 'none' : 2)};
       -webkit-box-orient: vertical;
     }
 
@@ -90,6 +162,24 @@ const RecipeReviewContainer = styled.div`
 
       &:hover {
         background-color: ${(props) => props.theme.colors.gray}50;
+      }
+    }
+  }
+
+  .buttons {
+    position: absolute;
+    display: flex;
+    right: 12px;
+    gap: 12px;
+
+    button {
+      height: 20px;
+      font-size: 18px;
+      color: ${(props) => props.theme.colors.gray};
+      transition: all 0.3s;
+
+      &:hover {
+        color: ${(props) => props.theme.colors.black};
       }
     }
   }

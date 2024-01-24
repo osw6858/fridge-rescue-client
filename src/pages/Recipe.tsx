@@ -1,20 +1,40 @@
+/* eslint-disable no-nested-ternary */
 import styled from 'styled-components';
-import { BasicTitle } from '../components/common/BasicTitle';
-import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
-import { useNavigate } from 'react-router-dom';
-import { RecipeCard } from '../components/common/RecipeCard';
+import { BasicButton } from '../components/common/BasicButton';
+import { useNavigate } from 'react-router';
+import { RecommendedRecipe } from '../components/pages/recipe/RecommendedRecipe';
+import { LatestRecipe } from '../components/pages/recipe/LatestRecipe';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '../constants/queryKey';
+import { getRecipesCount } from '../api/recipe';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import { useState } from 'react';
+import { RECIPE_CATEGORIES } from '../constants/menu';
+import { PopularRecipe } from '../components/pages/recipe/PopularRecipe';
 
 export const Recipe = () => {
   const navigation = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState('최신 레시피');
+
   const handleRecipePost = () => {
     navigation('/add');
   };
+
+  const { data: count } = useQuery({
+    queryKey: [QUERY_KEY.RECIPES_COUNT],
+    queryFn: getRecipesCount,
+    select: (data) => data.data,
+  });
+
   return (
     <RecipeContainer>
       <div className="header">
         <p>
-          총 <span className="recipe-count">13,435개</span>의 맛있는 레시피가 있어요!
+          총 <span className="recipe-count">{Number(count).toLocaleString('ko-KR')}개</span>의
+          맛있는 레시피가 있어요!
         </p>
         <BasicButton
           type="submit"
@@ -26,68 +46,42 @@ export const Recipe = () => {
           레시피 등록
         </BasicButton>
       </div>
-      <BasicTitle title="최신 레시피" />
-      <CardList>
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-      </CardList>
-      <BasicTitle title="당신을 위한 추천 레시피" />
-      <CardList>
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-        <RecipeCard
-          recipeTitle="레시피 제목"
-          briefExplanation="간단 설명 You can add ornaments to the beginning of the component."
-          imageURL="https://img.freepik.com/free-photo/cheesy-tokbokki-korean-traditional-food-on-black-board-background-lunch-dish_1150-42986.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703376000&semt=ais"
-          matchedFoodList={['당근', '무']}
-          size="small"
-        />
-      </CardList>
+      <RecipeCategory>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            '& > *': {
+              m: 1,
+            },
+          }}
+        >
+          <ButtonGroup size="large" aria-label="large button group">
+            {RECIPE_CATEGORIES.map((button) => (
+              <Button
+                key={button}
+                onClick={() => setSelectedCategory(button)}
+                className={selectedCategory === button ? 'is--active' : ''}
+              >
+                {button}
+              </Button>
+            ))}
+          </ButtonGroup>
+        </Box>
+      </RecipeCategory>
+
+      <div>
+        {selectedCategory === '최신 레시피' ? (
+          <LatestRecipe />
+        ) : selectedCategory === '인기 레시피' ? (
+          <PopularRecipe />
+        ) : selectedCategory === '추천 레시피' ? (
+          <RecommendedRecipe />
+        ) : (
+          <LatestRecipe />
+        )}
+      </div>
     </RecipeContainer>
   );
 };
@@ -115,8 +109,10 @@ const RecipeContainer = styled.div`
   }
 `;
 
-const CardList = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-bottom: 48px;
+const RecipeCategory = styled.div`
+  padding: 24px 0 48px 0;
+
+  .is--active {
+    background-color: ${(props) => props.theme.colors.sky}40;
+  }
 `;

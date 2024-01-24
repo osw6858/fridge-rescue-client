@@ -2,100 +2,87 @@ import { styled } from 'styled-components';
 import { BasicButton } from '../components/common/BasicButton';
 import { BasicTitle } from '../components/common/BasicTitle';
 import { theme } from '../styles/theme';
-import { RecipeStep } from '../components/RecipeStep';
-import { useState, type ChangeEvent } from 'react';
-import { useSelectItem } from '../hooks/useSelectItem';
-import { IngredientSearchForm } from '../components/IngredientSearchForm';
-import { IngredientList } from '../components/common/IngredientList';
+import { useRef } from 'react';
+import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
+import { FaPlus } from 'react-icons/fa6';
+import { BasicInput } from '../components/common/BasicInput';
+import { Controller, useForm } from 'react-hook-form';
+import { RecipeStep } from '../components/pages/Recipe/RecipeStep';
+import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
+import { useRecipe } from '../hooks/useRecipe';
+import { useNavigate } from 'react-router-dom';
 
-interface Step {
+export interface StepImage {
   image: File | null;
-  content: string;
+}
+
+export interface InputData {
+  [index: number | string]: {
+    content: string;
+    tip: string;
+    title: string;
+    summary: string;
+  };
+}
+
+export interface Ingredient {
+  id?: number;
+  name: string;
+  amount: string;
 }
 
 export const AddRecipe = () => {
-  const { selectedItem, setSelectedItem, addItemList, setAddItemList } = useSelectItem();
-  const [step, setStep] = useState<Step[]>([{ image: null, content: '' }]);
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageStep = (event: ChangeEvent<HTMLInputElement>, index: number) => {
-    const newImage = [...step];
-    const file = event.target.files && event.target.files[0];
+  const {
+    stepImage,
+    thumbnail,
+    ingredient,
+    addItemList,
+    setIngridentAmount,
+    deleteIngredientByName,
+    onThumbnailChange,
+    onThumbnailRemove,
+    handleImageStep,
+    deleteImageStep,
+    addRecipeMutation,
+    handleDeleteStep,
+    setAddItemList,
+    setStepImage,
+  } = useRecipe();
 
-    if (file) {
-      newImage[index] = {
-        image: file,
-        content: newImage[index].content,
-      };
-      setStep(newImage);
-    }
-  };
-
-  const onThumbnailChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const thumbnail = event.target.files && event.target.files[0];
-      setThumbnail(thumbnail);
-    }
-  };
-
-  const handleContentStep = (event: ChangeEvent<HTMLTextAreaElement>, index: number) => {
-    const newContent = [...step];
-    newContent[index] = {
-      image: newContent[index].image,
-      content: event.target.value,
-    };
-    setStep(newContent);
-  };
-
-  const deleteStep = (index: number) => {
-    setStep(step.filter((_, idx) => idx !== index));
-  };
-
-  const addStep = () => {
-    setStep([...step, { image: null, content: '' }]);
-  };
-
-  const deleteImageStep = (index: number) => {
-    const newStep = [...step];
-    newStep[index] = {
-      ...newStep[index],
-      image: null,
-    };
-    setStep(newStep);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const target = e.target as typeof e.target & {
-      title: { value: string };
-    };
-    const title = target.title.value;
-
-    const formData = new FormData();
-
-    selectedItem.forEach((ingredient, index) => {
-      formData.append(`usedIngredient[${index}]`, ingredient);
-    });
-
-    formData.append(`recipeTitle`, title);
-
-    // TODO: 예외처리 보강
-    if (thumbnail) {
-      formData.append(`recipeImage`, thumbnail);
-    } else {
-      console.error('썸네일을 등록해 주세요!');
+  const handleAddRecipe = async (data: InputData) => {
+    if (thumbnail === null) {
+      // eslint-disable-next-line no-alert
+      alert('썸네일은 필수 입니다.');
       return;
     }
 
-    step.forEach((item, index) => {
-      if (item.image) {
-        formData.append(`step[${index}][image]`, item.image);
-      }
-      formData.append(`step[${index}][content]`, item.content);
+    const steps = stepImage.map((_, index) => {
+      const { content } = data[index];
+      const { tip } = data[index];
+
+      return {
+        description: content,
+        tip,
+      };
     });
 
-    // 이후 axios를 사용
+    const finalData = {
+      title: data.title.title,
+      summary: data.summary.summary,
+      recipeImage: thumbnail,
+      steps,
+      ingredient,
+      stepImage,
+    };
+
+    addRecipeMutation.mutate(finalData);
   };
+
+  const { control, handleSubmit } = useForm();
+  const onSubmit = handleAddRecipe;
 
   return (
     <>
@@ -103,63 +90,98 @@ export const AddRecipe = () => {
         <BasicTitle title="어떤 재료를 사용할까요?" />
       </TitleWrapper>
       <IngredientSearchForm addItemList={addItemList} setAddItemList={setAddItemList} />
-      <IngredientList
-        setSelectedIngredient={setSelectedItem}
-        usedIngredient={selectedItem}
-        titleList={['원래 냉장고 재료']}
+      <UsedIngrident
+        addItemList={ingredient}
+        setAddItemList={setIngridentAmount}
+        deleteItem={deleteIngredientByName}
       />
-      <IngredientList
-        setSelectedIngredient={setSelectedItem}
-        usedIngredient={selectedItem}
-        titleList={addItemList}
-      />
-      <WriteContainer onSubmit={(e) => handleSubmit(e)}>
-        <RecipeTitle placeholder="레시피 제목 입력" name="title" />
+      <WriteContainer onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="title.title"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <RecipeTitle id="title.title" placeholder="레시피 제목 입력" {...field} />
+          )}
+        />
+        <Summary>
+          <Controller
+            name="summary.summary"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <BasicInput
+                type="text"
+                id="summary.summary"
+                placeholder="레시피 요약 입력"
+                {...field}
+              ></BasicInput>
+            )}
+          />
+        </Summary>
         <Thumbnail>
-          <ImageContainer>
-            {thumbnail ? <ImagePreview src={URL.createObjectURL(thumbnail)} /> : <Placeholder />}
-          </ImageContainer>
-          <InputContainer>
-            <Input type="file" accept="image/*" id="thumbnail" onChange={onThumbnailChange} />
-            {thumbnail ? (
+          {thumbnail && (
+            <DeleteWrapper>
               <BasicButton
                 type="button"
-                $bgcolor={theme.colors.orange}
-                $fontcolor={theme.colors.white}
-                onClick={() => setThumbnail(null)}
+                $bgcolor={theme.colors.grayishWhite}
+                $fontcolor={theme.colors.black}
+                onClick={onThumbnailRemove}
               >
                 썸네일 삭제
               </BasicButton>
+            </DeleteWrapper>
+          )}
+          <ImageContainer>
+            {thumbnail ? (
+              <ImagePreview src={URL.createObjectURL(thumbnail)} />
             ) : (
-              <InputLabel htmlFor="thumbnail">썸네일 업로드</InputLabel>
+              <Placeholder htmlFor="thumbnail">
+                <p>레시피의 썸네일을 등록하세요!</p>
+                <PlusIcon />
+              </Placeholder>
             )}
+          </ImageContainer>
+          <InputContainer>
+            <Input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              id="thumbnail"
+              onChange={onThumbnailChange}
+            />
           </InputContainer>
         </Thumbnail>
-        {step.map((e, i) => (
+        {stepImage.map((e, index) => (
           <RecipeStep
-            key={i}
-            index={i}
+            key={index}
             image={e.image}
-            deleteStep={deleteStep}
+            index={index}
+            control={control}
             deleteImageStep={deleteImageStep}
+            handleDeleteStep={handleDeleteStep}
             handleImageStep={handleImageStep}
-            handleContentStep={handleContentStep}
           />
         ))}
         <BasicButton
           type="button"
           $bgcolor={theme.colors.orange}
           $fontcolor={theme.colors.white}
-          onClick={addStep}
+          onClick={() => setStepImage([...stepImage, { image: null }])}
         >
           +
         </BasicButton>
         <ButtonWrapper>
+          <BasicButton
+            type="button"
+            $bgcolor={theme.colors.orange}
+            $fontcolor={theme.colors.white}
+            onClick={() => navigate('/recipe')}
+          >
+            돌아가기
+          </BasicButton>
           <BasicButton type="submit" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
             완료
-          </BasicButton>
-          <BasicButton type="button" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
-            돌아가기
           </BasicButton>
         </ButtonWrapper>
       </WriteContainer>
@@ -167,18 +189,18 @@ export const AddRecipe = () => {
   );
 };
 
-const TitleWrapper = styled.div`
+export const TitleWrapper = styled.div`
   display: grid;
   grid-template-columns: 90% 10%;
 `;
 
-const WriteContainer = styled.form`
+export const WriteContainer = styled.form`
   display: grid;
   grid-template-columns: 100%;
   margin-top: 50px;
 `;
 
-const RecipeTitle = styled.input`
+export const RecipeTitle = styled.input`
   height: 50px;
   border: none;
   font-size: 24px;
@@ -186,19 +208,42 @@ const RecipeTitle = styled.input`
   outline: none;
 `;
 
+export const Summary = styled.div`
+  label {
+  }
+
+  & > input {
+    border: none;
+    width: 100%;
+    outline: none;
+  }
+`;
+
 const ButtonWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 200px 200px;
-  gap: 4px;
-  margin-top: 40px;
+  display: flex;
+  margin-top: 50px;
+
+  button:nth-child(1) {
+    margin-right: 10px;
+  }
+`;
+
+export const Thumbnail = styled.div`
+  margin: 10px 0 5px 0;
+
+  button {
+    max-width: 90px;
+    padding: 3px 3px 3px 3px;
+    margin-bottom: 10px;
+  }
+`;
+
+export const DeleteWrapper = styled.div`
+  display: flex;
   justify-content: end;
 `;
 
-const Thumbnail = styled.div`
-  margin: 10px 0 40px 0;
-`;
-
-const ImageContainer = styled.div`
+export const ImageContainer = styled.div`
   width: 100%;
   height: 400px;
   display: flex;
@@ -207,35 +252,39 @@ const ImageContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-const ImagePreview = styled.img`
+export const ImagePreview = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
 `;
 
-const Placeholder = styled.div`
-  width: 100%;
-  height: 100%;
-  background-color: ${(props) => props.theme.colors.gray};
-`;
-
-const Input = styled.input`
-  display: none;
-`;
-
-const InputContainer = styled.div`
-  position: relative;
-`;
-
-const InputLabel = styled.label`
-  font-size: 14px;
+export const Placeholder = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  padding: 10px 20px;
-  background-color: ${(props) => props.theme.colors.orange};
-  color: white;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border: 3px dashed ${(props) => props.theme.colors.blue}90;
+  border-radius: 5px;
+  color: ${(props) => props.theme.colors.blue};
   cursor: pointer;
-  margin-right: 5px;
+
+  P {
+    margin-bottom: 17px;
+  }
+`;
+
+export const Input = styled.input`
+  display: none;
+`;
+
+export const InputContainer = styled.div`
+  position: relative;
+  margin-bottom: 20px;
+`;
+
+export const PlusIcon = styled(FaPlus)`
+  font-size: 24px;
+  margin-bottom: 4px;
 `;
