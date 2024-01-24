@@ -13,7 +13,7 @@ import { useRecipe } from '../hooks/useRecipe';
 import { useNavigate } from 'react-router-dom';
 
 export interface StepImage {
-  image: File | null;
+  image: File | null | string;
 }
 
 export interface InputData {
@@ -34,23 +34,6 @@ export interface Ingredient {
 export const AddRecipe = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const {
-    stepImage,
-    thumbnail,
-    ingredient,
-    addItemList,
-    setIngridentAmount,
-    deleteIngredientByName,
-    onThumbnailChange,
-    onThumbnailRemove,
-    handleImageStep,
-    deleteImageStep,
-    addRecipeMutation,
-    handleDeleteStep,
-    setAddItemList,
-    setStepImage,
-  } = useRecipe();
 
   const handleAddRecipe = async (data: InputData) => {
     if (thumbnail === null) {
@@ -81,8 +64,25 @@ export const AddRecipe = () => {
     addRecipeMutation.mutate(finalData);
   };
 
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, unregister } = useForm();
   const onSubmit = handleAddRecipe;
+
+  const {
+    stepImage,
+    thumbnail,
+    ingredient,
+    addItemList,
+    setIngridentAmount,
+    deleteIngredientByName,
+    onThumbnailChange,
+    onThumbnailRemove,
+    handleImageStep,
+    deleteImageStep,
+    addRecipeMutation,
+    handleDeleteStep,
+    setAddItemList,
+    setStepImage,
+  } = useRecipe(unregister);
 
   return (
     <>
@@ -126,7 +126,12 @@ export const AddRecipe = () => {
                 type="button"
                 $bgcolor={theme.colors.grayishWhite}
                 $fontcolor={theme.colors.black}
-                onClick={onThumbnailRemove}
+                onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                  }
+                  onThumbnailRemove();
+                }}
               >
                 썸네일 삭제
               </BasicButton>
@@ -219,7 +224,7 @@ export const Summary = styled.div`
   }
 `;
 
-const ButtonWrapper = styled.div`
+export const ButtonWrapper = styled.div`
   display: flex;
   margin-top: 50px;
 

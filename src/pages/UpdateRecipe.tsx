@@ -4,6 +4,7 @@ import { UsedIngrident } from '../components/pages/Recipe/UsedIngrident';
 import { IngredientSearchForm } from '../components/pages/fridge/IngredientSearchForm';
 import type { Ingredient, InputData } from './AddRecipe';
 import {
+  ButtonWrapper,
   DeleteWrapper,
   ImageContainer,
   ImagePreview,
@@ -20,19 +21,95 @@ import {
 import { useRecipe } from '../hooks/useRecipe';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '../constants/queryKey';
-import { getDetailRecipe } from '../api/recipe';
+import { getDetailRecipe, updateRecipe } from '../api/recipe';
 import { BasicInput } from '../components/common/BasicInput';
 import { BasicButton } from '../components/common/BasicButton';
 import { theme } from '../styles/theme';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { RecipeStep, StepData } from '../components/pages/Recipe/RecipeStep';
 
 export const UpdateRecipe = () => {
+  const navigate = useNavigate();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { recipeId } = useParams();
   const id = recipeId?.replace(':', '') as string;
   const [change, setChange] = useState(false);
+
+  const { data } = useSuspenseQuery({
+    queryKey: [QUERY_KEY.UPDATE_RECIPE],
+    queryFn: () => getDetailRecipe(id),
+    select: (data) => data.data,
+  });
+
+  useEffect(() => {
+    setAddItemList(data?.recipeIngredients.map((item: Ingredient) => item.name));
+    setIngredient(data?.recipeIngredients);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setStepImage(
+      data?.recipeSteps.map((image: StepData) => {
+        return { image: image.stepImageUrl };
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const updateRecipeMutation = useMutation({
+    mutationFn: updateRecipe,
+    onError: (error) => console.error(error),
+    onSuccess: () => {
+      alert('수정되었습니다.');
+      navigate(`/recipe/${id}`);
+    },
+  });
+
+  const handleUpdateRecipe = (Updatedata: InputData) => {
+    const originalStep = data?.recipeSteps;
+
+    const steps = stepImage.map((_, index) => {
+      const { content } = Updatedata[index];
+      const { tip } = Updatedata[index];
+
+      return {
+        id: data.recipeSteps[index] ? data.recipeSteps[index].id : null,
+        stepNo: data.recipeSteps[index] ? data.recipeSteps[index].setpNo : index,
+        description: content,
+        tip,
+      };
+    });
+
+    const ChangedStep = steps.filter((changedStep, index) => {
+      const originalObj = originalStep[index];
+      return (
+        changedStep?.description !== originalObj?.stepDescription ||
+        changedStep?.tip !== originalObj?.stepTip
+      );
+    });
+
+    const finalData = {
+      updateSteps: ChangedStep,
+      deleteSteps: deleteStep,
+      recipeImage: thumbnail ?? 'string',
+      stepImages: stepImage,
+      title: Updatedata.title.title,
+      summary: Updatedata.summary.summary,
+      ingredient,
+    };
+
+    console.log(finalData);
+
+    updateRecipeMutation.mutate({ recipeId: id, recipeData: finalData });
+  };
+
+  const { control, handleSubmit, unregister } = useForm();
+  const onSubmit = handleUpdateRecipe;
+
   const {
     stepImage,
     thumbnail,
@@ -44,33 +121,12 @@ export const UpdateRecipe = () => {
     onThumbnailRemove,
     handleImageStep,
     deleteImageStep,
-    addRecipeMutation,
+    deleteStep,
     handleDeleteStep,
     setAddItemList,
     setStepImage,
     setIngredient,
-  } = useRecipe();
-
-  const { data } = useSuspenseQuery({
-    queryKey: [QUERY_KEY.UPDATE_RECIPE],
-    queryFn: () => getDetailRecipe(id),
-    select: (data) => data.data,
-  });
-
-  console.log(data);
-
-  useEffect(() => {
-    setAddItemList(data.recipeIngredients.map((item: Ingredient) => item.name));
-    setIngredient(data.recipeIngredients);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleUpdateRecipe = (inputData: InputData) => {
-    console.log(inputData);
-  };
-
-  const { control, handleSubmit } = useForm();
-  const onSubmit = handleUpdateRecipe;
+  } = useRecipe(unregister);
 
   return (
     <>
@@ -150,6 +206,40 @@ export const UpdateRecipe = () => {
             </>
           )}
         </Thumbnail>
+        {stepImage.map((item, index: number) => (
+          <RecipeStep
+            key={index}
+            stepImage={stepImage}
+            recipeSteps={data.recipeSteps}
+            image={item.image}
+            index={index}
+            control={control}
+            deleteImageStep={deleteImageStep}
+            handleDeleteStep={handleDeleteStep}
+            handleImageStep={handleImageStep}
+          />
+        ))}
+        <BasicButton
+          type="button"
+          $bgcolor={theme.colors.orange}
+          $fontcolor={theme.colors.white}
+          onClick={() => setStepImage([...stepImage, { image: null }])}
+        >
+          +
+        </BasicButton>
+        <ButtonWrapper>
+          <BasicButton
+            type="button"
+            $bgcolor={theme.colors.orange}
+            $fontcolor={theme.colors.white}
+            onClick={() => navigate('/recipe')}
+          >
+            돌아가기
+          </BasicButton>
+          <BasicButton type="submit" $bgcolor={theme.colors.orange} $fontcolor={theme.colors.white}>
+            완료
+          </BasicButton>
+        </ButtonWrapper>
       </WriteContainer>
     </>
   );

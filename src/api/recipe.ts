@@ -14,6 +14,24 @@ interface AddRecipeData {
   stepImage: StepImage[];
 }
 
+interface UpdateRecipeData {
+  recipeId: string;
+  recipeData: {
+    updateSteps: {
+      id: number;
+      stepNo: number;
+      description: string;
+      tip: string;
+    }[];
+    deleteSteps: number[];
+    recipeImage: File | string;
+    stepImages: StepImage[];
+    title: string | undefined;
+    summary: string | undefined;
+    ingredient: Ingredient[] | undefined;
+  };
+}
+
 export const getNewRecipe = async () => {
   const response = await axiosDefault.get(END_POINTS.RECIPES, {
     params: { keyword: '당근', sortType: 'hot' },
@@ -58,8 +76,30 @@ export const toggleBookmark = async (recipeId: string) => {
   return result.data;
 };
 
-export const updateRecipe = async (recipeId: string, recipeData: AddRecipeData) => {
-  const { data } = await axiosFormData.post(`${END_POINTS.RECIPES}/${recipeId}`, recipeData);
+export const updateRecipe = async ({ recipeId, recipeData }: UpdateRecipeData) => {
+  const formData = new FormData();
+
+  const requestData = {
+    title: recipeData.title,
+    summary: recipeData.summary,
+    ingredients: recipeData.ingredient,
+    updateSteps: recipeData.updateSteps,
+    deleteSteps: recipeData.deleteSteps,
+  };
+
+  console.log(JSON.stringify(requestData));
+
+  const requestBlob = new Blob([JSON.stringify(requestData)], { type: 'application/json' });
+
+  formData.append('request', requestBlob);
+
+  recipeData.stepImages.forEach((item) => {
+    formData.append(`stepImages`, item.image || new Blob());
+  });
+
+  formData.append('recipeImage', recipeData.recipeImage);
+
+  const { data } = await axiosFormData.patch(`${END_POINTS.RECIPES}/${recipeId}`, formData);
   return data;
 };
 

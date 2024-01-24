@@ -1,14 +1,25 @@
 import { styled } from 'styled-components';
 import { BasicButton } from '../../common/BasicButton';
 import { theme } from '../../../styles/theme';
-import { type ChangeEvent } from 'react';
+import { useState, type ChangeEvent, useEffect } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 import { FaTrash } from 'react-icons/fa';
 import type { Control } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 
+export interface StepData {
+  stepDescription: string;
+  stepImageUrl: string;
+  stepNo: number;
+  stepTip: string;
+}
+
 interface stepProps {
-  image: File | null;
+  image: string | File | null;
+  stepImage?: {
+    image: File | null | string;
+  }[];
+  recipeSteps?: StepData[];
   index: number;
   control: Control;
   handleDeleteStep: (index: number) => void;
@@ -18,21 +29,42 @@ interface stepProps {
 
 export const RecipeStep = ({
   image,
+  stepImage,
   index,
   control,
+  recipeSteps,
   deleteImageStep,
   handleDeleteStep,
   handleImageStep,
 }: stepProps) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(typeof image === 'string' ? image : null);
+
+  useEffect(() => {
+    if (image instanceof File) {
+      setImageUrl(URL.createObjectURL(image));
+    } else if (typeof image === 'string') {
+      setImageUrl(image);
+    }
+  }, [image, stepImage]);
+
+  const handleDeleteImage = () => {
+    if (typeof image === 'string') {
+      setImageUrl(null);
+    } else {
+      deleteImageStep(index);
+    }
+    setImageUrl(null);
+  };
+
   return (
     <>
       <TopWrapper>
-        {image && (
+        {imageUrl && (
           <BasicButton
             type="button"
             $bgcolor={theme.colors.grayishWhite}
             $fontcolor={theme.colors.black}
-            onClick={() => deleteImageStep(index)}
+            onClick={handleDeleteImage}
           >
             이미지 삭제
           </BasicButton>
@@ -42,13 +74,9 @@ export const RecipeStep = ({
 
       <RecipeContainer>
         <div>
-          {image ? (
+          {imageUrl ? (
             <ImageWrapper>
-              <UploadImage
-                className="uploadImg"
-                src={URL.createObjectURL(image)}
-                alt="업로드된 이미지"
-              />
+              <UploadImage className="uploadImg" src={imageUrl} alt="업로드된 이미지" />
             </ImageWrapper>
           ) : (
             <>
@@ -68,7 +96,7 @@ export const RecipeStep = ({
           <Controller
             name={`${index}.tip`}
             control={control}
-            defaultValue=""
+            defaultValue={recipeSteps && recipeSteps[index]?.stepTip}
             render={({ field }) => (
               <input
                 id={`${index}.tip`}
@@ -82,7 +110,7 @@ export const RecipeStep = ({
         <Controller
           name={`${index}.content`}
           control={control}
-          defaultValue=""
+          defaultValue={recipeSteps && recipeSteps[index]?.stepDescription}
           render={({ field }) => (
             <Content
               maxLength={200}

@@ -5,17 +5,20 @@ import type { Ingredient } from '../pages/AddRecipe';
 import { useMutation } from '@tanstack/react-query';
 import { useSelectItem } from './useSelectItem';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { FieldValues, UseFormUnregister } from 'react-hook-form';
 
 interface StepImg {
-  image: File | null;
+  image: File | null | string;
 }
 
-export function useRecipe() {
+export function useRecipe(unregister: UseFormUnregister<FieldValues>) {
   const navigate = useNavigate();
   const [stepImage, setStepImage] = useState<StepImg[]>([]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [ingredient, setIngredient] = useState<Ingredient[]>();
-  const { addItemList, setAddItemList } = useSelectItem(); // addItemList state가 누락되어 있어 추가하였습니다.
+  const { addItemList, setAddItemList } = useSelectItem();
+  const [deleteStep, setDeleteStep] = useState<number[]>([]);
 
   useEffect(() => {
     const uniqueAddItemList = Array.from(new Set(addItemList));
@@ -73,6 +76,7 @@ export function useRecipe() {
       image: null,
     };
     setStepImage(newStep);
+    setDeleteStep([...deleteStep, index]);
   };
 
   const addRecipeMutation = useMutation({
@@ -87,7 +91,12 @@ export function useRecipe() {
 
   const handleDeleteStep = (index: number) => {
     deleteImageStep(index);
-    setStepImage(stepImage.filter((_, idx) => idx !== index));
+    const newStepImage = stepImage.filter((_, idx) => idx !== index);
+    setStepImage(newStepImage);
+
+    const lastIndex = stepImage.length - 1;
+    unregister(`${lastIndex}.tip`);
+    unregister(`${lastIndex}.content`);
   };
 
   return {
@@ -106,5 +115,6 @@ export function useRecipe() {
     setIngredient,
     setAddItemList,
     setStepImage,
+    deleteStep,
   };
 }
