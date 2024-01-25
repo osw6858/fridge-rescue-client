@@ -128,6 +128,6 @@ export const getRecipesCount = async () => {
 };
 
 export const deleteRecipe = async (recipeId: string) => {
-  const result = await axiosDefault.delete(`${END_POINTS.RECIPES}/${recipeId}`);
+  const result = await axiosAuth.delete(`${END_POINTS.RECIPES}/${recipeId}`);
   return result.data;
 };
