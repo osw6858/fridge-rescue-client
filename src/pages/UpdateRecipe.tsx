@@ -85,7 +85,7 @@ export const UpdateRecipe = () => {
     mutationFn: updateRecipe,
     onError: (error) => console.error(error),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.GET_MY_RECIPE, id] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.DETAIL_RECIPE, id] });
       alert('수정되었습니다.');
       navigate(`/recipe/${id}`);
     },
@@ -114,21 +114,21 @@ export const UpdateRecipe = () => {
       );
     });
 
-    // const changedImg = stepImage.map((e) => {
-    //   if (e.image === null) {
-    //     return {
-    //       ...e,
-    //       image: 'string',
-    //     };
-    //   }
-    //   return e;
-    // });
+    const changedImg = stepImage.map((e) => {
+      if (typeof e.image === 'string') {
+        return {
+          ...e,
+          image: null,
+        };
+      }
+      return e;
+    });
 
     const finalData = {
       updateSteps: ChangedStep,
       deleteSteps: deleteStep,
-      recipeImage: thumbnail ?? 'string',
-      stepImages: stepImage,
+      recipeImage: !thumbnail ? null : thumbnail,
+      stepImages: changedImg,
       title: Updatedata.title.title,
       summary: Updatedata.summary.summary,
       ingredient,
@@ -140,8 +140,6 @@ export const UpdateRecipe = () => {
   };
 
   const onSubmit = handleUpdateRecipe;
-
-  console.log(deleteStep);
 
   return (
     <>

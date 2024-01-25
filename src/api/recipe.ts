@@ -1,3 +1,4 @@
+import { blob } from 'stream/consumers';
 import { END_POINTS } from '../constants/api';
 import type { Ingredient, StepImage } from '../pages/AddRecipe';
 import { axiosAuth, axiosDefault, axiosFormData } from './axiosInstance';
@@ -31,8 +32,8 @@ interface UpdateRecipeData {
       tip: string;
     }[];
     deleteSteps: number[];
-    recipeImage: File | string;
-    stepImages: StepImage[];
+    recipeImage: File | null;
+    stepImages: StepImage[] | null;
     title: string | undefined;
     summary: string | undefined;
     ingredient: Ingredient[] | undefined;
@@ -94,19 +95,17 @@ export const updateRecipe = async ({ recipeId, recipeData }: UpdateRecipeData) =
     deleteSteps: recipeData.deleteSteps,
   };
 
-  console.log(JSON.stringify(requestData));
-
   const requestBlob = new Blob([JSON.stringify(requestData)], { type: 'application/json' });
 
   formData.append('request', requestBlob);
 
-  recipeData.stepImages.forEach((item) => {
-    if (item.image) {
-      formData.append(`stepImages`, item.image);
-    }
+  recipeData.stepImages?.forEach((item) => {
+    formData.append(`stepImages`, item.image || new Blob());
   });
 
-  formData.append('recipeImage', recipeData.recipeImage);
+  if (recipeData.recipeImage) {
+    formData.append('recipeImage', recipeData.recipeImage);
+  }
 
   const { data } = await axiosFormData.patch(`${END_POINTS.RECIPES}/${recipeId}`, formData);
   return data;
