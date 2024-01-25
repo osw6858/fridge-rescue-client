@@ -7,6 +7,7 @@ import { FaTrash } from 'react-icons/fa';
 import type { FieldValues, UseFormRegister } from 'react-hook-form';
 
 export interface StepData {
+  id: number;
   stepDescription: string;
   stepImageUrl: string;
   stepNo: number;
@@ -21,7 +22,7 @@ interface stepProps {
   recipeSteps?: StepData[];
   index: number;
   register: UseFormRegister<FieldValues>;
-  handleDeleteStep: (index: number) => void;
+  handleDeleteStep: (index: number, id: number) => void;
   deleteImageStep: (index: number) => void;
   handleImageStep: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
 }
@@ -69,7 +70,13 @@ export const RecipeStep = ({
             이미지 삭제
           </BasicButton>
         )}
-        {index >= 1 && <StyledTrash onClick={() => handleDeleteStep(index)} />}
+        {index >= 1 && (
+          <StyledTrash
+            onClick={() => {
+              if (recipeSteps) handleDeleteStep(index, recipeSteps[index].id);
+            }}
+          />
+        )}
       </TopWrapper>
 
       <RecipeContainer>

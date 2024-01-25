@@ -84,10 +84,6 @@ export function useRecipe(
       image: null,
     };
     setStepImage(newStep);
-
-    if (!deleteStep.includes(index)) {
-      setDeleteStep([...deleteStep, index]);
-    }
   };
 
   const addRecipeMutation = useMutation({
@@ -100,8 +96,12 @@ export function useRecipe(
     },
   });
 
-  const handleDeleteStep = (index: number) => {
+  const handleDeleteStep = (index: number, id: number) => {
     deleteImageStep(index);
+
+    if (!deleteStep.includes(id)) {
+      setDeleteStep([...deleteStep, id]);
+    }
 
     stepImage.forEach((_, i) => {
       if (i >= index && i < stepImage.length - 1) {

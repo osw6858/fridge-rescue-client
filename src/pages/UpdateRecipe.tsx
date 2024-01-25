@@ -141,7 +141,7 @@ export const UpdateRecipe = () => {
 
   const onSubmit = handleUpdateRecipe;
 
-  console.log(data);
+  console.log(deleteStep);
 
   return (
     <>
