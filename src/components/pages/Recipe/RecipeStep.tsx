@@ -45,6 +45,8 @@ export const RecipeStep = ({
     }
   }, [image]);
 
+  console.log(recipeSteps);
+
   const handleDeleteImage = () => {
     if (typeof image === 'string') {
       setImageUrl(null);

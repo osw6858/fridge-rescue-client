@@ -117,8 +117,6 @@ export const RecipeView = () => {
     deleteMutation.mutate(recipeId);
   };
 
-  console.log('유저1', user, '우저2', data?.author.nickname);
-
   return (
     <>
       <RecipeViewContainer>

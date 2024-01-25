@@ -101,7 +101,9 @@ export const updateRecipe = async ({ recipeId, recipeData }: UpdateRecipeData) =
   formData.append('request', requestBlob);
 
   recipeData.stepImages.forEach((item) => {
-    formData.append(`stepImages`, item.image || new Blob());
+    if (item.image) {
+      formData.append(`stepImages`, item.image);
+    }
   });
 
   formData.append('recipeImage', recipeData.recipeImage);

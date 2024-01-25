@@ -43,6 +43,7 @@ export const UpdateRecipe = () => {
     queryKey: [QUERY_KEY.UPDATE_RECIPE],
     queryFn: () => getDetailRecipe(id),
     select: (data) => data.data,
+    staleTime: 0,
   });
 
   const { register, control, handleSubmit, getValues, setValue, unregister } = useForm();
@@ -68,8 +69,7 @@ export const UpdateRecipe = () => {
   useEffect(() => {
     setAddItemList(data?.recipeIngredients.map((item: Ingredient) => item.name));
     setIngredient(data?.recipeIngredients);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data?.recipeIngredients, id, setAddItemList, setIngredient]);
 
   useEffect(() => {
     setStepImage(
@@ -77,8 +77,7 @@ export const UpdateRecipe = () => {
         return { image: image.stepImageUrl };
       })
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data?.recipeSteps, id, setStepImage]);
 
   const updateRecipeMutation = useMutation({
     mutationFn: updateRecipe,
@@ -138,6 +137,8 @@ export const UpdateRecipe = () => {
   };
 
   const onSubmit = handleUpdateRecipe;
+
+  console.log(data);
 
   return (
     <>
@@ -223,6 +224,7 @@ export const UpdateRecipe = () => {
             image={e.image}
             index={index}
             register={register}
+            recipeSteps={data.recipeSteps}
             deleteImageStep={deleteImageStep}
             handleDeleteStep={handleDeleteStep}
             handleImageStep={handleImageStep}
