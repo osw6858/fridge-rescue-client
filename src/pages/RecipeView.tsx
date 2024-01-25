@@ -107,7 +107,7 @@ export const RecipeView = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteRecipe,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.GET_MY_RECIPE] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.GET_MY_RECIPE, recipeId] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY.GET_LATEST_RECIPE] });
       navigation('/mypage');
       alert('삭제가 완료되었습니다.');

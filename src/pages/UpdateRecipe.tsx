@@ -22,7 +22,7 @@ import { useRecipe } from '../hooks/useRecipe';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '../constants/queryKey';
 import { getDetailRecipe, updateRecipe } from '../api/recipe';
 import { BasicInput } from '../components/common/BasicInput';
@@ -38,6 +38,8 @@ export const UpdateRecipe = () => {
   const { recipeId } = useParams();
   const id = recipeId?.replace(':', '') as string;
   const [change, setChange] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const { data } = useSuspenseQuery({
     queryKey: [QUERY_KEY.UPDATE_RECIPE],
@@ -83,6 +85,7 @@ export const UpdateRecipe = () => {
     mutationFn: updateRecipe,
     onError: (error) => console.error(error),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.GET_MY_RECIPE, id] });
       alert('수정되었습니다.');
       navigate(`/recipe/${id}`);
     },
@@ -111,21 +114,21 @@ export const UpdateRecipe = () => {
       );
     });
 
-    const changedImg = stepImage.map((e) => {
-      if (e.image === null) {
-        return {
-          ...e,
-          image: 'string',
-        };
-      }
-      return e;
-    });
+    // const changedImg = stepImage.map((e) => {
+    //   if (e.image === null) {
+    //     return {
+    //       ...e,
+    //       image: 'string',
+    //     };
+    //   }
+    //   return e;
+    // });
 
     const finalData = {
       updateSteps: ChangedStep,
       deleteSteps: deleteStep,
       recipeImage: thumbnail ?? 'string',
-      stepImages: changedImg,
+      stepImages: stepImage,
       title: Updatedata.title.title,
       summary: Updatedata.summary.summary,
       ingredient,
