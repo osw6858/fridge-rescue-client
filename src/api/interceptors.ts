@@ -29,7 +29,7 @@ export const handleTokenError = async (error: AxiosError) => {
   const originalRequest = error.config;
 
   if (!error.response || !originalRequest) {
-    return Promise.reject(error);
+    throw new Error('에러가 발생했습니다.');
   }
 
   const contentType = originalRequest.headers['Content-Type'];
